@@ -3,7 +3,7 @@ from serial_connection import Serial_Connection
 from table import Table
 
 def main():
-    sc = Serial_Connection()
+    # sc = Serial_Connection()
     gui = GUI()
     tb = Table(gui)
 
