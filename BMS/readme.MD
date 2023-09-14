@@ -289,5 +289,15 @@ Message Format: [IVT Data Message ID] [U1] [U2] [U3] [I1]
 * Cell Over/Under Voltage
 * Cell Over/Under Temperature
 * Charger Invalid Status Flag
+* IVT Under/Over Current
+* IMD Shutdown
+* TSMS Shutdown
+* Receive CAN Shutdown Message 
 
 ## 3.2 Shutdown Control Loop
+* Open BMS Shutdown
+* Open Pre-charge Relay
+* Open Air+ Relay
+* Stop Charge
+* Stop Discharge (Cell Balance)
+* Transmit CAN Shutdown Message
