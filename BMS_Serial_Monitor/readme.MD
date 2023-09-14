@@ -4,15 +4,45 @@ The BMS Serial Monitor is a GUI for data from the BMS (Battery Management System
 # Table of Contents
 - [BMS Serial Monitor](#bms-serial-monitor)
 - [Table of Contents](#table-of-contents)
-- [1. Data Logged](#1-data-logged)
-  - [1.1 Raw Data](#11-raw-data)
-  - [1.2 Processed Data](#12-processed-data)
+- [1. Setup Instructions](#1-setup-instructions)
 - [2. Usage Instructions](#2-usage-instructions)
-- [3. Python Libraries](#3-python-libraries)
+- [3. Data Logged](#3-data-logged)
+  - [3.1 Raw Data](#31-raw-data)
+  - [3.2 Processed Data](#32-processed-data)
 - [4. Monitor States](#4-monitor-states)
 
-# 1. Data Logged
-## 1.1 Raw Data
+# 1. Setup Instructions
+1. Download and install [Anaconda](https://www.anaconda.com/download)
+2. Open terminal
+3. Create a conda environment for FEB_BMS_SM (with Python 3.11.5). Press 'y' when prompted.
+```
+conda create -n FEB_BMS_SM python=3.11.5
+```
+
+4. Activate the environment
+```
+conda activate FEB_BMS_SM
+```
+
+4. Install pip packages:
+```
+pip install pyserial serial-tool
+```
+
+5. After finished with Serial Monitor, deactivate conda environment:
+```
+conda deactivate
+```
+
+# 2. Usage Instructions
+1. Run "serial_monitor.py". Active COM ports are printed. Terminate execution.
+2. Set serial COM port in "constants.py".
+3. Run "serial_monitor.py"
+
+
+
+# 3. Data Logged
+## 3.1 Raw Data
 * Battery Voltage (20 x 7)
 * Battery Temperature (20 x 7)
 * Disabled Temperature Sensors
@@ -49,20 +79,10 @@ The BMS Serial Monitor is a GUI for data from the BMS (Battery Management System
   * Voltage U3
   * Current I1
 
-## 1.2 Processed Data
+## 3.2 Processed Data
 * Voltage: Mean, Min, Max, Std, Range, Total
 * Temperature: Mean, Min, Max, Std, Range
 * Discharge Data: No. Cells Discharging
-
-# 2. Usage Instructions
-1. Run "serial_monitor.py". Active COM ports are printed. Terminate execution.
-2. Set serial COM port in "constants.py".
-3. Run "serial_monitor.py"
-
-# 3. Python Libraries
-1. serial 
-2. serial-tool
-3. tkinter
 
 # 4. Monitor States
 <table>
