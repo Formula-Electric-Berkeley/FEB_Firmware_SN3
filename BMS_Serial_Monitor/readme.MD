@@ -26,7 +26,7 @@ conda activate FEB_BMS_SM
 
 4. Install pip packages:
 ```
-pip install pyserial serial-tool
+pip install pyserial serial-tool matplotlib
 ```
 
 5. After finished with Serial Monitor, deactivate conda environment:

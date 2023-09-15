@@ -2,19 +2,18 @@
 
 import tkinter as tk
 import tkinter.ttk as ttk
-from tkinter.constants import *
 
 class VerticalScrolledFrame(ttk.Frame):
     def __init__(self, parent, *args, **kw):
         ttk.Frame.__init__(self, parent, *args, **kw)
 
         # Create a canvas object and a vertical scrollbar for scrolling it.
-        vscrollbar = ttk.Scrollbar(self, orient=VERTICAL)
-        vscrollbar.pack(fill=Y, side=RIGHT, expand=FALSE)
+        vscrollbar = ttk.Scrollbar(self, orient=tk.VERTICAL)
+        vscrollbar.pack(fill=tk.Y, side=tk.RIGHT, expand=tk.FALSE)
         self.canvas = tk.Canvas(self, bd=0, highlightthickness=0, 
                                 width = 200, height = 300,
                                 yscrollcommand=vscrollbar.set)
-        self.canvas.pack(side=LEFT, fill=BOTH, expand=TRUE)
+        self.canvas.pack(fill=tk.BOTH, expand=tk.TRUE)
         vscrollbar.config(command = self.canvas.yview)
 
         # Reset the view
@@ -25,7 +24,7 @@ class VerticalScrolledFrame(ttk.Frame):
         self.interior = ttk.Frame(self.canvas)
         self.interior.bind('<Configure>', self._configure_interior)
         self.canvas.bind('<Configure>', self._configure_canvas)
-        self.interior_id = self.canvas.create_window(0, 0, window=self.interior, anchor=NW)
+        self.interior_id = self.canvas.create_window(0, 0, window=self.interior, anchor=tk.NW)
 
 
     def _configure_interior(self, event):
@@ -40,18 +39,3 @@ class VerticalScrolledFrame(ttk.Frame):
         if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
             # Update the inner frame's width to fill the canvas.
             self.canvas.itemconfigure(self.interior_id, width=self.canvas.winfo_width())
-        
-
-# class Window():
-#     def __init__(self, master, *args, **kwargs):
-#         self.frame = VerticalScrolledFrame(master)
-#         self.frame.pack(expand = True, fill = tk.BOTH)
-#         self.label = ttk.Label(master, text="Shrink the window to activate the scrollbar.")
-#         self.label.pack()
-
-#         for i in range(10):
-#             ttk.Button(self.frame.interior, text=f"Button {i}").grid(row=i, column=0)
-
-# root = tk.Tk()
-# window = Window(root)
-# root.mainloop()
