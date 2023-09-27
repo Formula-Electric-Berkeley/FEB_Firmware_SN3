@@ -18,7 +18,7 @@ The BMS (Battery Management System) is responsible for regulating the accumulato
   - [2.6 Relay State](#26-relay-state)
   - [2.7 Shutdown State](#27-shutdown-state)
   - [2.8 Charge Data](#28-charge-data)
-  - [2.9 Discharge Data](#29-discharge-data)
+  - [2.9 Cell Balance](#29-cell-balance)
   - [2.10 IVT Data](#210-ivt-data)
 - [3. Shutdown](#3-shutdown)
   - [3.1 Shutdown Triggers](#31-shutdown-triggers)
@@ -73,7 +73,7 @@ Passive cell balancing of battery cells to a target voltage (lowest cell voltage
     <td>0b0110</td>
   </tr>
   <tr>
-    <td>Discharge Data</td>
+    <td>Cell Balance</td>
     <td>0b0111</td> 
   </tr>
   <tr>
@@ -138,7 +138,7 @@ Message Format: [Cell Temperature Message ID] [Bank ID] [t0] ... [t19]
     <th>Type</th>
   </tr>
   <tr>
-    <td>Debug Standard</td>
+    <td>Debug Balance</td>
     <td>[0 (Enabled), 1 (Disabled)]</td>
     <td>uint8_t</td>
   </tr>
@@ -148,7 +148,12 @@ Message Format: [Cell Temperature Message ID] [Bank ID] [t0] ... [t19]
     <td>uint8_t</td>
   </tr>
   <tr>
-    <td>Debug Discharge</td>
+    <td>Debug Drive</td>
+    <td>[0 (Enabled), 1 (Disabled)]</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>Debug Precharge</td>
     <td>[0 (Enabled), 1 (Disabled)]</td>
     <td>uint8_t</td>
   </tr>
@@ -158,7 +163,7 @@ Message Format: [Cell Temperature Message ID] [Bank ID] [t0] ... [t19]
     <td>uint8_t</td>
   </tr>
 </table>
-Message Format: [BMS State Message ID] [Standard] [Charge] [Discharge] [Shutdown]
+Message Format: [BMS State Message ID] [Balance] [Charge] [Drive] [Precharge] [Shutdown]
 
 ## 2.6 Relay State
 <table>
@@ -252,7 +257,7 @@ Message Format: [Shutdown State Message ID] [BMS] [TSMS] [IMD]
 </table>
 Message Format: [Charger Data Message ID] [State] [Max Current] [Max Voltage] [Current] [Voltage] [Status Flags]
 
-## 2.9 Discharge Data
+## 2.9 Cell Balance
 
 ## 2.10 IVT Data
 <table>

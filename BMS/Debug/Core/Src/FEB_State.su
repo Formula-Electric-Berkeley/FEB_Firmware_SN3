@@ -1,0 +1,9 @@
+../Core/Src/FEB_State.c:16:6:FEB_State_Set_Balance	8	static
+../Core/Src/FEB_State.c:26:6:FEB_State_Set_Charge	8	static
+../Core/Src/FEB_State.c:36:6:FEB_State_Set_Debug	4	static
+../Core/Src/FEB_State.c:40:6:FEB_State_Reset_Debug	4	static
+../Core/Src/FEB_State.c:44:6:FEB_State_Set_Drive	8	static
+../Core/Src/FEB_State.c:53:6:FEB_State_Set_Precharge	8	static
+../Core/Src/FEB_State.c:63:6:FEB_State_Set_Shutdown	8	static
+../Core/Src/FEB_State.c:74:6:FEB_State_Init	8	static
+../Core/Src/FEB_State.c:78:6:FEB_State_Process	16	static

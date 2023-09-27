@@ -32,18 +32,7 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
-#include <string.h>
-
-#include "FEB_LTC6811.h"
-#include "FEB_BMS_Shutdown.h"
-#include <FEB_BMS_AIR.h>
-#include "FEB_CAN_IVT.h"
-#include "FEB_CAN_Charger.h"
-#include "FEB_CAN.h"
-#include "FEB_BMS_State.h"
-#include "FEB_Fan.h"
-#include "FEB_Timer.h"
-#include "FEB_CAN_Inverter.h"
+#include "FEB_Main.h"
 
 /* USER CODE END Includes */
 
@@ -62,8 +51,6 @@ extern "C" {
 
 /* USER CODE END EM */
 
-void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
-
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
@@ -72,14 +59,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define USART_TX_Pin GPIO_PIN_2
-#define USART_TX_GPIO_Port GPIOA
-#define USART_RX_Pin GPIO_PIN_3
-#define USART_RX_GPIO_Port GPIOA
-#define TMS_Pin GPIO_PIN_13
-#define TMS_GPIO_Port GPIOA
-#define TCK_Pin GPIO_PIN_14
-#define TCK_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 
