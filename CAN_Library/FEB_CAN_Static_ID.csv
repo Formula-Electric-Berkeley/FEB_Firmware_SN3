@@ -1,0 +1,13 @@
+# Comment
+# Format: device + message name, binary/decimal/hexadecimal address
+# '//' creates C comment
+
+// Charger
+Charger BMS, 0x1806E5F4
+Charger CCS, 0x18FF50E5
+
+// IVT
+IVT Current, 0x521
+IVT Voltage 1, 0x522
+IVT Voltage 2, 0x523
+IVT Voltage 3, 0x524
