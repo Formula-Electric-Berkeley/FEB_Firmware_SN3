@@ -25,7 +25,8 @@ Core/Src/FEB_Main.o: ../Core/Src/FEB_Main.c ../Core/Inc/FEB_Main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
- ../Core/Inc/FEB_State.h
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
+ ../Core/Inc/FEB_UART.h ../Core/Inc/FEB_State.h
 ../Core/Inc/FEB_Main.h:
 ../Core/Inc/FEB_Relay.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -53,4 +54,6 @@ Core/Src/FEB_Main.o: ../Core/Src/FEB_Main.c ../Core/Inc/FEB_Main.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
+../Core/Inc/FEB_UART.h:
 ../Core/Inc/FEB_State.h:

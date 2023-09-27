@@ -2,6 +2,10 @@
 #ifndef INC_FEB_UART_H_
 #define INC_FEB_UART_H_
 
+// ******************************** Includes ********************************
+
+#include "stm32f4xx_hal.h"
+
 // ******************************** Defines ********************************
 
 #define FEB_UART_Cell_Voltage_ID		0b0000

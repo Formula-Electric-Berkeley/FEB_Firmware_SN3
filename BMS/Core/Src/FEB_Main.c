@@ -13,5 +13,10 @@ void FEB_Main_Setup(void) {
 }
 
 void FEB_Main_Loop(void) {
+	// State
 	FEB_State_Process();
+	FEB_State_UART_Transmit();
+
+	// Relay
+	FEB_Relay_UART_Transmit();
 }
