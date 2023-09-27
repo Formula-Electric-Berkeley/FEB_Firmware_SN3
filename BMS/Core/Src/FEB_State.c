@@ -68,7 +68,12 @@ void FEB_State_Set_Shutdown(void) {
 	FEB_State_Drive = false;
 	FEB_State_Precharge = false;
 	FEB_State_Shutdown = true;
+
 	FEB_Relay_State_Shutdown();
+
+	// Stop Charge
+	// Stop Balance
+	// Transmit Shutdown Message (UART, CAN)
 }
 
 // ******************************** Interface ********************************

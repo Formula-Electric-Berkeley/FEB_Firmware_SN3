@@ -3,9 +3,9 @@
 
 // ******************************** Includes ********************************
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include <string.h>
 
 #include "stm32f4xx_hal.h"
@@ -14,21 +14,20 @@
 
 // ******************************** Defines ********************************
 
-#define FEB_Relay_Close 	0
-#define FEB_Relay_Open 		1
+#define FEB_RELAY_CLOSE 	0
+#define FEB_RELAY_OPEN 		1
 
 // ******************************** Functions ********************************
 
 // Interface
 void FEB_Relay_Init(void);
-void FEB_Relay_State_Precharge(void);
 void FEB_Relay_State_Balance(void);
 void FEB_Relay_State_Charge(void);
 void FEB_Relay_State_Drive(void);
+void FEB_Relay_State_Precharge(void);
 void FEB_Relay_State_Shutdown(void);
 
 // UART
 void FEB_Relay_UART_Transmit(void);
-
 
 #endif /* INC_FEB_RELAY_H_ */
