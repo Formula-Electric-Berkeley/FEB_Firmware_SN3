@@ -1,3 +1,4 @@
+from bank_statistic import Bank_Statistic
 import constants
 import tkinter as tk
 from VerticalScrolledFrame import VerticalScrolledFrame
@@ -40,6 +41,8 @@ class Table:
         # self.__debug_shutdown = False
 
         # Volt-temp data
+        self.__volt_data = Bank_Statistic()
+        self.__temp_data = Bank_Statistic()
         self.__volt_cells = dict()
         self.__temp_cells = dict()
         self.__volt_bank_stats_cells = dict()
@@ -113,6 +116,48 @@ class Table:
     # Volt-Temp Cell Data #
     #######################
 
+    # Interface
+
+    def update_volt(self, bank, cell, value):
+        self.__volt_data[(bank, cell)] = value
+        self.__volt_cells[(bank, cell)].config(text=value)
+
+    def update_temp(self, bank, cell, value):
+        self.__temp_data[(bank, cell)] = value
+        self.__temp_cells[(bank, cell)].config(text=value)
+
+    def update_volt_temp_stats(self):
+        # Voltage
+        volt_stats = self.__volt_data.get_stats()
+        self.__volt_stats_cells["mean"].config(text=volt_stats["mean"])
+        self.__volt_stats_cells["min"].config(text=volt_stats["min"])
+        self.__volt_stats_cells["max"].config(text=volt_stats["max"])
+        self.__volt_stats_cells["stdev"].config(text=volt_stats["stdev"])
+        self.__volt_stats_cells["range"].config(text=volt_stats["range"])
+        self.__volt_stats_cells["sum"].config(text=volt_stats["sum"])
+
+        # Bank voltage
+        for bank in range(constants.NUM_BANKS):
+            bank_volt_stats = self.__volt_data.get_stats(bank=bank)
+            self.__volt_bank_stats_cells[(bank, "mean")].config(text=bank_volt_stats["mean"])
+            self.__volt_bank_stats_cells[(bank, "sum")].config(text=bank_volt_stats["sum"])
+
+        # Temperature
+        temp_stats = self.__temp_data.get_stats()
+        self.__temp_stats_cells["mean"].config(text=temp_stats["mean"])
+        self.__temp_stats_cells["min"].config(text=temp_stats["min"])
+        self.__temp_stats_cells["max"].config(text=temp_stats["max"])
+        self.__temp_stats_cells["stdev"].config(text=temp_stats["stdev"])
+        self.__temp_stats_cells["range"].config(text=temp_stats["range"])
+        self.__temp_stats_cells["sum"].config(text=temp_stats["sum"])
+    
+        # Bank temperature
+        for bank in range(constants.NUM_BANKS):
+            bank_temp_stats = self.__temp_data.get_stats(bank=bank)
+            self.__temp_bank_stats_cells[(bank, "mean")].config(text=bank_temp_stats["mean"])
+
+    # Create Table
+
     def __create_volt_temp_table(self, row):
         # Create header
         self.__create_cell(row, 0, "Cell", rs = 2, wsf=2)
@@ -166,7 +211,7 @@ class Table:
         self.__volt_stats_cells["mean"] = self.__create_cell(row, 1, "", cs=2)
         self.__volt_stats_cells["min"] = self.__create_cell(row, 3, "", cs=2)
         self.__volt_stats_cells["max"] = self.__create_cell(row, 5, "", cs=2)
-        self.__volt_stats_cells["std_dev"] = self.__create_cell(row, 7, "", cs=2)
+        self.__volt_stats_cells["stdev"] = self.__create_cell(row, 7, "", cs=2)
         self.__volt_stats_cells["range"] = self.__create_cell(row, 9, "", cs=2)
         self.__volt_stats_cells["sum"] = self.__create_cell(row, 11, "", cs=2)
         row += 1
@@ -176,7 +221,7 @@ class Table:
         self.__temp_stats_cells["mean"] = self.__create_cell(row, 1, "", cs=2)
         self.__temp_stats_cells["min"] = self.__create_cell(row, 3, "", cs=2)
         self.__temp_stats_cells["max"] = self.__create_cell(row, 5, "", cs=2)
-        self.__temp_stats_cells["std_dev"] = self.__create_cell(row, 7, "", cs=2)
+        self.__temp_stats_cells["stdev"] = self.__create_cell(row, 7, "", cs=2)
         self.__temp_stats_cells["range"] = self.__create_cell(row, 9, "", cs=2)
         self.__temp_stats_cells["sum"] = self.__create_cell(row, 11, "", cs=2)
         row += 1

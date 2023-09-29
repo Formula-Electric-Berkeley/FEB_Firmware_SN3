@@ -14,6 +14,8 @@ def main():
 
     gui.root.mainloop()
 
+    # TODO: Add thread to update volt-temp table stats
+
     global stopThread
     stopThread = True
 
