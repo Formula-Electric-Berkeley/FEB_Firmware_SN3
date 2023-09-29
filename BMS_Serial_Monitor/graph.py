@@ -31,8 +31,11 @@ class Graph:
         self.__axis[1].set_ylabel("Total Voltage / V")
 
     def __update(self):
+        # Clear
         self.__axis[0].clear()
         self.__axis[1].clear()
+
+        # Update
         self.__label_plots()
         self.__axis[0].plot(self.__x_coords_0, self.__y_coords_0)
         self.__axis[1].plot(self.__x_coords_1, self.__y_coords_1)
