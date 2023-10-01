@@ -1,4 +1,3 @@
-from bank_statistic import Bank_Statistic
 import constants
 import tkinter as tk
 from VerticalScrolledFrame import VerticalScrolledFrame
@@ -17,55 +16,52 @@ class Table:
         __temp_bank_stats_cells [dict]: (bank[int], type [str]) -> cell [tk.Label], processed temperature data for each bank
         __volt_stats_cells [dict]: type [str] -> data [float]
         __temp_stats_cells [dict]: type [str] -> data [float]
-
         __relay_state_cells [dict]: type [str] -> cell [tk.Label]
-
         __shutdown_state_cells [dict]: type [str] -> cell [tk.Label]
-
         __ivt_data_cells [dict]: type [str] -> cell [tk.Label]
-
         __charger_data_cells [dict]: type [str] -> cell [tk.Label]
-
         __discharge_data_cells [dict]: type [str] -> cell [tk.Label]
     """
-    def __init__(self, master):
-        self.__master = master
+    def __init__(self, root, sd, ui):
+        self.__master = root
+        self.__serial_data = sd
         self.__frame = self.__create_table_frame()
+        self.__update_interval = ui
 
-        # States
-        self.__state_cells = dict()        
-
-        # self.__debug_standard = True
-        # self.__debug_charge = False
-        # self.__debug_discharge = False
-        # self.__debug_shutdown = False
-
-        # Volt-temp data
-        self.__volt_data = Bank_Statistic()
-        self.__temp_data = Bank_Statistic()
+        # Cells
+        self.__state_cells = dict()
         self.__volt_cells = dict()
         self.__temp_cells = dict()
         self.__volt_bank_stats_cells = dict()
         self.__temp_bank_stats_cells = dict()
         self.__volt_stats_cells = dict()
         self.__temp_stats_cells = dict()
-
-        # Relay states
         self.__relay_state_cells = dict()
-
-        # Shutdown states
         self.__shutdown_state_cells = dict()
-
-        # IVT data
         self.__ivt_data_cells = dict()
-
-        # Charger data
         self.__charger_data_cells = dict()
-
-        # Discharge data
-        self.__discharge_data_cells = dict()
+        self.__cell_balance_data_cells = dict()
 
         self.__setup()
+
+    ################
+    # Update Table #
+    ################
+
+    def update(self):
+        self.__update_volt_temp_table()
+        self.__update_volt_temp_stats_table()
+        self.__update_shutdown_state_table()
+        self.__update_relay_state_table()
+        self.__update_IVT_table()
+        self.__update_charger_data_table()
+        self.__update_cell_balance_data_table()
+
+        self.__master.after(self.__update_interval, self.update)
+    
+    ################
+    # Create Table #
+    ################
 
     def __create_table_frame(self):
         frame = VerticalScrolledFrame(self.__master)
@@ -91,7 +87,7 @@ class Table:
         row = self.__create_blank_row(row)
         row = self.__create_charger_data_table(row)
         row = self.__create_blank_row(row)
-        row = self.__create_discharge_data_table(row)
+        row = self.__create_cell_balance_data_table(row)
         row = self.__create_blank_row(row)
 
     #####################
@@ -116,19 +112,24 @@ class Table:
     # Volt-Temp Cell Data #
     #######################
 
-    # Interface
-
-    def update_volt(self, bank, cell, value):
-        self.__volt_data[(bank, cell)] = value
-        self.__volt_cells[(bank, cell)].config(text=value)
-
-    def update_temp(self, bank, cell, value):
-        self.__temp_data[(bank, cell)] = value
-        self.__temp_cells[(bank, cell)].config(text=value)
-
-    def update_volt_temp_stats(self):
+    def __update_volt_temp_table(self):
         # Voltage
-        volt_stats = self.__volt_data.get_stats()
+        for bank in range(constants.NUM_BANKS):
+            for cell in range(constants.NUM_CELLS_PER_BANK):
+                value = self.__serial_data.voltage.get((bank, cell), '-')
+                value = round(value, 3) if value != '-' else value
+                self.__volt_cells[(bank, cell)].config(text=value)
+
+        # Temperature
+        for bank in range(constants.NUM_BANKS):
+            for cell in range(constants.NUM_CELLS_PER_BANK):
+                value = self.__serial_data.temperature.get((bank, cell), '-')
+                value = round(value, 3) if value != '-' else value
+                self.__temp_cells[(bank, cell)].config(text=value)
+
+    def __update_volt_temp_stats_table(self):
+        # Voltage
+        volt_stats = self.__serial_data.voltage.get_stats()
         self.__volt_stats_cells["mean"].config(text=volt_stats["mean"])
         self.__volt_stats_cells["min"].config(text=volt_stats["min"])
         self.__volt_stats_cells["max"].config(text=volt_stats["max"])
@@ -138,25 +139,22 @@ class Table:
 
         # Bank voltage
         for bank in range(constants.NUM_BANKS):
-            bank_volt_stats = self.__volt_data.get_stats(bank=bank)
+            bank_volt_stats = self.__serial_data.voltage.get_stats(bank=bank)
             self.__volt_bank_stats_cells[(bank, "mean")].config(text=bank_volt_stats["mean"])
             self.__volt_bank_stats_cells[(bank, "sum")].config(text=bank_volt_stats["sum"])
 
         # Temperature
-        temp_stats = self.__temp_data.get_stats()
+        temp_stats = self.__serial_data.temperature.get_stats()
         self.__temp_stats_cells["mean"].config(text=temp_stats["mean"])
         self.__temp_stats_cells["min"].config(text=temp_stats["min"])
         self.__temp_stats_cells["max"].config(text=temp_stats["max"])
         self.__temp_stats_cells["stdev"].config(text=temp_stats["stdev"])
         self.__temp_stats_cells["range"].config(text=temp_stats["range"])
-        self.__temp_stats_cells["sum"].config(text=temp_stats["sum"])
     
         # Bank temperature
         for bank in range(constants.NUM_BANKS):
-            bank_temp_stats = self.__temp_data.get_stats(bank=bank)
+            bank_temp_stats = self.__serial_data.temperature.get_stats(bank=bank)
             self.__temp_bank_stats_cells[(bank, "mean")].config(text=bank_temp_stats["mean"])
-
-    # Create Table
 
     def __create_volt_temp_table(self, row):
         # Create header
@@ -223,7 +221,7 @@ class Table:
         self.__temp_stats_cells["max"] = self.__create_cell(row, 5, "", cs=2)
         self.__temp_stats_cells["stdev"] = self.__create_cell(row, 7, "", cs=2)
         self.__temp_stats_cells["range"] = self.__create_cell(row, 9, "", cs=2)
-        self.__temp_stats_cells["sum"] = self.__create_cell(row, 11, "", cs=2)
+        self.__temp_stats_cells["sum"] = self.__create_cell(row, 11, "-", cs=2)
         row += 1
 
         return row
@@ -231,6 +229,12 @@ class Table:
     ###################
     # Shutdown States #
     ###################
+
+    def __update_shutdown_state_table(self):
+        states = ["bms", "imd", "tsms"]
+        for s in states:
+            value = self.__serial_data.shutdown_state.get(s, "-")
+            self.__shutdown_state_cells[s].config(text=value)
 
     def __create_shutdown_state_table(self, row):
         # Headers
@@ -252,6 +256,12 @@ class Table:
     # Relay States #
     ################
 
+    def __update_relay_state_table(self):
+        states = ["pre_charge", "air_plus"]
+        for s in states:
+            value = self.__serial_data.relay_state.get(s, "-")
+            self.__relay_state_cells[s].config(text=value)
+
     def __create_relay_state_table(self, row):
         # Headers
         self.__create_cell(row, 0, "Relay", rs=2)
@@ -269,6 +279,12 @@ class Table:
     ############
     # IVT Data #
     ############
+
+    def __update_IVT_table(self):
+        states = ["u1", "u2", "u3", "i1"]
+        for s in states:
+            value = self.__serial_data.ivt_data.get(s, "-")
+            self.__ivt_data_cells[s].config(text=value)
 
     def __create_IVT_table(self, row):
         # Headers
@@ -292,6 +308,14 @@ class Table:
     ################
     # Charger Data #
     ################
+
+    def __update_charger_data_table(self):
+        states = ["state", "max_current", "max_voltage", "output_current", "output_voltage",
+                  "hardware_failure", "temperature_protection", "input_voltage", "starting_state",
+                  "communication_state"]
+        for s in states:
+            value = self.__serial_data.charger_data.get(s, "-")
+            self.__charger_data_cells[s].config(text=value)
 
     def __create_charger_data_table(self, row):
         # Header 1
@@ -330,11 +354,17 @@ class Table:
 
         return row
     
-    ##################
-    # Discharge Data #
-    ##################
+    #####################
+    # Cell Balance Data #
+    #####################
 
-    def __create_discharge_data_table(self, row):
+    def __update_cell_balance_data_table(self):
+        states = ["target_voltage", "num_cells_discharging"]
+        for s in states:
+            value = self.__serial_data.cell_balance_data.get(s, "-")
+            self.__cell_balance_data_cells[s].config(text=value)
+
+    def __create_cell_balance_data_table(self, row):
         # Headers
         self.__create_cell(row, 0, "Discharge Data", rs=2)
         self.__create_cell(row, 1, "Target Voltage", cs=2)
@@ -342,8 +372,8 @@ class Table:
         row += 1
 
         # Body
-        self.__discharge_data_cells["target_voltage"] = self.__create_cell(row, 1, "", cs=2)
-        self.__discharge_data_cells["num_cells_discharging"] = self.__create_cell(row, 3, "", cs=2)
+        self.__cell_balance_data_cells["target_voltage"] = self.__create_cell(row, 1, "", cs=2)
+        self.__cell_balance_data_cells["num_cells_discharging"] = self.__create_cell(row, 3, "", cs=2)
         row += 1
 
         return row

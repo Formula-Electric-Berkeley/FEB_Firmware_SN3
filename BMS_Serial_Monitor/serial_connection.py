@@ -1,16 +1,41 @@
 import serial, serial.tools.list_ports
 
+import random, time
+
 class Serial_Connection:
     BAUDRATE = 115200
     BYTESIZE = serial.SEVENBITS
     PARITY = serial.PARITY_EVEN
     STOPBITS = serial.STOPBITS_ONE
 
-    def __init__(self):
+    def __init__(self, sd):
         ports = self.__get_active_ports()
         self.__display_active_ports(ports)
         port_str = self.__select_active_port(ports)
         self.connection = self.__connect(port_str)
+        self.__serial_data = sd
+
+    
+    def read_data(self):
+        while True:
+            bank = random.randint(0, 7)
+            cell = random.randint(0, 19)
+            volt = 3 + 1.2 * random.random()
+            temp = 16 + 4 * random.random()
+            self.__serial_data.voltage[(bank, cell)] = volt
+            self.__serial_data.temperature[(bank, cell)] = temp
+
+            time.sleep(0.02)
+        # self.connection.readline()
+        # message = ""
+        # try:
+        #     message = self.connection.readline().decode().replace("\x00", "").replace("\n", "").split(" ")
+        #     message_id = int(message[0]) & constants.MESSAGE_ID_MASK
+        #     bank = (int(message[0]) & constants.BANK_ID_MASK) >> constants.BITS_PER_MESSAGE_ID
+        #     self.__process_message(message, message_id, bank, table)
+        # except:
+        #     if message:
+        #         print("Error:", message)
 
     """
     Args:

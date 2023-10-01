@@ -11,3 +11,4 @@ class GUI:
     def __setup_root(self):
         self.root.geometry(f"{GUI.WIDTH}x{GUI.HEIGHT}")
         self.root.title("BMS Serial Monitor")
+
