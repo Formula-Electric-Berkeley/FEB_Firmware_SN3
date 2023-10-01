@@ -1,4 +1,6 @@
 import constants
+from graph import Graph
+from serial_data import Serial_Data
 import tkinter as tk
 from VerticalScrolledFrame import VerticalScrolledFrame
 
@@ -26,7 +28,7 @@ class Table:
         __charger_data_cells [dict]: type [str] -> cell [tk.Label]
         __discharge_data_cells [dict]: type [str] -> cell [tk.Label]
     """
-    def __init__(self, root, sd, ui):
+    def __init__(self, root, sd: Serial_Data, ui):
         self.__master = root
         self.__serial_data = sd
         self.__frame = self.__create_table_frame()
@@ -61,18 +63,19 @@ class Table:
 
     def __key_press(self, e):
         match e.char:
-            case 's' | 'S':
-                self.__range_state = False
-                self.__state_cells["monitor"].config(text="Standard")
             case 'r' | 'R':
                 self.__range_state = True
                 self.__state_cells["monitor"].config(text="Range")
+            case 's' | 'S':
+                self.__range_state = False
+                self.__state_cells["monitor"].config(text="Standard")
 
     ################
     # Update Table #
     ################
 
     def update(self):
+        self.__update_states_table()
         self.__update_volt_temp_table()
         self.__update_volt_temp_stats_table()
         self.__update_shutdown_state_table()
@@ -118,6 +121,14 @@ class Table:
     # Controller States #
     #####################
 
+    def __update_states_table(self):
+        state_split = []
+        for k,v in self.__serial_data.bms_state.items():
+            if v == True:
+                state_split.append(k)
+        state = " ".join(state_split) if state_split else "-"
+        self.__state_cells["bms"].config(text=state)
+
     def __create_states_table(self, row):
         # Header
         self.__create_cell(row, 0, "State", rs = 2)
@@ -147,7 +158,7 @@ class Table:
                     if self.__range_state and not constants.CELL_VOLTAGE_MIN <= value <= constants.CELL_VOLTAGE_MAX:
                         bg = Table.COLOR_OUT_OF_RANGE
                     elif self.__range_state:
-                        green = int((value - constants.CELL_VOLTAGE_MIN) / (constants.CELL_VOLTAGE_MAX - constants.CELL_VOLTAGE_MIN) * 155 + 100) % 256
+                        green = int((value - constants.CELL_VOLTAGE_MIN) / (constants.CELL_VOLTAGE_MAX - constants.CELL_VOLTAGE_MIN) * 135 + 120) % 256
                         rgb = (0, green, 0)
                         bg = "#%02x%02x%02x" % rgb 
                 self.__volt_cells[(bank, cell)].config(text=value, background=bg)

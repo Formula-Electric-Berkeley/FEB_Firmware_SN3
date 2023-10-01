@@ -24,6 +24,13 @@ class Graph:
         self.anim = animation.FuncAnimation(self.__fig, self.__animate, interval=self.__update_interval, cache_frame_data=False)
         plt.show()
         plt.close()
+
+    @staticmethod
+    def visualize_graph():
+        vg = ""
+        while vg not in ["y", "n"]:
+            vg = input("Visaulize Graph (y/n): ").lower()
+        return vg == "y"
     
     def __label_plots(self):
         # Plot 0
