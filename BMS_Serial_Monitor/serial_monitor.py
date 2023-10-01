@@ -12,7 +12,7 @@ def main():
     tb = Table(gui.root, sd, 50)
     gui.root.after(0, tb.update)
     threading.Thread(target=sc.read_data).start()
-    graph = Graph(sd, 50, 30)
+    # graph = Graph(sd, 50, 30)
     gui.root.mainloop()
 
 if __name__ == "__main__":

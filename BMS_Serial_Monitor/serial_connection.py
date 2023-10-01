@@ -20,8 +20,8 @@ class Serial_Connection:
         while True:
             bank = random.randint(0, 7)
             cell = random.randint(0, 19)
-            volt = 3 + 1.2 * random.random()
-            temp = 16 + 4 * random.random()
+            volt = 2.8 + 1.6 * random.random()
+            temp = 12 + 8 * random.random()
             self.__serial_data.voltage[(bank, cell)] = volt
             self.__serial_data.temperature[(bank, cell)] = temp
 

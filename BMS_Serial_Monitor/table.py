@@ -6,6 +6,10 @@ class Table:
     CELL_WIDTH = 8
     CELL_HEIGHT = 1
 
+    # Colors
+    COLOR_DEFAULT = ""
+    COLOR_OUT_OF_RANGE = "#FF0000"
+
     """
     Atributes:
         __state_cells [dict]: name [str] -> cell [tk.Label]
@@ -28,6 +32,9 @@ class Table:
         self.__frame = self.__create_table_frame()
         self.__update_interval = ui
 
+        # BMS States
+        self.__range_state = False
+
         # Cells
         self.__state_cells = dict()
         self.__volt_cells = dict()
@@ -43,6 +50,23 @@ class Table:
         self.__cell_balance_data_cells = dict()
 
         self.__setup()
+        self.__bind_key_press()
+
+    ###############
+    # Key Presses #
+    ###############
+
+    def __bind_key_press(self):
+        self.__master.bind("<KeyPress>", self.__key_press)
+
+    def __key_press(self, e):
+        match e.char:
+            case 's' | 'S':
+                self.__range_state = False
+                self.__state_cells["monitor"].config(text="Standard")
+            case 'r' | 'R':
+                self.__range_state = True
+                self.__state_cells["monitor"].config(text="Range")
 
     ################
     # Update Table #
@@ -102,7 +126,7 @@ class Table:
         row += 1
 
         # Body
-        self.__state_cells["monitor"] = self.__create_cell(row, 1, "", cs=2)
+        self.__state_cells["monitor"] = self.__create_cell(row, 1, "Standard", cs=2)
         self.__state_cells["bms"] = self.__create_cell(row, 3, "", cs=2)
         row += 1
 
@@ -117,15 +141,27 @@ class Table:
         for bank in range(constants.NUM_BANKS):
             for cell in range(constants.NUM_CELLS_PER_BANK):
                 value = self.__serial_data.voltage.get((bank, cell), '-')
-                value = round(value, 3) if value != '-' else value
-                self.__volt_cells[(bank, cell)].config(text=value)
+                bg = Table.COLOR_DEFAULT
+                if value != '-':
+                    value = round(value, 3)
+                    if self.__range_state and not constants.CELL_VOLTAGE_MIN <= value <= constants.CELL_VOLTAGE_MAX:
+                        bg = Table.COLOR_OUT_OF_RANGE
+                    elif self.__range_state:
+                        green = int((value - constants.CELL_VOLTAGE_MIN) / (constants.CELL_VOLTAGE_MAX - constants.CELL_VOLTAGE_MIN) * 155 + 100) % 256
+                        rgb = (0, green, 0)
+                        bg = "#%02x%02x%02x" % rgb 
+                self.__volt_cells[(bank, cell)].config(text=value, background=bg)
 
         # Temperature
         for bank in range(constants.NUM_BANKS):
             for cell in range(constants.NUM_CELLS_PER_BANK):
                 value = self.__serial_data.temperature.get((bank, cell), '-')
-                value = round(value, 3) if value != '-' else value
-                self.__temp_cells[(bank, cell)].config(text=value)
+                bg = Table.COLOR_DEFAULT
+                if value != '-':
+                    value = round(value, 3)
+                    if self.__range_state and not constants.CELL_TEMPERATURE_MIN <= value <= constants.CELL_TEMPERATURE_MAX:
+                        bg = Table.COLOR_OUT_OF_RANGE
+                self.__temp_cells[(bank, cell)].config(text=value, background=bg)
 
     def __update_volt_temp_stats_table(self):
         # Voltage
@@ -402,6 +438,8 @@ class Table:
         cell = tk.Label(self.__frame, text=txt, borderwidth=bd_width, width=int(Table.CELL_WIDTH * wsf * cs), 
                         height=Table.CELL_HEIGHT * rs, bd=bd, relief="solid")
         cell.grid(row=row, column=col + 1, rowspan=rs, columnspan=cs, sticky="nesw")
+        if not Table.COLOR_DEFAULT:
+            Table.COLOR_DEFAULT = cell.cget("background")
         return cell
     
     def __create_blank_row(self, row):

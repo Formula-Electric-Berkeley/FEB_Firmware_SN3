@@ -88,7 +88,7 @@ conda deactivate
 <table>
   <tr>
     <th>State</th>
-    <th>Command</th>
+    <th>Key Press</th>
     <th>About</th>
   </tr>
   <tr>
