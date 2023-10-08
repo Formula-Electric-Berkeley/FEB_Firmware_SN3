@@ -75,14 +75,14 @@ class Table:
     ################
 
     def update(self):
-        self.__update_states_table()
+        # self.__update_states_table()
         self.__update_volt_temp_table()
         self.__update_volt_temp_stats_table()
-        self.__update_shutdown_state_table()
-        self.__update_relay_state_table()
-        self.__update_IVT_table()
-        self.__update_charger_data_table()
-        self.__update_cell_balance_data_table()
+        # self.__update_shutdown_state_table()
+        # self.__update_relay_state_table()
+        # self.__update_IVT_table()
+        # self.__update_charger_data_table()
+        # self.__update_cell_balance_data_table()
 
         self.__master.after(self.__update_interval, self.update)
     
@@ -93,7 +93,6 @@ class Table:
     def __create_table_frame(self):
         frame = VerticalScrolledFrame(self.__master)
         frame.pack(expand = True, fill = tk.BOTH)
-        self.testFrame = frame
         return frame.interior
 
     def __setup(self):
@@ -126,7 +125,7 @@ class Table:
         for k,v in self.__serial_data.bms_state.items():
             if v == True:
                 state_split.append(k)
-        state = " ".join(state_split) if state_split else "-"
+        state = " ".join(state_split).title() if state_split else "-"
         self.__state_cells["bms"].config(text=state)
 
     def __create_states_table(self, row):
@@ -281,7 +280,8 @@ class Table:
         states = ["bms", "imd", "tsms"]
         for s in states:
             value = self.__serial_data.shutdown_state.get(s, "-")
-            self.__shutdown_state_cells[s].config(text=value)
+            bg = Table.COLOR_DEFAULT if value == 0 else Table.COLOR_OUT_OF_RANGE
+            self.__shutdown_state_cells[s].config(text=value, background=bg)
 
     def __create_shutdown_state_table(self, row):
         # Headers
@@ -307,7 +307,8 @@ class Table:
         states = ["pre_charge", "air_plus"]
         for s in states:
             value = self.__serial_data.relay_state.get(s, "-")
-            self.__relay_state_cells[s].config(text=value)
+            bg = Table.COLOR_DEFAULT if value == 0 else Table.COLOR_OUT_OF_RANGE
+            self.__relay_state_cells[s].config(text=value, background=bg)
 
     def __create_relay_state_table(self, row):
         # Headers
@@ -330,7 +331,7 @@ class Table:
     def __update_IVT_table(self):
         states = ["u1", "u2", "u3", "i1"]
         for s in states:
-            value = self.__serial_data.ivt_data.get(s, "-")
+            value = round(self.__serial_data.ivt_data.get(s, "-"), 3)
             self.__ivt_data_cells[s].config(text=value)
 
     def __create_IVT_table(self, row):

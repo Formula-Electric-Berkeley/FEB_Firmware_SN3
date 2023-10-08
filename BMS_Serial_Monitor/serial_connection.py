@@ -20,38 +20,47 @@ class Serial_Connection:
 
     
     def read_data(self):
-        while True:
-            bank = random.randint(0, 6)
-            cell = random.randint(0, 19)
-            volt = 2.8 + 1.6 * random.random()
-            temp = 12 + 8 * random.random()
-            self.__serial_data.voltage[(bank, cell)] = volt
-            self.__serial_data.temperature[(bank, cell)] = temp
+        # TEST CODE
+        # while True:
+        #     bank = random.randint(0, 6)
+        #     cell = random.randint(0, 19)
+        #     volt = 2.8 + 1.6 * random.random()
+        #     temp = 12 + 8 * random.random()
+        #     self.__serial_data.voltage[(bank, cell)] = volt
+        #     self.__serial_data.temperature[(bank, cell)] = temp
 
-            time.sleep(0.02)
+        #     self.__process_message(constants.BMS_STATE_MSG_ID, list("11101"))
+        #     self.__process_message(constants.RELAY_STATE_MSG_ID, list("01"))
+        #     self.__process_message(constants.SHUTDOWN_STATE_MSG_ID, list("101"))
+        #     self.__process_message(constants.IVT_DATA_MSG_ID, f"3 2 1 {int(sum(random.random() for _ in range(100)) * 30 - 1500)}".split(" "))
 
+        #     time.sleep(0.02)
+
+        # Actual Code:
+        
         self.connection.readline()
         message = ""
-        try:
-            message = self.connection.readline()
-            message_split = message.decode().replace("\x00", "").replace("\n", "").split(" ")
-            message_id = message_split[0]
-            message_data = message_split[1:]
-            self.__process_message(message_id, message_data)
-        except:
-            if message:
-                print("Error:", message)
+        while True:
+            try:
+                message = self.connection.readline()
+                message_split = message.decode().replace("\x00", "").replace("\n", "").split(" ")
+                message_id = int(message_split[0])
+                message_data = message_split[1:]
+                self.__process_message(message_id, message_data)
+            except:
+                if message:
+                    print("Error:", message)
 
     def __process_message(self, message_id, message_data):
         match message_id:
             case constants.CELL_VOLT_MSG_ID:
-                bank = message_data[0]
+                bank = int(message_data[0])
                 for i in range(1, constants.NUM_CELLS_PER_BANK + 1):
                     cell = i - 1
                     value = int(message_data[i]) * 10 ** -4
                     self.__serial_data.voltage[(bank, cell)] = value
             case constants.CELL_TEMP_MSG_ID:
-                bank = message_data[0]
+                bank = int(message_data[0])
                 for i in range(1, constants.NUM_CELLS_PER_BANK + 1):
                     cell = i - 1
                     value = int(message_data[i]) * 10 ** -4
@@ -74,7 +83,6 @@ class Serial_Connection:
                     value = int(message_data[i])
                     self.__serial_data.shutdown_state[states[i]] = value
             case constants.CHARGE_DATA_MSG_ID:
-                "state, max charger current, max charger voltage, charger current, charger voltage, status flags"
                 state = message_data[0]
                 max_current = message_data[1] * 10 ** -1
                 max_voltage = message_data[2] * 10 ** -1
@@ -101,7 +109,7 @@ class Serial_Connection:
                 states = ["u1", "u2", "u3", "i1"]
                 for i in range(len(states)):
                     value = int(message_data[i]) * 10 ** -3
-                    self.__serial_data.shutdown_state[states[i]] = value
+                    self.__serial_data.ivt_data[states[i]] = value
             case _:
                 raise ValueError("Invalid message identifier.")
 

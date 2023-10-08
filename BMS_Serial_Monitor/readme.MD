@@ -24,22 +24,26 @@ conda create -n FEB_BMS_SM python=3.11.5
 conda activate FEB_BMS_SM
 ```
 
-4. Install pip packages:
+4. Install pip packages
 ```
 pip install pyserial serial-tool matplotlib
 ```
 
-5. After finished with Serial Monitor, deactivate conda environment:
+5. Deactivate the environment
 ```
 conda deactivate
 ```
 
 # 2. Usage Instructions
-1. Run "serial_monitor.py". Active COM ports are printed. Terminate execution.
-2. Set serial COM port in "constants.py".
-3. Run "serial_monitor.py"
-
-
+1. Activate environment
+```
+conda activate FEB_BMS_SM
+```
+2. Run "serial_monitor.py" and type responses to questions in terminal
+3. When done, deactivate environment
+```
+conda deactivate
+```
 
 # 3. Data Logged
 ## 3.1 Raw Data
@@ -99,7 +103,7 @@ conda deactivate
   <tr>
     <td>Range</td>
     <td>R</td> 
-    <td>Highlight out of range values (e.g., voltage, temperature)</td>
+    <td>Highlight out of range values (voltage, temperature)</td>
   </tr>
   <tr>
     <td>Discharge</td>

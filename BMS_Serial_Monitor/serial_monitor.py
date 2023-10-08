@@ -14,7 +14,7 @@ def main():
     gui.root.after(0, tb.update)
     threading.Thread(target=sc.read_data).start()
     if vg:
-        Graph(sd, 50, 5)
+        Graph(sd, 50, 30)
     gui.root.mainloop()
 
 if __name__ == "__main__":

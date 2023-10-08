@@ -1,11 +1,15 @@
 import matplotlib, matplotlib.animation as animation
 import matplotlib.pyplot as plt
+from serial_data import Serial_Data
+
+# TEST
+import time
 
 matplotlib.use('TkAgg')
 plt.rcParams['figure.dpi'] = 110
 
 class Graph:
-    def __init__(self, sd, ui, ti):
+    def __init__(self, sd: Serial_Data, ui, ti):
         self.__fig, self.__axis = plt.subplots(2,1,figsize=(8, 5))
         self.__serial_data = sd
         self.__update_interval = ui
