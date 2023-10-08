@@ -787,8 +787,13 @@ void FEB_State_Set_Shutdown(void) {
  80007ac:	4b07      	ldr	r3, [pc, #28]	; (80007cc <FEB_State_Set_Shutdown+0x3c>)
  80007ae:	2201      	movs	r2, #1
  80007b0:	701a      	strb	r2, [r3, #0]
+
 	FEB_Relay_State_Shutdown();
  80007b2:	f7ff ff8d 	bl	80006d0 <FEB_Relay_State_Shutdown>
+
+	// Stop Charge
+	// Stop Balance
+	// Transmit Shutdown Message (UART, CAN)
 }
  80007b6:	bf00      	nop
  80007b8:	bd80      	pop	{r7, pc}

@@ -223,6 +223,7 @@ Discarded input sections
                 0x0000000000000000       0x3c ./Core/Src/FEB_Relay.o
  .debug_macro   0x0000000000000000      0xaa8 ./Core/Src/FEB_Relay.o
  .debug_macro   0x0000000000000000       0x22 ./Core/Src/FEB_Relay.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/FEB_Relay.o
  .debug_macro   0x0000000000000000       0x8e ./Core/Src/FEB_Relay.o
  .debug_macro   0x0000000000000000       0x51 ./Core/Src/FEB_Relay.o
  .debug_macro   0x0000000000000000      0x103 ./Core/Src/FEB_Relay.o
@@ -248,7 +249,6 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0x16 ./Core/Src/FEB_Relay.o
  .debug_macro   0x0000000000000000       0x16 ./Core/Src/FEB_Relay.o
  .debug_macro   0x0000000000000000      0x147 ./Core/Src/FEB_Relay.o
- .debug_macro   0x0000000000000000       0x22 ./Core/Src/FEB_Relay.o
  .debug_macro   0x0000000000000000       0x16 ./Core/Src/FEB_Relay.o
  .debug_macro   0x0000000000000000       0x35 ./Core/Src/FEB_Relay.o
  .debug_macro   0x0000000000000000       0x20 ./Core/Src/FEB_Relay.o
@@ -597,6 +597,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0x89 ./Core/Src/main.o
  .debug_macro   0x0000000000000000      0x295 ./Core/Src/main.o
  .debug_macro   0x0000000000000000      0x126 ./Core/Src/main.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/main.o
  .debug_macro   0x0000000000000000       0x61 ./Core/Src/main.o
  .debug_macro   0x0000000000000000       0x2a ./Core/Src/main.o
  .debug_macro   0x0000000000000000       0x43 ./Core/Src/main.o
@@ -616,7 +617,6 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0x16 ./Core/Src/main.o
  .debug_macro   0x0000000000000000       0x16 ./Core/Src/main.o
  .debug_macro   0x0000000000000000      0x147 ./Core/Src/main.o
- .debug_macro   0x0000000000000000       0x22 ./Core/Src/main.o
  .debug_macro   0x0000000000000000       0x16 ./Core/Src/main.o
  .debug_macro   0x0000000000000000       0x20 ./Core/Src/main.o
  .debug_macro   0x0000000000000000       0x3a ./Core/Src/main.o
@@ -724,6 +724,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0x89 ./Core/Src/stm32f4xx_hal_msp.o
  .debug_macro   0x0000000000000000      0x295 ./Core/Src/stm32f4xx_hal_msp.o
  .debug_macro   0x0000000000000000      0x126 ./Core/Src/stm32f4xx_hal_msp.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/stm32f4xx_hal_msp.o
  .debug_macro   0x0000000000000000       0x61 ./Core/Src/stm32f4xx_hal_msp.o
  .debug_macro   0x0000000000000000       0x2a ./Core/Src/stm32f4xx_hal_msp.o
  .debug_macro   0x0000000000000000       0x43 ./Core/Src/stm32f4xx_hal_msp.o
@@ -743,7 +744,6 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0x16 ./Core/Src/stm32f4xx_hal_msp.o
  .debug_macro   0x0000000000000000       0x16 ./Core/Src/stm32f4xx_hal_msp.o
  .debug_macro   0x0000000000000000      0x147 ./Core/Src/stm32f4xx_hal_msp.o
- .debug_macro   0x0000000000000000       0x22 ./Core/Src/stm32f4xx_hal_msp.o
  .debug_macro   0x0000000000000000       0x16 ./Core/Src/stm32f4xx_hal_msp.o
  .debug_macro   0x0000000000000000       0x20 ./Core/Src/stm32f4xx_hal_msp.o
  .debug_macro   0x0000000000000000       0x3a ./Core/Src/stm32f4xx_hal_msp.o
@@ -849,6 +849,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0x89 ./Core/Src/stm32f4xx_it.o
  .debug_macro   0x0000000000000000      0x295 ./Core/Src/stm32f4xx_it.o
  .debug_macro   0x0000000000000000      0x126 ./Core/Src/stm32f4xx_it.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/stm32f4xx_it.o
  .debug_macro   0x0000000000000000       0x61 ./Core/Src/stm32f4xx_it.o
  .debug_macro   0x0000000000000000       0x2a ./Core/Src/stm32f4xx_it.o
  .debug_macro   0x0000000000000000       0x43 ./Core/Src/stm32f4xx_it.o
@@ -868,7 +869,6 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0x16 ./Core/Src/stm32f4xx_it.o
  .debug_macro   0x0000000000000000       0x16 ./Core/Src/stm32f4xx_it.o
  .debug_macro   0x0000000000000000      0x147 ./Core/Src/stm32f4xx_it.o
- .debug_macro   0x0000000000000000       0x22 ./Core/Src/stm32f4xx_it.o
  .debug_macro   0x0000000000000000       0x16 ./Core/Src/stm32f4xx_it.o
  .debug_macro   0x0000000000000000       0x20 ./Core/Src/stm32f4xx_it.o
  .debug_macro   0x0000000000000000       0x3a ./Core/Src/stm32f4xx_it.o
@@ -3788,32 +3788,32 @@ LOAD /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.id
  .debug_macro   0x0000000000000000      0x2f1 ./Core/Src/FEB_Main.o
  .debug_macro   0x00000000000002f1      0xaa8 ./Core/Src/FEB_Main.o
  .debug_macro   0x0000000000000d99       0x22 ./Core/Src/FEB_Main.o
- .debug_macro   0x0000000000000dbb       0x8e ./Core/Src/FEB_Main.o
- .debug_macro   0x0000000000000e49       0x51 ./Core/Src/FEB_Main.o
- .debug_macro   0x0000000000000e9a      0x103 ./Core/Src/FEB_Main.o
- .debug_macro   0x0000000000000f9d       0x6a ./Core/Src/FEB_Main.o
- .debug_macro   0x0000000000001007      0x1df ./Core/Src/FEB_Main.o
- .debug_macro   0x00000000000011e6       0x61 ./Core/Src/FEB_Main.o
- .debug_macro   0x0000000000001247       0x2a ./Core/Src/FEB_Main.o
- .debug_macro   0x0000000000001271       0x43 ./Core/Src/FEB_Main.o
- .debug_macro   0x00000000000012b4       0x34 ./Core/Src/FEB_Main.o
- .debug_macro   0x00000000000012e8       0x16 ./Core/Src/FEB_Main.o
- .debug_macro   0x00000000000012fe       0x97 ./Core/Src/FEB_Main.o
- .debug_macro   0x0000000000001395      0x369 ./Core/Src/FEB_Main.o
- .debug_macro   0x00000000000016fe       0xfd ./Core/Src/FEB_Main.o
- .debug_macro   0x00000000000017fb       0x10 ./Core/Src/FEB_Main.o
- .debug_macro   0x000000000000180b       0x16 ./Core/Src/FEB_Main.o
- .debug_macro   0x0000000000001821       0x43 ./Core/Src/FEB_Main.o
- .debug_macro   0x0000000000001864       0x34 ./Core/Src/FEB_Main.o
- .debug_macro   0x0000000000001898       0x10 ./Core/Src/FEB_Main.o
- .debug_macro   0x00000000000018a8       0x58 ./Core/Src/FEB_Main.o
- .debug_macro   0x0000000000001900       0x8e ./Core/Src/FEB_Main.o
- .debug_macro   0x000000000000198e       0x1c ./Core/Src/FEB_Main.o
- .debug_macro   0x00000000000019aa      0x177 ./Core/Src/FEB_Main.o
- .debug_macro   0x0000000000001b21       0x16 ./Core/Src/FEB_Main.o
- .debug_macro   0x0000000000001b37       0x16 ./Core/Src/FEB_Main.o
- .debug_macro   0x0000000000001b4d      0x147 ./Core/Src/FEB_Main.o
- .debug_macro   0x0000000000001c94       0x22 ./Core/Src/FEB_Main.o
+ .debug_macro   0x0000000000000dbb       0x22 ./Core/Src/FEB_Main.o
+ .debug_macro   0x0000000000000ddd       0x8e ./Core/Src/FEB_Main.o
+ .debug_macro   0x0000000000000e6b       0x51 ./Core/Src/FEB_Main.o
+ .debug_macro   0x0000000000000ebc      0x103 ./Core/Src/FEB_Main.o
+ .debug_macro   0x0000000000000fbf       0x6a ./Core/Src/FEB_Main.o
+ .debug_macro   0x0000000000001029      0x1df ./Core/Src/FEB_Main.o
+ .debug_macro   0x0000000000001208       0x61 ./Core/Src/FEB_Main.o
+ .debug_macro   0x0000000000001269       0x2a ./Core/Src/FEB_Main.o
+ .debug_macro   0x0000000000001293       0x43 ./Core/Src/FEB_Main.o
+ .debug_macro   0x00000000000012d6       0x34 ./Core/Src/FEB_Main.o
+ .debug_macro   0x000000000000130a       0x16 ./Core/Src/FEB_Main.o
+ .debug_macro   0x0000000000001320       0x97 ./Core/Src/FEB_Main.o
+ .debug_macro   0x00000000000013b7      0x369 ./Core/Src/FEB_Main.o
+ .debug_macro   0x0000000000001720       0xfd ./Core/Src/FEB_Main.o
+ .debug_macro   0x000000000000181d       0x10 ./Core/Src/FEB_Main.o
+ .debug_macro   0x000000000000182d       0x16 ./Core/Src/FEB_Main.o
+ .debug_macro   0x0000000000001843       0x43 ./Core/Src/FEB_Main.o
+ .debug_macro   0x0000000000001886       0x34 ./Core/Src/FEB_Main.o
+ .debug_macro   0x00000000000018ba       0x10 ./Core/Src/FEB_Main.o
+ .debug_macro   0x00000000000018ca       0x58 ./Core/Src/FEB_Main.o
+ .debug_macro   0x0000000000001922       0x8e ./Core/Src/FEB_Main.o
+ .debug_macro   0x00000000000019b0       0x1c ./Core/Src/FEB_Main.o
+ .debug_macro   0x00000000000019cc      0x177 ./Core/Src/FEB_Main.o
+ .debug_macro   0x0000000000001b43       0x16 ./Core/Src/FEB_Main.o
+ .debug_macro   0x0000000000001b59       0x16 ./Core/Src/FEB_Main.o
+ .debug_macro   0x0000000000001b6f      0x147 ./Core/Src/FEB_Main.o
  .debug_macro   0x0000000000001cb6       0x16 ./Core/Src/FEB_Main.o
  .debug_macro   0x0000000000001ccc       0x35 ./Core/Src/FEB_Main.o
  .debug_macro   0x0000000000001d01       0x20 ./Core/Src/FEB_Main.o

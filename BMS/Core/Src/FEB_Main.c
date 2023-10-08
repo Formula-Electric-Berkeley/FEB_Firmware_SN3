@@ -19,4 +19,16 @@ void FEB_Main_Loop(void) {
 
 	// Relay
 	FEB_Relay_UART_Transmit();
+
+	// Charger
+
+	// Fans
+
+	// Balance
+
+	// Voltage
+
+	// Temperature
+
+
 }
