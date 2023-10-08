@@ -62,7 +62,7 @@ void FEB_State_Set_Precharge(void) {
 	FEB_Relay_State_Precharge();
 }
 
-void FEB_State_Set_Shutdown(void) {
+void FEB_State_Set_Shutdown(char* msg) {
 	FEB_State_Balance = false;
 	FEB_State_Charge = false;
 	FEB_State_Drive = false;
@@ -73,7 +73,13 @@ void FEB_State_Set_Shutdown(void) {
 
 	// Stop Charge
 	// Stop Balance
-	// Transmit Shutdown Message (UART, CAN)
+	// Transmit Shutdown Message (CAN)
+
+	if (FEB_State_Debug && strlen(msg) <= 124) {
+		char UART_str[128];
+		sprintf(UART_str, "%d %s\n", FEB_UART_Shutdown_Message_ID, msg);
+		HAL_UART_Transmit_IT(&huart2, (uint8_t*) UART_str, strlen(UART_str));
+	}
 }
 
 // ******************************** Interface ********************************
@@ -85,7 +91,7 @@ void FEB_State_Init(void) {
 void FEB_State_Process(void) {
 	uint8_t total = (uint8_t) (FEB_State_Balance + FEB_State_Charge + FEB_State_Drive + FEB_State_Precharge + FEB_State_Shutdown);
 	if (total != 1) {
-		FEB_State_Set_Shutdown();
+		FEB_State_Set_Shutdown("[FEB_State_Process] Invalid state.");
 	}
 }
 
@@ -93,7 +99,7 @@ void FEB_State_UART_Transmit(void) {
 	if (!FEB_State_Debug) {
 		return;
 	}
-	char UART_str[32];
+	char UART_str[16];
 	sprintf(UART_str, "%d %d %d %d %d %d\n", FEB_UART_BMS_State_ID, (uint8_t) FEB_State_Balance, (uint8_t) FEB_State_Charge,
 											 (uint8_t) FEB_State_Drive, (uint8_t) FEB_State_Precharge, (uint8_t) FEB_State_Shutdown);
 	HAL_UART_Transmit_IT(&huart2, (uint8_t*) UART_str, strlen(UART_str));

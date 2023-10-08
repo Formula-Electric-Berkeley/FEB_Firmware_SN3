@@ -20,6 +20,7 @@ The BMS (Battery Management System) is responsible for regulating the accumulato
   - [2.8 Charge Data](#28-charge-data)
   - [2.9 Cell Balance](#29-cell-balance)
   - [2.10 IVT Data](#210-ivt-data)
+  - [2.11 Shutdown Message](#211-shutdown-message)
 - [3. Shutdown](#3-shutdown)
   - [3.1 Shutdown Triggers](#31-shutdown-triggers)
   - [3.2 Shutdown Control Loop](#32-shutdown-control-loop)
@@ -79,6 +80,10 @@ Passive cell balancing of battery cells to a target voltage (lowest cell voltage
   <tr>
     <td>IVT Data</td>
     <td>0b1000</td> 
+  </tr>
+  <tr>
+    <td>Shutdown Message</td>
+    <td>0b1001</td> 
   </tr>
 </table>
 
@@ -288,6 +293,10 @@ Message Format: [Charger Data Message ID] [State] [Max Current] [Max Voltage] [C
   </tr>
 </table>
 Message Format: [IVT Data Message ID] [U1] [U2] [U3] [I1]
+
+## 2.11 Shutdown Message
+Message Format: [Shutdown Message ID] [Shutdown Message]
+
 
 # 3. Shutdown
 ## 3.1 Shutdown Triggers

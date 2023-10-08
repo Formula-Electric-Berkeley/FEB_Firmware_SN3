@@ -22,7 +22,7 @@ void FEB_State_Set_Charge(void);
 void FEB_State_Set_Debug(void);
 void FEB_State_Reset_Debug(void);
 void FEB_State_Set_Precharge(void);
-void FEB_State_Set_Shutdown(void);
+void FEB_State_Set_Shutdown(char* msg);
 
 // Interface
 void FEB_State_Init(void);

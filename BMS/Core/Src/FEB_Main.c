@@ -10,25 +10,27 @@ void FEB_Main_Setup(void) {
 	FEB_State_Init();
 
 	// Other
+	FEB_CAN_Init();
 }
 
 void FEB_Main_Loop(void) {
-	// State
+	// State-Relay
 	FEB_State_Process();
 	FEB_State_UART_Transmit();
-
-	// Relay
 	FEB_Relay_UART_Transmit();
-
-	// Charger
-
-	// Fans
-
-	// Balance
 
 	// Voltage
 
 	// Temperature
 
+	// IVT
+	FEB_CAN_IVT_Process();
+	FEB_CAN_IVT_UART_Transmit();
+
+	// Charger
+
+	// Balance
+
+	// Fans
 
 }

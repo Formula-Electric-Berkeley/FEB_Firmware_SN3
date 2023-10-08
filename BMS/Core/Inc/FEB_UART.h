@@ -17,5 +17,6 @@
 #define FEB_UART_Charge_Data_ID			0b0110
 #define FEB_UART_Cell_Balance_ID		0b0111
 #define FEB_UART_IVT_Data_ID			0b1000
+#define FEB_UART_Shutdown_Message_ID	0b1001
 
 #endif /* INC_FEB_UART_H_ */
