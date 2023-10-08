@@ -2,12 +2,3 @@
 # Format: device + message name
 # '//' creates C comment
 
-// Global
-Shutdown
-
-// APPS
-APPS Torque
-
-// BMS
-BMS Temperature
-BMS Voltage

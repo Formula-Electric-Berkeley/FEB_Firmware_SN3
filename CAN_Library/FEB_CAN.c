@@ -37,7 +37,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan) {
 	}
 }
 
-// **************************************** Template Code ****************************************
+// **************************************** Template Code [Other Files] ****************************************
 
 uint8_t FEB_CAN_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
     // For multiple filters, create array of filter IDs and loop over IDs.
