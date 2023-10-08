@@ -15,14 +15,4 @@
 
 // **************************************** Dynamic CAN IDs ****************************************
 
-// Global
-#define FEB_CAN_ID_SHUTDOWN 0x0
-
-// APPS
-#define FEB_CAN_ID_APPS_TORQUE 0x1
-
-// BMS
-#define FEB_CAN_ID_BMS_TEMPERATURE 0x2
-#define FEB_CAN_ID_BMS_VOLTAGE 0x3
-
 #endif /* INC_FEB_CAN_ID_H_ */
