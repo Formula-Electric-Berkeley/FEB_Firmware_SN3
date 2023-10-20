@@ -57,15 +57,13 @@ class Serial_Connection:
                 bank = int(message_data[0])
                 for i in range(1, constants.NUM_CELLS_PER_BANK + 1):
                     cell = i - 1
-                    # value = int(message_data[i]) * 10 ** -4
-                    value = float(message_data[i])
+                    value = int(message_data[i]) * 10 ** -4
                     self.__serial_data.voltage[(bank, cell)] = value
             case constants.CELL_TEMP_MSG_ID:
                 bank = int(message_data[0])
                 for i in range(1, constants.NUM_CELLS_PER_BANK + 1):
                     cell = i - 1
-                    # value = int(message_data[i]) * 10 ** -4
-                    value = float(message_data[i])
+                    value = int(message_data[i]) * 10 ** -1
                     self.__serial_data.temperature[(bank, cell)] = value
             case constants.BMS_STATE_MSG_ID:
                 states = ["balance", "charge", "drive", "precharge", "shutdown"]
@@ -109,10 +107,8 @@ class Serial_Connection:
                 pass
             case constants.IVT_DATA_MSG_ID:
                 states = ["u1", "u2", "u3", "i1"]
-                print("IVT VALUE!")
                 for i in range(len(states)):
-                    # value = int(message_data[i]) * 10 ** -3
-                    value = float(message_data[i])
+                    value = int(message_data[i]) * 10 ** -3
                     self.__serial_data.ivt_data[states[i]] = value
             case _:
                 raise ValueError("Invalid message identifier.")
