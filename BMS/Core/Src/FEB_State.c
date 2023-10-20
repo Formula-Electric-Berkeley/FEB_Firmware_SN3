@@ -100,7 +100,9 @@ void FEB_State_UART_Transmit(void) {
 		return;
 	}
 	char UART_str[16];
-	sprintf(UART_str, "%d %d %d %d %d %d\n", FEB_UART_BMS_State_ID, (uint8_t) FEB_State_Balance, (uint8_t) FEB_State_Charge,
-											 (uint8_t) FEB_State_Drive, (uint8_t) FEB_State_Precharge, (uint8_t) FEB_State_Shutdown);
+
+	sprintf(UART_str, "%" PRIu8 " %" PRIu8 " %" PRIu8 " %" PRIu8 " %" PRIu8 " %" PRIu8 "\n", FEB_UART_BMS_State_ID,
+			(uint8_t) FEB_State_Balance, (uint8_t) FEB_State_Charge, (uint8_t) FEB_State_Drive, (uint8_t) FEB_State_Precharge,
+			(uint8_t) FEB_State_Shutdown);
 	HAL_UART_Transmit_IT(&huart2, (uint8_t*) UART_str, strlen(UART_str));
 }

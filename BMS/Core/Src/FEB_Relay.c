@@ -110,7 +110,7 @@ void FEB_Relay_UART_Transmit(void) {
 		return;
 	}
 	char UART_str[32];
-	sprintf(UART_str, "%d %d %d\n", FEB_UART_Relay_State_ID, FEB_Relay_Precharge_Value, FEB_Relay_Air_Plus_Value);
+	sprintf(UART_str, "%" PRIu8 " %" PRIu8 " %" PRIu8 "\n", FEB_UART_Relay_State_ID, FEB_Relay_Precharge_Value, FEB_Relay_Air_Plus_Value);
 	HAL_UART_Transmit_IT(&huart2, (uint8_t*) UART_str, strlen(UART_str));
 }
 

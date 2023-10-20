@@ -94,5 +94,6 @@ float FEB_LTC6811_Convert_Temperature(uint16_t value);
 // Temperature interface
 void FEB_LTC6811_Validate_Temperature(void);
 void FEB_LTC6811_UART_Transmit_Temperature(void);
+void FEB_LTC6811_CAN_Transmit_Temperature(void);
 
 #endif /* INC_FEB_LTC6811_H_ */

@@ -20,24 +20,6 @@ class Serial_Connection:
 
     
     def read_data(self):
-        # TEST CODE
-        # while True:
-        #     bank = random.randint(0, 6)
-        #     cell = random.randint(0, 19)
-        #     volt = 2.8 + 1.6 * random.random()
-        #     temp = 12 + 8 * random.random()
-        #     self.__serial_data.voltage[(bank, cell)] = volt
-        #     self.__serial_data.temperature[(bank, cell)] = temp
-
-        #     self.__process_message(constants.BMS_STATE_MSG_ID, list("11101"))
-        #     self.__process_message(constants.RELAY_STATE_MSG_ID, list("01"))
-        #     self.__process_message(constants.SHUTDOWN_STATE_MSG_ID, list("101"))
-        #     self.__process_message(constants.IVT_DATA_MSG_ID, f"3 2 1 {int(sum(random.random() for _ in range(100)) * 30 - 1500)}".split(" "))
-
-        #     time.sleep(0.02)
-
-        # Actual Code:
-        
         self.connection.readline()
         message = ""
         while True:
@@ -70,7 +52,7 @@ class Serial_Connection:
                 for i in range(len(states)):
                     if message_data[i] not in ['0', '1']:
                         raise ValueError("Invalid BMS state.")
-                    value = message_data[i] == '0'
+                    value = message_data[i] == '1'
                     self.__serial_data.bms_state[states[i]] = value
             case constants.RELAY_STATE_MSG_ID:
                 states = ["pre_charge", "air_plus"]

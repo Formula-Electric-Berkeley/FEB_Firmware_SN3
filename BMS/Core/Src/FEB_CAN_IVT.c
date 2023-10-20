@@ -3,9 +3,10 @@
 #include "FEB_CAN_IVT.h"
 
 extern UART_HandleTypeDef huart2;
-extern bool FEB_State_Debug;
 
+extern bool FEB_State_Debug;
 extern bool FEB_State_Precharge;
+extern bool FEB_State_Shutdown;
 
 // ******************************** Type Definitions ********************************
 
@@ -65,11 +66,17 @@ void FEB_CAN_IVT_Store_Msg(CAN_RxHeaderTypeDef* rx_header, uint8_t rx_data[]) {
 void FEB_CAN_IVT_Process(void) {
 	if (FEB_CAN_IVT_Flags.current) {
 		FEB_CAN_IVT_Flags.current = false;
-
+		if (!FEB_State_Shutdown) {
+			float current = FEB_CAN_IVT_Message.current_mA * 0.001;
+			if (current < FEB_CONSTANT_MIN_CURRENT) {
+				FEB_State_Set_Shutdown("[FEB_CAN_IVT_Process] Under current.");
+			} else if (current > FEB_CONSTANT_MAX_CURRENT) {
+				FEB_State_Set_Shutdown("[FEB_CAN_IVT_Process] Over current.");
+			}
+		}
 	}
 	if (FEB_CAN_IVT_Flags.voltage_1) {
 		FEB_CAN_IVT_Flags.voltage_1 = false;
-		// Do something
 		if (FEB_State_Precharge) {
 			float voltage = (float) (FEB_CAN_IVT_Message.voltage_1_mV * 0.001);
 			float target_voltage = FEB_CONSTANT_PRECHARGE_PERCENT * FEB_LTC6811_Total_Voltage();
@@ -93,7 +100,8 @@ void FEB_CAN_IVT_UART_Transmit(void) {
 		return;
 	}
 	char UART_str[64];
-	sprintf(UART_str, "%d %ld %ld %ld %ld\n", FEB_UART_IVT_Data_ID, FEB_CAN_IVT_Message.voltage_1_mV, FEB_CAN_IVT_Message.voltage_2_mV,
-											  FEB_CAN_IVT_Message.voltage_3_mV, FEB_CAN_IVT_Message.current_mA);
+	sprintf(UART_str, "%" PRIu8 " %" PRId32 " %" PRId32 " %" PRId32 " %" PRId32 "\n",
+			FEB_UART_IVT_Data_ID, FEB_CAN_IVT_Message.voltage_1_mV, FEB_CAN_IVT_Message.voltage_2_mV, FEB_CAN_IVT_Message.voltage_3_mV,
+			FEB_CAN_IVT_Message.current_mA);
 	HAL_UART_Transmit_IT(&huart2, (uint8_t*) UART_str, strlen(UART_str));
 }

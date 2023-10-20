@@ -144,27 +144,27 @@ Message Format: [Cell Temperature Message ID] [Bank ID] [t0] ... [t19]
   </tr>
   <tr>
     <td>Debug Balance</td>
-    <td>[0 (Enabled), 1 (Disabled)]</td>
+    <td>[0 (Disabled), 1 (Enabled)]</td>
     <td>uint8_t</td>
   </tr>
   <tr>
     <td>Debug Charge</td>
-    <td>[0 (Enabled), 1 (Disabled)]</td>
+    <td>[0 (Disabled), 1 (Enabled)]</td>
     <td>uint8_t</td>
   </tr>
   <tr>
     <td>Debug Drive</td>
-    <td>[0 (Enabled), 1 (Disabled)]</td>
+    <td>[0 (Disabled), 1 (Enabled)]</td>
     <td>uint8_t</td>
   </tr>
   <tr>
     <td>Debug Precharge</td>
-    <td>[0 (Enabled), 1 (Disabled)]</td>
+    <td>[0 (Disabled), 1 (Enabled)]</td>
     <td>uint8_t</td>
   </tr>
   <tr>
     <td>Debug Shutdown</td>
-    <td>[0 (Enabled), 1 (Disabled)]</td>
+    <td>[0 (Disabled), 1 (Enabled)]</td>
     <td>uint8_t</td>
   </tr>
 </table>
@@ -179,7 +179,7 @@ Message Format: [BMS State Message ID] [Balance] [Charge] [Drive] [Precharge] [S
   </tr>
   <tr>
     <td>Pre-charge Relay</td>
-    <td>[0 (closed), 1 (Open)]</td>
+    <td>[0 (Closed), 1 (Open)]</td>
     <td>uint8_t</td>
   </tr>
   <tr>
@@ -199,7 +199,7 @@ Message Format: [Relay State Message ID] [Pre-charge Relay] [Air+ Relay]
   </tr>
   <tr>
     <td>BMS</td>
-    <td>[0 (closed), 1 (Open)]</td>
+    <td>[0 (Closed), 1 (Open)]</td>
     <td>uint8_t</td>
   </tr>
   <tr>
