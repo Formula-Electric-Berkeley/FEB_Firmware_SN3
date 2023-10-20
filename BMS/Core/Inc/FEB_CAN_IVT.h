@@ -9,24 +9,26 @@
 #include "stm32f4xx_hal.h"
 
 #include "FEB_CAN_ID.h"
+#include "FEB_Constant.h"
+#include "FEB_LTC6811.h"
 #include "FEB_State.h"
 #include "FEB_UART.h"
 
 // ******************************** Type Definitions ********************************
 
-typedef struct FEB_CAN_IVT_FLAG_TYPE {
+typedef struct {
     bool current;
     bool voltage_1;
     bool voltage_2;
     bool voltage_3;
-} FEB_CAN_IVT_FLAG_TYPE;
+} FEB_CAN_IVT_Flag_t;
 
 typedef struct FEB_CAN_IVT_MESSAGE_TYPE {
 	int32_t current_mA;
 	int32_t voltage_1_mV;
 	int32_t voltage_2_mV;
 	int32_t voltage_3_mV;
-} FEB_CAN_IVT_MESSAGE_TYPE;
+} FEB_CAN_IVT_Message_t;
 
 #endif /* INC_FEB_CAN_IVT_H_ */
 

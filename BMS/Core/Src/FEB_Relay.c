@@ -24,11 +24,11 @@ static void FEB_Relay_Air_Plus(uint8_t state);
 
 static void FEB_Relay_Shutdown(uint8_t state) {
 	if (state == FEB_RELAY_CLOSE) {
-		// Close Shutdown Relay
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_SET);
 		FEB_Relay_Shutdown_Value = 0;
 
 	} else if (state == FEB_RELAY_OPEN) {
-		// Open Shutdown Relay
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET);
 		FEB_Relay_Shutdown_Value = 1;
 	}
 }
@@ -45,10 +45,10 @@ static void FEB_Relay_Precharge(uint8_t state) {
 
 static void FEB_Relay_Air_Plus(uint8_t state) {
 	if (state == FEB_RELAY_CLOSE) {
-		// Close Air+ Relay
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_2, GPIO_PIN_SET);
 		FEB_Relay_Air_Plus_Value = 0;
 	} else if (state == FEB_RELAY_OPEN) {
-		// Open Air+ Relay
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_2, GPIO_PIN_RESET);
 		FEB_Relay_Air_Plus_Value = 1;
 	}
 }
@@ -103,7 +103,7 @@ void FEB_Relay_State_Shutdown(void) {
 	FEB_Relay_Air_Plus(FEB_RELAY_OPEN);
 }
 
-// ******************************** UART ********************************
+// ******************************** Communication ********************************
 
 void FEB_Relay_UART_Transmit(void) {
 	if (!FEB_State_Debug) {

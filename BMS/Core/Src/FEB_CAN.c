@@ -34,22 +34,3 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan) {
 		FEB_CAN_IVT_Store_Msg(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);
 	}
 }
-
-// **************************************** Template Code [Other Files] ****************************************
-
-//
-//void FEB_CAN_Transmit(CAN_HandleTypeDef* hcan) {
-//	// Initialize Transmission Header
-//    // Write Code Here
-//
-//	// Configure FEB_CAN_Tx_Data
-//    // Write Code Here
-//
-//	// Delay until mailbox available
-//	while (HAL_CAN_GetTxMailboxesFreeLevel(hcan) == 0) {}
-//
-//	// Add Tx data to mailbox
-//	if (HAL_CAN_AddTxMessage(hcan, &FEB_CAN_Tx_Header, FEB_CAN_Tx_Data, &FEB_CAN_Tx_Mailbox) != HAL_OK) {
-//		// Code Error - Shutdown
-//	}
-//}

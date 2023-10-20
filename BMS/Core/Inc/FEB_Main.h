@@ -5,6 +5,7 @@
 
 #include "FEB_CAN.h"
 #include "FEB_CAN_IVT.h"
+#include "FEB_LTC6811.h"
 #include "FEB_Relay.h"
 #include "FEB_State.h"
 

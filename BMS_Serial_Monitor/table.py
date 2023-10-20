@@ -75,12 +75,12 @@ class Table:
     ################
 
     def update(self):
-        # self.__update_states_table()
+        self.__update_states_table()
         self.__update_volt_temp_table()
         self.__update_volt_temp_stats_table()
         # self.__update_shutdown_state_table()
         # self.__update_relay_state_table()
-        # self.__update_IVT_table()
+        self.__update_IVT_table()
         # self.__update_charger_data_table()
         # self.__update_cell_balance_data_table()
 
@@ -331,7 +331,7 @@ class Table:
     def __update_IVT_table(self):
         states = ["u1", "u2", "u3", "i1"]
         for s in states:
-            value = round(self.__serial_data.ivt_data.get(s, "-"), 3)
+            value = self.__serial_data.ivt_data.get(s, 0)
             self.__ivt_data_cells[s].config(text=value)
 
     def __create_IVT_table(self, row):
