@@ -15,4 +15,7 @@
 
 // **************************************** Dynamic CAN IDs ****************************************
 
+// BMS
+#define FEB_CAN_ID_BMS_TEMPERATURE 0x0
+
 #endif /* INC_FEB_CAN_ID_H_ */

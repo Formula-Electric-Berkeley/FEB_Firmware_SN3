@@ -2,3 +2,5 @@
 # Format: device + message name
 # '//' creates C comment
 
+// BMS
+BMS Temperature
