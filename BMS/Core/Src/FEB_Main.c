@@ -35,10 +35,11 @@ void FEB_Main_Loop(void) {
 	FEB_CAN_IVT_Process();
 	FEB_CAN_IVT_UART_Transmit();
 
-	// Charger
+	// TODO: Charger
+	// FEB_CAN_Charger_Process();
 
-	// Balance
+	// TODO: Balance
 
-	// Fans
+	// TODO: Fans
 
 }

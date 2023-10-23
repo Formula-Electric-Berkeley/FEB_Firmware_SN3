@@ -29,6 +29,8 @@ Core/Src/FEB_State.o: ../Core/Src/FEB_State.c ../Core/Inc/FEB_State.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
+ ../Core/Inc/FEB_CAN_Charger.h ../Core/Inc/FEB_CAN_ID.h \
+ ../Core/Inc/FEB_Constant.h ../Core/Inc/FEB_State.h \
  ../Core/Inc/FEB_Relay.h ../Core/Inc/FEB_UART.h
 ../Core/Inc/FEB_State.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -61,5 +63,9 @@ Core/Src/FEB_State.o: ../Core/Src/FEB_State.c ../Core/Inc/FEB_State.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
+../Core/Inc/FEB_CAN_Charger.h:
+../Core/Inc/FEB_CAN_ID.h:
+../Core/Inc/FEB_Constant.h:
+../Core/Inc/FEB_State.h:
 ../Core/Inc/FEB_Relay.h:
 ../Core/Inc/FEB_UART.h:

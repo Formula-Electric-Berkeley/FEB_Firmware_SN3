@@ -21,4 +21,7 @@
 // Pre-charge
 #define FEB_CONSTANT_PRECHARGE_PERCENT 0.9
 
+// Charging
+#define FEB_CONSTANT_MAX_CHARGING_CURRENT 7 	// [0, 12], 0.1A resolution
+
 #endif /* INC_FEB_CONSTANT_H_ */

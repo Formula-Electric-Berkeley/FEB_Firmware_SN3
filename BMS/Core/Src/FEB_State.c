@@ -63,6 +63,10 @@ void FEB_State_Set_Precharge(void) {
 }
 
 void FEB_State_Set_Shutdown(char* msg) {
+	if (FEB_State_Shutdown) {
+		return;
+	}
+
 	FEB_State_Balance = false;
 	FEB_State_Charge = false;
 	FEB_State_Drive = false;
@@ -70,8 +74,8 @@ void FEB_State_Set_Shutdown(char* msg) {
 	FEB_State_Shutdown = true;
 
 	FEB_Relay_State_Shutdown();
+	FEB_CAN_Charger_Stop_Charge();
 
-	// Stop Charge
 	// Stop Balance
 	// Transmit Shutdown Message (CAN)
 

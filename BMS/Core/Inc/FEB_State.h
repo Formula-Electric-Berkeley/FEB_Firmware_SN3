@@ -8,6 +8,7 @@
 
 #include "stm32f4xx_hal.h"
 
+#include "FEB_CAN_Charger.h"
 #include "FEB_Relay.h"
 #include "FEB_UART.h"
 
