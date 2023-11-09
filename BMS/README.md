@@ -1,5 +1,5 @@
 # Battery Management System
-The BMS (Battery Management System) is responsible for regulating the accumulator.
+The BMS (battery management system) is responsible for regulating the high voltage battery.
 
 # Table of Contents
 - [Battery Management System](#battery-management-system)
