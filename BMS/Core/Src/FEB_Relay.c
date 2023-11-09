@@ -1,3 +1,5 @@
+// TODO: Remove UART, transmit over CAN
+
 // ******************************** Includes & External ********************************
 
 #include "FEB_Relay.h"

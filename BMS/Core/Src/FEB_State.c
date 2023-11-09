@@ -1,3 +1,5 @@
+// TODO: Update shutdown, transmit over CAN
+
 // ******************************** Includes & External ********************************
 
 #include "FEB_State.h"

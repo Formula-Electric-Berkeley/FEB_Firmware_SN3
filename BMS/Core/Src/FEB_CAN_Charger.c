@@ -1,3 +1,5 @@
+// Remove validate charger status
+
 // ********************************** Includes & External **********************************
 
 #include "FEB_CAN_Charger.h"
