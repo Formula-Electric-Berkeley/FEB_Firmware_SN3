@@ -3,17 +3,14 @@
 - [CAN Library](#can-library)
 - [1 Overview](#1-overview)
 - [2 Update Instructions](#2-update-instructions)
-  - [2.1 Add CAN Message](#21-add-can-message)
-  - [2.2 Generate](#22-generate)
-  - [2.3 Documentation](#23-documentation)
-  - [2.4 GitHub](#24-github)
 - [3 CAN Message Documentation](#3-can-message-documentation)
   - [3.1 BMS](#31-bms)
+    - [3.1.1 Voltage](#311-voltage)
+    - [3.1.2 Temperature](#312-temperature)
+    - [3.1.3 State](#313-state)
   - [3.2 APPS](#32-apps)
   - [3.3 LVPDB](#33-lvpdb)
   - [3.4 DCU](#34-dcu)
-
-
 
 # 1 Overview
 STM32 Files:
@@ -27,21 +24,87 @@ Other files:
 * ```generate.py```: This file uses data from ```FEB_CAN_ID.csv``` and ```FEB_CAN_STATIC_ID.csv``` to generate ```FEB_CAN_ID.h```.
 
 # 2 Update Instructions
-## 2.1 Add CAN Message
-To add a CAN message with a static CAN ID, update ```FEB_CAN_STATIC_ID.csv``` file. To add a CAN message without a static CAN ID, update the ```FEB_CAN_ID.csv``` file.
-
-## 2.2 Generate
-Run ```generate.py``` script. This will update the ```FEB_CAN_ID.h``` header file. Add this file to STM32 project, if necessary.
-
-## 2.3 Documentation
-Document the new CAN message in this readme file.
-
-## 2.4 GitHub
-Push all changes to GitHub to ensure the CAN Library is up to date for everyone.
+1. <b>Add CAN Message</b>: To add a CAN message with a static CAN ID, update ```FEB_CAN_STATIC_ID.csv``` file. To add a CAN message without a static CAN ID, update the ```FEB_CAN_ID.csv``` file.
+2. <b>Generate</b>: Run ```generate.py``` script. This will update the ```FEB_CAN_ID.h``` header file. Add this file to STM32 project, if necessary.
+3. <b>Documentation</b>: Document the new CAN message in this readme file.
+4. <b>GitHub</b>: Push all changes to GitHub to ensure the CAN Library is up to date for everyone.
 
 # 3 CAN Message Documentation
 
 ## 3.1 BMS
+### 3.1.1 Voltage
+<table>
+  <tr>
+    <th>Byte</th>
+    <th>Value</th>
+    <th>Factor</th>
+    <th>Offset</th>
+    <th>Datatype</th>
+    <th>Unit</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>Bank</td>
+    <td>1</td>
+    <td>0</td>
+    <td>uint8_t</td>
+    <td>-</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>Cell</td>
+    <td>1</td>
+    <td>0</td>
+    <td>uint8_t</td>
+    <td>-</td>
+  </tr>
+  <tr>
+    <td>2-3</td>
+    <td>Voltage</td>
+    <td>10<sup>-4</sup></td>
+    <td>0</td>
+    <td>uint16_t</td>
+    <td>V</td>
+  </tr>
+</table>
+
+### 3.1.2 Temperature
+<table>
+  <tr>
+    <th>Byte</th>
+    <th>Value</th>
+    <th>Factor</th>
+    <th>Offset</th>
+    <th>Datatype</th>
+    <th>Unit</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>Bank</td>
+    <td>1</td>
+    <td>0</td>
+    <td>uint8_t</td>
+    <td>-</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>Cell</td>
+    <td>1</td>
+    <td>0</td>
+    <td>uint8_t</td>
+    <td>-</td>
+  </tr>
+  <tr>
+    <td>2-3</td>
+    <td>Temperature</td>
+    <td>10<sup>-2</sup></td>
+    <td>0</td>
+    <td>int16_t</td>
+    <td><sup>o</sup>C</td>
+  </tr>
+</table>
+
+### 3.1.3 State
 
 ## 3.2 APPS
 
