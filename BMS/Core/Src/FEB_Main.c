@@ -48,12 +48,12 @@ void FEB_Main_Task1_VT(void) {
 		// Voltage
 		FEB_LTC6811_Poll_Voltage();
 		FEB_LTC6811_Validate_Voltage();
-		osDelay(1000);
+		osDelay(500);
 
 		// Temperature
 		FEB_LTC6811_Poll_Temperature();
 		FEB_LTC6811_Validate_Temperature();
-		osDelay(1000);
+		osDelay(500);
 	}
 }
 
