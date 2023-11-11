@@ -21,7 +21,7 @@ STM32 Files:
 
 Other files:
 * ```FEB_CAN_ID.csv```: A CSV file that stores names of CAN messages without assigned CAN IDs. This file is used to generate dynamic CAN IDs.
-* ```FEB_CAN_STATIC_ID.csv```: A CSV file that sores names of CAN messages and their assigned CAN ID.
+* ```FEB_CAN_Static_ID.csv```: A CSV file that sores names of CAN messages and their assigned CAN ID.
 * ```generate.py```: This file uses data from ```FEB_CAN_ID.csv``` and ```FEB_CAN_Static_ID.csv``` to generate ```FEB_CAN_ID.h```.
 
 # 2 Update Instructions
