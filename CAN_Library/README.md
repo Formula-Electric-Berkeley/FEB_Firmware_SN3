@@ -106,6 +106,81 @@ Other files:
 </table>
 
 ### 3.1.3 State
+<table>
+  <tr>
+    <th>Byte</th>
+    <th>Value</th>
+    <th>Factor</th>
+    <th>Offset</th>
+    <th>Datatype</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>BMS State</td>
+    <td>1</td>
+    <td>0</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>Relay State</td>
+    <td>1</td>
+    <td>0</td>
+    <td>uint8_t</td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>BMS State Value</th>
+    <th>Bms State</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>Pre-charge</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>Charge</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>Balance</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>Drive</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>Shutdown</td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>Relay State Bit</th>
+    <th>Relay</th>
+    <th>State</th>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>Shutdown</td>
+    <td>0 if closed else 1</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>AIR+</td>
+    <td>0 if closed else 1</td>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>Pre-charge</td>
+    <td>0 if closed else 1</td>
+  </tr>
+</table>
+
+
 
 ### 3.1.4 Balance
 <table>
