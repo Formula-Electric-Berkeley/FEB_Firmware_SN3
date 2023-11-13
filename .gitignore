@@ -1,3 +1,5 @@
+# -------- STM32 CubeIDE --------
+
 # Settings
 .settings/
 
@@ -51,5 +53,6 @@ release
 *.idb
 *.pdb
 
-# Mac files
+# -------- MAC OS --------
+
 **/.DS_Store
