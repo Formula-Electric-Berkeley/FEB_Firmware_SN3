@@ -52,11 +52,12 @@ extern SPI_HandleTypeDef hspi1;
 // ******************** Delay ********************
 
 void delay_u(uint16_t micro) {
-	FEB_Timer_Delay_Micro(micro);
+	osDelay(1);
+//	FEB_Timer_Delay_Micro(micro);
 }
 
 void delay_m(uint16_t milli) {
-	HAL_Delay(milli);
+	osDelay(milli);
 }
 
 // ******************** SPI ********************

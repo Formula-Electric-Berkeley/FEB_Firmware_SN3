@@ -11,10 +11,16 @@ extern uint32_t FEB_CAN_Tx_Mailbox;
 extern bool FEB_State_Debug;
 extern bool FEB_State_Shutdown;
 
+// TODO: REMOVE TEST CODE
+#include "stm32f4xx_hal.h"
+#include <string.h>
+extern UART_HandleTypeDef huart2;
+// TODO: REMOVE TEST CODE
+
 // ********************************** LTC6811 Configuration **********************************
 
 // Cell -> Cell Id
-static uint8_t FEB_LTC6811_Cell_Id_Map[] = {9, 8, 7, 6, 4, 3, 2, 1, 0, 9, 8, 7, 6, 3, 2, 1, 0};
+static uint8_t FEB_LTC6811_Cell_Id_Map[17] = {9, 8, 7, 6, 4, 3, 2, 1, 0, 9, 8, 7, 6, 3, 2, 1, 0};
 
 // Set configuration bits
 static bool REFON = 1; 												//!< Reference Powered Up Bit
@@ -131,7 +137,7 @@ void FEB_LTC6811_Poll_Temperature(void) {
 		FEB_LTC6811_Update_GPIO(channel);
 		FEB_LTC6811_Start_GPIO_ADC_Measurement();
 		FEB_LTC6811_Read_Aux_Voltages();
-		FEB_LTC6811_Store_Temperature(channel);
+//		FEB_LTC6811_Store_Temperature(channel);
 	}
 }
 

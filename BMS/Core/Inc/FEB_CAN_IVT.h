@@ -11,7 +11,7 @@
 
 #include "FEB_CAN_ID.h"
 #include "FEB_Constant.h"
-#include "FEB_LTC6811.h"
+#include <FEB_LTC6811.h>
 #include "FEB_State.h"
 #include "FEB_UART.h"
 

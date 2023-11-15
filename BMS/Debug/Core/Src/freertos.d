@@ -38,15 +38,14 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/FEB_Main.h \
+ ../Core/Inc/FEB_Main.h ../Core/Inc/FEB_LTC6811.h ../Core/Inc/LTC6811.h \
+ ../Core/Inc/LTC681x.h ../Core/Inc/FEB_CAN.h ../Core/Inc/FEB_CAN_IVT.h \
+ ../Core/Inc/FEB_CAN_ID.h ../Core/Inc/FEB_Constant.h \
+ ../Core/Inc/FEB_State.h ../Core/Inc/FEB_CAN_Charger.h \
+ ../Core/Inc/FEB_Relay.h ../Core/Inc/FEB_UART.h \
+ ../Core/Inc/FEB_LTC6811_Temp_LUT.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
- ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
- ../Core/Inc/FEB_CAN.h ../Core/Inc/FEB_CAN_IVT.h ../Core/Inc/FEB_CAN_ID.h \
- ../Core/Inc/FEB_Constant.h ../Core/Inc/FEB_LTC6811.h \
- ../Core/Inc/LTC6811.h ../Core/Inc/LTC681x.h \
- ../Core/Inc/FEB_LTC6811_Temp_LUT.h ../Core/Inc/FEB_State.h \
- ../Core/Inc/FEB_CAN_Charger.h ../Core/Inc/FEB_Relay.h \
- ../Core/Inc/FEB_UART.h
+ ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
@@ -88,17 +87,17 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Core/Inc/FEB_Main.h:
-../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
-../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
+../Core/Inc/FEB_LTC6811.h:
+../Core/Inc/LTC6811.h:
+../Core/Inc/LTC681x.h:
 ../Core/Inc/FEB_CAN.h:
 ../Core/Inc/FEB_CAN_IVT.h:
 ../Core/Inc/FEB_CAN_ID.h:
 ../Core/Inc/FEB_Constant.h:
-../Core/Inc/FEB_LTC6811.h:
-../Core/Inc/LTC6811.h:
-../Core/Inc/LTC681x.h:
-../Core/Inc/FEB_LTC6811_Temp_LUT.h:
 ../Core/Inc/FEB_State.h:
 ../Core/Inc/FEB_CAN_Charger.h:
 ../Core/Inc/FEB_Relay.h:
 ../Core/Inc/FEB_UART.h:
+../Core/Inc/FEB_LTC6811_Temp_LUT.h:
+../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
+../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:

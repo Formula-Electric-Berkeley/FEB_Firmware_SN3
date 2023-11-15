@@ -6,7 +6,7 @@
 // Accumulator configuration
 #define FEB_CONSTANT_NUM_CELLS_PER_DAUGHTER_BOARD 12
 #define FEB_CONSTANT_NUM_CELLS_PER_BANK 17
-#define FEB_CONSTANT_NUM_BANKS 8
+#define FEB_CONSTANT_NUM_BANKS 4
 
 // Accumulator thresholds
 #define FEB_CONSTANT_MIN_CURRENT -0.1
