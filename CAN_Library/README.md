@@ -133,7 +133,7 @@ Other files:
 <table>
   <tr>
     <th>BMS State Value</th>
-    <th>Bms State</th>
+    <th>BMS State</th>
   </tr>
   <tr>
     <td>0</td>
