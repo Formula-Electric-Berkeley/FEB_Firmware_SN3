@@ -4,5 +4,7 @@
 
 // BMS
 BMS Temperature
+BMS Enabled Temperature Sensors
 BMS Voltage
 BMS State
+BMS Balance

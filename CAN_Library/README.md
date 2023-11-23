@@ -9,6 +9,7 @@
     - [3.1.2 Temperature](#312-temperature)
     - [3.1.3 State](#313-state)
     - [3.1.4 Balance](#314-balance)
+    - [3.1.5 Enabled Temperature Sensors](#315-enabled-temperature-sensors)
   - [3.2 APPS](#32-apps)
   - [3.3 LVPDB](#33-lvpdb)
   - [3.4 DCU](#34-dcu)
@@ -110,22 +111,16 @@ Other files:
   <tr>
     <th>Byte</th>
     <th>Value</th>
-    <th>Factor</th>
-    <th>Offset</th>
     <th>Datatype</th>
   </tr>
   <tr>
     <td>0</td>
     <td>BMS State</td>
-    <td>1</td>
-    <td>0</td>
     <td>uint8_t</td>
   </tr>
   <tr>
     <td>1</td>
     <td>Relay State</td>
-    <td>1</td>
-    <td>0</td>
     <td>uint8_t</td>
   </tr>
 </table>
@@ -180,29 +175,21 @@ Other files:
   </tr>
 </table>
 
-
-
 ### 3.1.4 Balance
 <table>
   <tr>
     <th>Byte</th>
     <th>Value</th>
-    <th>Factor</th>
-    <th>Offset</th>
     <th>Datatype</th>
   </tr>
   <tr>
     <td>0</td>
     <td>Bank [1, 7]</td>
-    <td>1</td>
-    <td>0</td>
     <td>uint8_t</td>
   </tr>
   <tr>
     <td>1-3</td>
     <td>Cell balance state</td>
-    <td>1</td>
-    <td>0</td>
     <td>-</td>
   </tr>
 </table>
@@ -213,12 +200,46 @@ Other files:
     <th>Value</th>
   </tr>
   <tr>
-    <td>23-4</td>
-    <td>1 if cell balance else 0</td>
+    <td>24-20</td>
+    <td>0</td>
   </tr>
   <tr>
-    <td>3-0</td>
+    <td>19-0</td>
+    <td>1 if cell balance else 0</td>
+  </tr>
+</table>
+
+### 3.1.5 Enabled Temperature Sensors
+<table>
+  <tr>
+    <th>Byte</th>
+    <th>Value</th>
+    <th>Datatype</th>
+  </tr>
+  <tr>
     <td>0</td>
+    <td>Bank [1, 7]</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>1-3</td>
+    <td>Temperature Sensor</td>
+    <td>-</td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>Temperature sensor state bit</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>24-20</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td>19-0</td>
+    <td>1 if enabled else 0</td>
   </tr>
 </table>
 
