@@ -9,7 +9,7 @@ C_HEADER_FILENAME = "FEB_CAN_ID.h"
 C_HEADER_GUARD = "INC_FEB_CAN_ID_H_"
 C_CAN_MESSAGE_PREFIX = "FEB_CAN_ID_"
 
-PYTHON_FILENAME = "FEB_CAN_ID.py"
+PYTHON_FILENAME = "feb_can_id.py"
 
 # Global Variables
 
@@ -81,7 +81,8 @@ def Generate_Python_File(filename: str, CAN_Id_Data: list[dict], CAN_Static_Id_D
                 Python_File.write("\n")
                 Python_File.write(f"# {CAN_Message['comment'][3:]}\n")
             else:
-                Python_File.write(Python_Assign_Macro(CAN_Message["name"], CAN_Message["id"]) + "\n")
+                Python_File.write(Python_Assign_Macro(CAN_Message["name"].replace(C_CAN_MESSAGE_PREFIX, ''), 
+                                                      CAN_Message["id"]) + "\n")
 
     with open(filename, "w") as Python_File:
         # Static CAN IDs
