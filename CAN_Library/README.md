@@ -24,10 +24,11 @@ Other files:
 * ```FEB_CAN_ID.csv```: A CSV file that stores names of CAN messages without assigned CAN IDs. This file is used to generate dynamic CAN IDs.
 * ```FEB_CAN_Static_ID.csv```: A CSV file that sores names of CAN messages and their assigned CAN ID.
 * ```generate.py```: This file uses data from ```FEB_CAN_ID.csv``` and ```FEB_CAN_Static_ID.csv``` to generate ```FEB_CAN_ID.h```.
+* ```FEB_CAN_ID.py```: This file storse all CAN Message IDs. Used for the CAN Monitor.
 
 # 2 Update Instructions
 1. <b>Add CAN Message</b>: To add a CAN message with a static CAN ID, update ```FEB_CAN_Static_ID.csv``` file. To add a CAN message without a static CAN ID, update the ```FEB_CAN_ID.csv``` file.
-2. <b>Generate</b>: Run ```generate.py``` script. This will update the ```FEB_CAN_ID.h``` header file. Add this file to STM32 project, if necessary.
+2. <b>Generate</b>: Run ```generate.py``` script. This will update the ```FEB_CAN_ID.h``` header file.
 3. <b>Documentation</b>: Document the new CAN message in this readme file.
 4. <b>GitHub</b>: Push all changes to GitHub to ensure the CAN Library is up to date for everyone.
 
