@@ -1,14 +1,24 @@
 import ctypes
-from feb_can_id import *
+import feb_can_id
 import PCANBasic
 
 class CanData:
+    def store_message(self, message: PCANBasic.TPCANMsg) -> None:
+        raise NotImplementedError
+    
+class MonitorCanData(CanData):
     def __init__(self):
         self.bms = BmsCanData()
         self.charger = ChargerCanData()
         self.ivt = IvtCanData()
+    
+    def store_message(self, message: PCANBasic.TPCANMsg) -> None:
+        self.bms.store_message(message)
+        self.charger.store_message(message)
+        self.ivt.store_message(message)
 
-class BmsCanData:
+
+class BmsCanData(CanData):
     def __init__(self):
         self.state = None
         self.relay_state = None
@@ -17,7 +27,18 @@ class BmsCanData:
         self.temp = None
         self.enabled_temp = None
 
-class ChargerCanData:
+    def store_message(self, message: PCANBasic.TPCANMsg) -> None:
+        match message.ID.value:
+            case feb_can_id.IVT_CURRENT:
+                ...
+            case feb_can_id.IVT_VOLTAGE_1:
+                ...
+            case feb_can_id.IVT_VOLTAGE_2:
+                ...
+            case feb_can_id.IVT_VOLTAGE_3:
+                ...
+
+class ChargerCanData(CanData):
     def __init__(self):
         # BMS -> Charger
         self.bms_max_voltage = None
@@ -25,32 +46,31 @@ class ChargerCanData:
         self.bms_control = None
 
         # Charger -> BMS
-        self.charger_voltage = None
-        self.charger_current = None
-        self.charger_status = None
+        self.ccs_voltage = None
+        self.ccs_current = None
+        self.ccs_status = None
 
-    def store_message(self, message: PCANBasic.TPCANMsg):
-        pass
-    
-    # def store_message(self, message: PCANBasic.TPCANMsg):
-    #     match message.ID.value:
-    #         case feb_can_id.FEB_CAN_ID_CHARGER_BMS:
-    #             pass
-    #         case feb_can_id.FEB_CAN_ID_CHARGER_CCS:
-    #             pass
-    
-    # def _store_message_charger(self, message: PCANBasic.TPCANMsg):
-    #     pass
+    def store_message(self, message: PCANBasic.TPCANMsg) -> None:
+        match message.ID.value:
+            case feb_can_id.CHARGER_BMS:
+                ...
+            case feb_can_id.CHARGER_CCS:
+                ...
 
-class IvtCanData:
+class IvtCanData(CanData):
     def __init__(self):
         self.current = None
         self.voltage_1 = None
         self.voltage_2 = None
         self.voltage_3 = None
-        self.temperature = None
-        self.power = None
-        self.current_counter = None
-        self.energy_counter = None
 
-
+    def store_message(self, message: PCANBasic.TPCANMsg) -> None:
+        match message.ID.value:
+            case feb_can_id.IVT_CURRENT:
+                ...
+            case feb_can_id.IVT_VOLTAGE_1:
+                ...
+            case feb_can_id.IVT_VOLTAGE_2:
+                ...
+            case feb_can_id.IVT_VOLTAGE_3:
+                ...
