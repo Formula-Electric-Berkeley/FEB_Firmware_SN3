@@ -9,6 +9,8 @@ C_HEADER_FILENAME = "FEB_CAN_ID.h"
 C_HEADER_GUARD = "INC_FEB_CAN_ID_H_"
 C_CAN_MESSAGE_PREFIX = "FEB_CAN_ID_"
 
+PYTHON_FILENAME = "FEB_CAN_ID.py"
+
 # Global Variables
 
 CAN_Static_Id_Set = set()
@@ -37,8 +39,8 @@ def C_Header_Comment(s: str) -> str:
 def C_Define_Macro(name: str, value: "hex") -> str:
     return f"#define {name} {value}"
 
-def Generate_C_Header_File(filename: str, CAN_Id_Data: str, CAN_Static_Id_Data: str) -> None:
-    def Write_CAN_ID_To_File(CAN_Id_Data: "dict"):
+def Generate_C_Header_File(filename: str, CAN_Id_Data: list[dict], CAN_Static_Id_Data: list[dict]) -> None:
+    def Write_CAN_ID_To_File(CAN_Id_Data: list[dict]):
         for CAN_Message in CAN_Id_Data:
             if "comment" in CAN_Message:
                 C_Header_File.write("\n")
@@ -63,6 +65,33 @@ def Generate_C_Header_File(filename: str, CAN_Id_Data: str, CAN_Static_Id_Data: 
         # Close header guard
         C_Header_File.write("\n")
         C_Header_File.write(f"#endif /* {C_HEADER_GUARD} */\n")
+
+# Python file
+
+def Python_Header_Comment(s: str) -> str:
+    return f"# {'*' * 40} {s} {'*' * 40}"
+
+def Python_Assign_Macro(name: str, value: "hex") -> str:
+    return f"{name} = {value}"
+
+def Generate_Python_File(filename: str, CAN_Id_Data: list[dict], CAN_Static_Id_Data: list[dict]) -> None:
+    def Write_CAN_ID_To_File(CAN_Id_Data: list[dict]):
+        for CAN_Message in CAN_Id_Data:
+            if "comment" in CAN_Message:
+                Python_File.write("\n")
+                Python_File.write(f"# {CAN_Message['comment'][3:]}\n")
+            else:
+                Python_File.write(Python_Assign_Macro(CAN_Message["name"], CAN_Message["id"]) + "\n")
+
+    with open(filename, "w") as Python_File:
+        # Static CAN IDs
+        Python_File.write(Python_Header_Comment("Static CAN IDs") + "\n")
+        Write_CAN_ID_To_File(CAN_Static_Id_Data)
+        Python_File.write("\n")
+
+        # Dynamic CAN IDs
+        Python_File.write(Python_Header_Comment("Dynamic CAN IDs") + "\n")
+        Write_CAN_ID_To_File(CAN_Id_Data)
 
 # CSV File
 
@@ -104,6 +133,7 @@ def main():
     CSV_Static_Id_Data = Read_CSV_Data(CAN_STATIC_ID_CSV_FILENAME, Process_CAN_Static_Id_CSV_Row)
     CSV_ID_Data = Read_CSV_Data(CAN_ID_CSV_FILENAME, Process_CAN_Id_CSV_Row)
     Generate_C_Header_File(C_HEADER_FILENAME, CSV_ID_Data, CSV_Static_Id_Data)
+    Generate_Python_File(PYTHON_FILENAME, CSV_ID_Data, CSV_Static_Id_Data)
 
 if __name__ == "__main__":
     main()
