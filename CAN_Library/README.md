@@ -99,7 +99,7 @@ Other files:
   <tr>
     <td>2-3</td>
     <td>Temperature</td>
-    <td>10<sup>-2</sup></td>
+    <td>10<sup>-1</sup></td>
     <td>0</td>
     <td>int16_t</td>
     <td><sup>o</sup>C</td>
