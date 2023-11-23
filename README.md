@@ -5,7 +5,8 @@ A repository of vehicle firmware for 2023-2024.
 Up-to-date code found on respective branches.
 - ```APPS```: Accelerator pedal position sensor
 - ```BMS```: Battery management system
-    - ```BMS_Serial_Monitor```
+    - ```BMS_CAN_Monitor```: GUI to display BMS related data from CAN bus.
+    - ```BMS_Temp_LUT```: Lookup table mapping voltage -> temperature.
 - ```CAN_Library```
 - ```DCU```: Data control unit
 - ```LVPDB```: Low voltage power distribution board
