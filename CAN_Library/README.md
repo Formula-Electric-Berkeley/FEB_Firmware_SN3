@@ -206,7 +206,7 @@ Other files:
   </tr>
   <tr>
     <td>19-0</td>
-    <td>1 if cell balance else 0</td>
+    <td>1 if cell balance else 0. Bit i for cell (i + 1).</td>
   </tr>
 </table>
 
@@ -240,7 +240,7 @@ Other files:
   </tr>
   <tr>
     <td>19-0</td>
-    <td>1 if enabled else 0</td>
+    <td>1 if enabled else 0. Bit i for cell (i + 1).</td>
   </tr>
 </table>
 
