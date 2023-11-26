@@ -1,16 +1,19 @@
-import constants
-from graph import Graph
-from serial_data import Serial_Data
+import accumulator
+from can_data import MonitorCanData
 import tkinter as tk
 from VerticalScrolledFrame import VerticalScrolledFrame
 
 class Table:
+    # Cell size
     CELL_WIDTH = 8
     CELL_HEIGHT = 1
 
     # Colors
     COLOR_DEFAULT = ""
     COLOR_OUT_OF_RANGE = "#FF0000"
+
+    # Update rate (ms)
+    UPDATE_INTERVAL = 1000
 
     """
     Atributes:
@@ -28,31 +31,30 @@ class Table:
         __charger_data_cells [dict]: type [str] -> cell [tk.Label]
         __discharge_data_cells [dict]: type [str] -> cell [tk.Label]
     """
-    def __init__(self, root, sd: Serial_Data, ui):
-        self.__master = root
-        self.__serial_data = sd
-        self.__frame = self.__create_table_frame()
-        self.__update_interval = ui
+    def __init__(self, root: tk.Tk, mcd: MonitorCanData):
+        self._root = root
+        self._mcd = mcd
+        self._frame = self._create_table_frame()
 
-        # BMS States
-        self.__range_state = False
+        # # BMS States
+        # self.__range_state = False
 
-        # Cells
-        self.__state_cells = dict()
-        self.__volt_cells = dict()
-        self.__temp_cells = dict()
-        self.__volt_bank_stats_cells = dict()
-        self.__temp_bank_stats_cells = dict()
-        self.__volt_stats_cells = dict()
-        self.__temp_stats_cells = dict()
-        self.__relay_state_cells = dict()
-        self.__shutdown_state_cells = dict()
-        self.__ivt_data_cells = dict()
-        self.__charger_data_cells = dict()
-        self.__cell_balance_data_cells = dict()
+        # # Cells
+        # self.__state_cells = dict()
+        # self.__volt_cells = dict()
+        # self.__temp_cells = dict()
+        # self.__volt_bank_stats_cells = dict()
+        # self.__temp_bank_stats_cells = dict()
+        # self.__volt_stats_cells = dict()
+        # self.__temp_stats_cells = dict()
+        # self.__relay_state_cells = dict()
+        # self.__shutdown_state_cells = dict()
+        # self.__ivt_data_cells = dict()
+        # self.__charger_data_cells = dict()
+        # self.__cell_balance_data_cells = dict()
 
-        self.__setup()
-        self.__bind_key_press()
+        self._setup()
+        # self.__bind_key_press()
 
     ###############
     # Key Presses #
@@ -90,31 +92,31 @@ class Table:
     # Create Table #
     ################
 
-    def __create_table_frame(self):
-        frame = VerticalScrolledFrame(self.__master)
+    def _create_table_frame(self):
+        frame = VerticalScrolledFrame(self._root)
         frame.pack(expand = True, fill = tk.BOTH)
         return frame.interior
 
     def __setup(self):
         row = 0
-        self.__create_cell(0, -1, "", border=False, wsf=0.3)
-        row = self.__create_blank_row(row)
-        row = self.__create_states_table(row)
-        row = self.__create_blank_row(row)
-        row = self.__create_volt_temp_table(row)
-        row = self.__create_blank_row(row)
-        row = self.__create_volt_temp_stats_table(row)
-        row = self.__create_blank_row(row)
-        row = self.__create_shutdown_state_table(row)
-        row = self.__create_blank_row(row)
-        row = self.__create_relay_state_table(row)
-        row = self.__create_blank_row(row)
-        row = self.__create_IVT_table(row)
-        row = self.__create_blank_row(row)
-        row = self.__create_charger_data_table(row)
-        row = self.__create_blank_row(row)
-        row = self.__create_cell_balance_data_table(row)
-        row = self.__create_blank_row(row)
+        self._create_cell(0, -1, "", border=False, wsf=0.3)
+        # row = self.__create_blank_row(row)
+        # row = self.__create_states_table(row)
+        # row = self.__create_blank_row(row)
+        # row = self.__create_volt_temp_table(row)
+        # row = self.__create_blank_row(row)
+        # row = self.__create_volt_temp_stats_table(row)
+        # row = self.__create_blank_row(row)
+        # row = self.__create_shutdown_state_table(row)
+        # row = self.__create_blank_row(row)
+        # row = self.__create_relay_state_table(row)
+        # row = self.__create_blank_row(row)
+        # row = self.__create_IVT_table(row)
+        # row = self.__create_blank_row(row)
+        # row = self.__create_charger_data_table(row)
+        # row = self.__create_blank_row(row)
+        # row = self.__create_cell_balance_data_table(row)
+        # row = self.__create_blank_row(row)
 
     #####################
     # Controller States #
@@ -148,28 +150,28 @@ class Table:
 
     def __update_volt_temp_table(self):
         # Voltage
-        for bank in range(constants.NUM_BANKS):
-            for cell in range(constants.NUM_CELLS_PER_BANK):
+        for bank in range(accumulator.NUM_BANKS):
+            for cell in range(accumulator.NUM_CELLS_PER_BANK):
                 value = self.__serial_data.voltage.get((bank, cell), '-')
                 bg = Table.COLOR_DEFAULT
                 if value != '-':
                     value = round(value, 3)
-                    if self.__range_state and not constants.CELL_VOLTAGE_MIN <= value <= constants.CELL_VOLTAGE_MAX:
+                    if self.__range_state and not accumulator.CELL_VOLTAGE_MIN <= value <= accumulator.CELL_VOLTAGE_MAX:
                         bg = Table.COLOR_OUT_OF_RANGE
                     elif self.__range_state:
-                        green = int((value - constants.CELL_VOLTAGE_MIN) / (constants.CELL_VOLTAGE_MAX - constants.CELL_VOLTAGE_MIN) * 135 + 120) % 256
+                        green = int((value - accumulator.CELL_VOLTAGE_MIN) / (accumulator.CELL_VOLTAGE_MAX - accumulator.CELL_VOLTAGE_MIN) * 135 + 120) % 256
                         rgb = (0, green, 0)
                         bg = "#%02x%02x%02x" % rgb 
                 self.__volt_cells[(bank, cell)].config(text=value, background=bg)
 
         # Temperature
-        for bank in range(constants.NUM_BANKS):
-            for cell in range(constants.NUM_CELLS_PER_BANK):
+        for bank in range(accumulator.NUM_BANKS):
+            for cell in range(accumulator.NUM_CELLS_PER_BANK):
                 value = self.__serial_data.temperature.get((bank, cell), '-')
                 bg = Table.COLOR_DEFAULT
                 if value != '-':
                     value = round(value, 3)
-                    if self.__range_state and not constants.CELL_TEMPERATURE_MIN <= value <= constants.CELL_TEMPERATURE_MAX:
+                    if self.__range_state and not accumulator.CELL_TEMPERATURE_MIN <= value <= accumulator.CELL_TEMPERATURE_MAX:
                         bg = Table.COLOR_OUT_OF_RANGE
                 self.__temp_cells[(bank, cell)].config(text=value, background=bg)
 
@@ -184,7 +186,7 @@ class Table:
         self.__volt_stats_cells["sum"].config(text=volt_stats["sum"])
 
         # Bank voltage
-        for bank in range(constants.NUM_BANKS):
+        for bank in range(accumulator.NUM_BANKS):
             bank_volt_stats = self.__serial_data.voltage.get_stats(bank=bank)
             self.__volt_bank_stats_cells[(bank, "mean")].config(text=bank_volt_stats["mean"])
             self.__volt_bank_stats_cells[(bank, "sum")].config(text=bank_volt_stats["sum"])
@@ -198,41 +200,41 @@ class Table:
         self.__temp_stats_cells["range"].config(text=temp_stats["range"])
     
         # Bank temperature
-        for bank in range(constants.NUM_BANKS):
+        for bank in range(accumulator.NUM_BANKS):
             bank_temp_stats = self.__serial_data.temperature.get_stats(bank=bank)
             self.__temp_bank_stats_cells[(bank, "mean")].config(text=bank_temp_stats["mean"])
 
     def __create_volt_temp_table(self, row):
         # Create header
         self.__create_cell(row, 0, "Cell", rs = 2, wsf=2)
-        for i in range(constants.NUM_BANKS):
+        for i in range(accumulator.NUM_BANKS):
             col = i * 2 + 1
             bank_num = i + 1
             self.__create_cell(row, col, f"Bank {bank_num}", cs=2)
-        for i in range(constants.NUM_BANKS * 2):
+        for i in range(accumulator.NUM_BANKS * 2):
             col = i + 1
             txt = "V" if i % 2 == 0 else "T"
             self.__create_cell(row + 1, col, txt)
         row += 2
 
         # Create body
-        for i in range(constants.NUM_CELLS_PER_BANK):
+        for i in range(accumulator.NUM_CELLS_PER_BANK):
             self.__create_cell(row, 0, str(i + 1))
-            for j in range(constants.NUM_BANKS):
+            for j in range(accumulator.NUM_BANKS):
                 self.__volt_cells[(j, i)] = self.__create_cell(row, j * 2 + 1, "")
                 self.__temp_cells[(j, i)] = self.__create_cell(row, j * 2 + 2, "")
             row += 1
 
         # Mean
         self.__create_cell(row, 0, "Mean")
-        for i in range(constants.NUM_BANKS):
+        for i in range(accumulator.NUM_BANKS):
             self.__volt_bank_stats_cells[(i, "mean")] = self.__create_cell(row, i * 2 + 1, "")
             self.__temp_bank_stats_cells[(i, "mean")] = self.__create_cell(row, i * 2 + 2, "")
         row += 1
 
         # Total
         self.__create_cell(row, 0, "Total")
-        for i in range(constants.NUM_BANKS):
+        for i in range(accumulator.NUM_BANKS):
             self.__volt_bank_stats_cells[(i, "sum")] = self.__create_cell(row, i * 2 + 1, "")
             self.__create_cell(row, i * 2 + 2, "-")
         row += 1
@@ -434,20 +436,21 @@ class Table:
     Create cell at (row, col). Col == -1 reserved as margin.
 
     Args:
-        row [int]: Cell grid row.
-        col [int]: Cell grid column.
-        txt [str]: Cell text.
-        border [bool]: Cell border.
-        rs [int]: Cell row span.
-        cs [int]: Cell column span.
-        wsf [float]: Cell width scale factor.
+        row: Cell grid row.
+        col: Cell grid column.
+        txt: Cell text.
+        border: Cell border.
+        rs: Cell row span.
+        cs: Cell column span.
+        wsf: Cell width scale factor.
     Return:
         cell: Tkinter label object.
     """
-    def __create_cell(self, row, col, txt, border=True, rs=1, cs=1, wsf=1):
+    def _create_cell(self, row: int, col: int, txt: str, border: bool = True, 
+                     rs : int = 1, cs : int = 1, wsf : float = 1):
         bd_width = 1 if border else 0
         bd = 1 if border else 0
-        cell = tk.Label(self.__frame, text=txt, borderwidth=bd_width, width=int(Table.CELL_WIDTH * wsf * cs), 
+        cell = tk.Label(self._frame, text=txt, borderwidth=bd_width, width=int(Table.CELL_WIDTH * wsf * cs), 
                         height=Table.CELL_HEIGHT * rs, bd=bd, relief="solid")
         cell.grid(row=row, column=col + 1, rowspan=rs, columnspan=cs, sticky="nesw")
         if not Table.COLOR_DEFAULT:

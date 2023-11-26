@@ -1,11 +1,11 @@
 from can_connection import CanConnection
 from can_data import MonitorCanData
+from gui import GUI
 import signal
 import sys
-import threading
 
-def main():
-    global cc, t1
+def main() -> None:
+    global cc, gui
 
     # Exit handler
     print("Press CTRL+C to exit")
@@ -14,19 +14,20 @@ def main():
     # CAN
     mcd = MonitorCanData()
     cc = CanConnection(mcd)
-    cc.connect()
+    # cc.connect()
+    # cc.read_data()
 
     # GUI
+    gui = GUI(mcd)
+    gui.root.mainloop()
 
+    sigint_handler()
 
-    # CAN Read
-    t1 = threading.Thread(target=cc.read_data)
-    t1.start()
-
-def sigint_handler(signum, frame):
+def sigint_handler(signum=None, frame=None) -> None:
     #  Clean up
     cc.stop_read_data()
     cc.disconnect()
+    gui.root.destroy()
 
     # Exit
     print("\nExiting...")

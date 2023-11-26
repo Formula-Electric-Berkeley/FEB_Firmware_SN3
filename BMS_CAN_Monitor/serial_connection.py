@@ -1,4 +1,4 @@
-import constants
+import accumulator
 import serial, serial.tools.list_ports
 from serial_data import Serial_Data
 
@@ -35,38 +35,38 @@ class Serial_Connection:
 
     def __process_message(self, message_id, message_data):
         match message_id:
-            case constants.CELL_VOLT_MSG_ID:
+            case accumulator.CELL_VOLT_MSG_ID:
                 bank = int(message_data[0])
-                for i in range(1, constants.NUM_CELLS_PER_BANK + 1):
+                for i in range(1, accumulator.NUM_CELLS_PER_BANK + 1):
                     cell = i - 1
                     # value = int(message_data[i]) * 10 ** -4
                     value = float(message_data[i])
                     self.__serial_data.voltage[(bank, cell)] = value
-            case constants.CELL_TEMP_MSG_ID:
+            case accumulator.CELL_TEMP_MSG_ID:
                 bank = int(message_data[0])
-                for i in range(1, constants.NUM_CELLS_PER_BANK + 1):
+                for i in range(1, accumulator.NUM_CELLS_PER_BANK + 1):
                     cell = i - 1
                     # value = int(message_data[i]) * 10 ** -1
                     value = float(message_data[i])
                     self.__serial_data.temperature[(bank, cell)] = value
-            case constants.BMS_STATE_MSG_ID:
+            case accumulator.BMS_STATE_MSG_ID:
                 states = ["balance", "charge", "drive", "precharge", "shutdown"]
                 for i in range(len(states)):
                     if message_data[i] not in ['0', '1']:
                         raise ValueError("Invalid BMS state.")
                     value = message_data[i] == '1'
                     self.__serial_data.bms_state[states[i]] = value
-            case constants.RELAY_STATE_MSG_ID:
+            case accumulator.RELAY_STATE_MSG_ID:
                 states = ["pre_charge", "air_plus"]
                 for i in range(len(states)):
                     value = int(message_data[i])
                     self.__serial_data.relay_state[states[i]] = value
-            case constants.SHUTDOWN_STATE_MSG_ID:
+            case accumulator.SHUTDOWN_STATE_MSG_ID:
                 states = ["bms", "imd", "tsms"]
                 for i in range(len(states)):
                     value = int(message_data[i])
                     self.__serial_data.shutdown_state[states[i]] = value
-            case constants.CHARGE_DATA_MSG_ID:
+            case accumulator.CHARGE_DATA_MSG_ID:
                 state = message_data[0]
                 max_current = message_data[1] * 10 ** -1
                 max_voltage = message_data[2] * 10 ** -1
@@ -87,9 +87,9 @@ class Serial_Connection:
                 self.__charger_data_cells["input_voltage"]          = status_flag >> 5 & 1
                 self.__charger_data_cells["starting_state"]         = status_flag >> 4 & 1
                 self.__charger_data_cells["communication_state"]    = status_flag >> 3 & 1
-            case constants.CELL_BALANCE_MSG_ID:
+            case accumulator.CELL_BALANCE_MSG_ID:
                 pass
-            case constants.IVT_DATA_MSG_ID:
+            case accumulator.IVT_DATA_MSG_ID:
                 states = ["u1", "u2", "u3", "i1"]
                 for i in range(len(states)):
                     # value = int(message_data[i]) * 10 ** -3
