@@ -5,6 +5,7 @@ from VerticalScrolledFrame import VerticalScrolledFrame
 
 # TODO: Remove
 import random
+import ctypes as ct
 
 class BmsTable:
     # Cell size
@@ -45,21 +46,23 @@ class BmsTable:
         self._volt_stats_cells = dict()         # str -> tk.Label
         self._temp_stats_cells = dict()         # str -> tk.Label
         self._relay_state_cells = dict()        # str -> tk.Label
+        self._ivt_data_cells = dict()           # str -> tk.Label
+        self._charger_data_cells = dict()       # str -> tk.Label
 
         self._setup()
+        self._bind_key_press()
 
         # TODO: REMOVE
         self.test_update()
-        self._bind_key_press()
 
     ###############
     # Key Presses #
     ###############
 
-    def _bind_key_press(self):
+    def _bind_key_press(self) -> None:
         self._root.bind("<KeyPress>", self._key_press)
 
-    def _key_press(self, e):
+    def _key_press(self, e) -> None:
         match e.char:
             case 'r' | 'R':
                 self._monitor_state = BmsTable.RANGE_STATE
@@ -94,29 +97,30 @@ class BmsTable:
             "air+": relay_open,
             "pre-charge": relay_closed
         }
+        
+        self._mcd.ivt._current = ct.c_int32(-5001)
+        self._mcd.ivt._voltage_1 = ct.c_int32(4201)
+        self._mcd.ivt._voltage_2 = ct.c_int32(3415)
+        self._mcd.ivt._voltage_3 = ct.c_int32(-1001)
+
+        self._mcd.charger.ccs_voltage = 84
+        self._mcd.charger._ccs_status = 59
     
     def update(self) -> None:
         self._update_states_table()
         self._update_volt_temp_table()
         self._update_volt_temp_stats_table()
         self._update_relay_state_table()
-
-        self._root.after(BmsTable.UPDATE_INTERVAL, self.update)
-
-        return
-        self._update_shutdown_state_table()
-        
         self._update_IVT_table()
         self._update_charger_data_table()
-        self._update_cell_balance_data_table()
 
-        self._root.after(self.__update_interval, self.update)
+        self._root.after(BmsTable.UPDATE_INTERVAL, self.update)
 
     ################
     # Create Table #
     ################
 
-    def _create_table_frame(self):
+    def _create_table_frame(self) -> None:
         frame = VerticalScrolledFrame(self._root)
         frame.pack(expand=True, fill=tk.BOTH)
         return frame.interior
@@ -130,27 +134,23 @@ class BmsTable:
         row = self._create_volt_temp_table(row)
         row = self._create_blank_row(row)
         row = self._create_volt_temp_stats_table(row)
-        # row = self._create_blank_row(row)
-        # row = self._create_shutdown_state_table(row)
         row = self._create_blank_row(row)
         row = self._create_relay_state_table(row)
-        # row = self._create_blank_row(row)
-        # row = self._create_IVT_table(row)
-        # row = self._create_blank_row(row)
-        # row = self._create_charger_data_table(row)
-        # row = self._create_blank_row(row)
-        # row = self._create_cell_balance_data_table(row)
-        # row = self._create_blank_row(row)
+        row = self._create_blank_row(row)
+        row = self._create_IVT_table(row)
+        row = self._create_blank_row(row)
+        row = self._create_charger_data_table(row)
+        row = self._create_blank_row(row)
 
     ##############################
     # BMS / Monitor States Table #
     ##############################
 
-    def _update_states_table(self):
+    def _update_states_table(self) -> None:
         self._state_cells["monitor"].config(text=self._monitor_state.title())
         self._state_cells["bms"].config(text=self._mcd.bms.state)
 
-    def _create_states_table(self, row):
+    def _create_states_table(self, row: int) -> int:
         # Header
         self._create_cell(row, 0, "State", rs = 2)
         self._create_cell(row, 1, "Monitor State", cs = 2)
@@ -168,7 +168,7 @@ class BmsTable:
     # Volt-Temp Cell Data #
     #######################
 
-    def _update_volt_temp_table(self):
+    def _update_volt_temp_table(self) -> None:
         resolution = 4
 
         # Voltage
@@ -208,7 +208,7 @@ class BmsTable:
                             bg = self._rgb_mix(BmsTable.COLOR_DEVIATION_TEMP, BmsTable.COLOR_DEFAULT, alpha)
                 self._temp_cells[(bank, cell)].config(text=value, background=bg)
 
-    def _update_volt_temp_stats_table(self):
+    def _update_volt_temp_stats_table(self) -> None:
         resolution = 4
 
         # Voltage
@@ -239,7 +239,7 @@ class BmsTable:
             bank_temp_stats = self._mcd.bms.voltage.get_stats(bank)
             self._temp_bank_stats_cells[(bank, "mean")].config(text=round(bank_temp_stats["mean"], resolution))
 
-    def _create_volt_temp_table(self, row):
+    def _create_volt_temp_table(self, row: int) -> int:
         # Create header
         self._create_cell(row, 0, "Cell", rs = 2, wsf=2)
         for i in range(accumulator.NUM_BANKS):
@@ -276,7 +276,7 @@ class BmsTable:
 
         return row
     
-    def _create_volt_temp_stats_table(self, row):
+    def _create_volt_temp_stats_table(self, row: int) -> int:
         # Create header
         self._create_cell(row, 0, "All Banks")
         self._create_cell(row, 1, "Mean", cs=2)
@@ -313,7 +313,7 @@ class BmsTable:
     # Relay States #
     ################
 
-    def _update_relay_state_table(self):
+    def _update_relay_state_table(self) -> None:
         states = ["pre-charge", "air+", "shutdown"]
         for s in states:
             value = self._mcd.bms.relay_state.get(s, '-').title()
@@ -322,7 +322,7 @@ class BmsTable:
                 bg = BmsTable.COLOR_RELAY_OPEN
             self._relay_state_cells[s].config(text=value, background=bg)
 
-    def _create_relay_state_table(self, row):
+    def _create_relay_state_table(self, row: int) -> int:
         # Headers
         self._create_cell(row, 0, "Relay", rs=2)
         self._create_cell(row, 1, "Pre-charge", cs=2)
@@ -334,6 +334,90 @@ class BmsTable:
         self._relay_state_cells["pre-charge"] = self._create_cell(row, 1, "", cs=2)
         self._relay_state_cells["air+"] = self._create_cell(row, 3, "", cs=2)
         self._relay_state_cells["shutdown"] = self._create_cell(row, 5, "", cs=2)
+        row += 1
+
+        return row
+
+    ############
+    # IVT Data #
+    ############
+
+    def _update_IVT_table(self) -> None:
+        resolution = 3
+        self._ivt_data_cells["current"].config(text=round(self._mcd.ivt.current, resolution))
+        self._ivt_data_cells["voltage_1"].config(text=round(self._mcd.ivt.voltage_1, resolution))
+        self._ivt_data_cells["voltage_2"].config(text=round(self._mcd.ivt.voltage_2, resolution))
+        self._ivt_data_cells["voltage_3"].config(text=round(self._mcd.ivt.voltage_3, resolution))
+
+    def _create_IVT_table(self, row: int) -> int:
+        # Headers
+        self._create_cell(row, 0, "IVT Data", rs=2)
+        self._create_cell(row, 1, "U1 [Name]", cs=2)
+        self._create_cell(row, 3, "U2 [Name]", cs=2)
+        self._create_cell(row, 5, "U3 [Name]", cs=2)
+        self._create_cell(row, 7, "I1 [Name]", cs=2)
+        row += 1
+
+        # Body
+        self._ivt_data_cells["current"] = self._create_cell(row, 1, "", cs=2)
+        self._ivt_data_cells["voltage_1"] = self._create_cell(row, 3, "", cs=2)
+        self._ivt_data_cells["voltage_2"] = self._create_cell(row, 5, "", cs=2)
+        self._ivt_data_cells["voltage_3"] = self._create_cell(row, 7, "", cs=2)
+        row += 1
+
+        return row
+    
+    ################
+    # Charger Data #
+    ################
+
+    def _update_charger_data_table(self) -> None:
+        control = "On" if self._mcd.charger.bms_control == 0 else "Off"
+        self._charger_data_cells["control"].config(text=control)
+        self._charger_data_cells["max_current"].config(text=self._mcd.charger.bms_max_current)
+        self._charger_data_cells["max_voltage"].config(text=self._mcd.charger.bms_max_voltage)
+        self._charger_data_cells["output_current"].config(text=self._mcd.charger.ccs_current)
+        self._charger_data_cells["output_voltage"].config(text=self._mcd.charger.ccs_voltage)
+
+        # Status flags
+        status_type = ["hardware_failure", "temperature_protection", "input_voltage", "start_state", "comm_state"]
+        status = self._mcd.charger.ccs_status
+        for s in status_type:
+            self._charger_data_cells[s].config(text=status[s])
+
+    def _create_charger_data_table(self, row: int) -> int:
+        # Header 1
+        self._create_cell(row, 0, "Charger Data", rs=2)
+        self._create_cell(row, 1, "Control (On / Off)", cs=2)
+        self._create_cell(row, 3, "Max Current", cs=2)
+        self._create_cell(row, 5, "Max Voltage", cs=2)
+        self._create_cell(row, 7, "Output Current", cs=2)
+        self._create_cell(row, 9, "Output Voltage", cs=2)
+        row += 1
+
+        # Body 1
+        self._charger_data_cells["control"] = self._create_cell(row, 1, "", cs=2)
+        self._charger_data_cells["max_current"] = self._create_cell(row, 3, "", cs=2)
+        self._charger_data_cells["max_voltage"] = self._create_cell(row, 5, "", cs=2)
+        self._charger_data_cells["output_current"] = self._create_cell(row, 7, "", cs=2)
+        self._charger_data_cells["output_voltage"] = self._create_cell(row, 9, "", cs=2)
+        row += 1
+
+        # Header 2
+        self._create_cell(row, 0, "Charger Status Flags", rs=2)
+        self._create_cell(row, 1, "Hardware Failure", cs=2)
+        self._create_cell(row, 3, "Temperature Protection", cs=2)
+        self._create_cell(row, 5, "Input Voltage", cs=2)
+        self._create_cell(row, 7, "Starting State", cs=2)
+        self._create_cell(row, 9, "Communication State", cs=2)
+        row += 1
+
+        # Body 2
+        self._charger_data_cells["hardware_failure"] = self._create_cell(row, 1, "", cs=2)
+        self._charger_data_cells["temperature_protection"] = self._create_cell(row, 3, "", cs=2)
+        self._charger_data_cells["input_voltage"] = self._create_cell(row, 5, "", cs=2)
+        self._charger_data_cells["start_state"] = self._create_cell(row, 7, "", cs=2)
+        self._charger_data_cells["comm_state"] = self._create_cell(row, 9, "", cs=2)
         row += 1
 
         return row
@@ -357,7 +441,7 @@ class BmsTable:
         cell: Tkinter label object.
     """
     def _create_cell(self, row: int, col: int, txt: str, border: bool = True, 
-                     rs : int = 1, cs : int = 1, wsf : float = 1):
+                     rs : int = 1, cs : int = 1, wsf : float = 1) -> tk.Label:
         bd_width = 1 if border else 0
         bd = 1 if border else 0
         cell = tk.Label(self._frame, text=txt, borderwidth=bd_width, width=int(BmsTable.CELL_WIDTH * wsf * cs), 
@@ -367,11 +451,11 @@ class BmsTable:
             BmsTable.COLOR_DEFAULT = cell.cget("background")
         return cell
     
-    def _create_blank_row(self, row):
+    def _create_blank_row(self, row: int) -> int:
         self._create_cell(row, 0, "", border=False)
         return row + 1
     
-    def _rgb_mix(self, rgb_1: str, rgb_2: str, alpha: float):
+    def _rgb_mix(self, rgb_1: str, rgb_2: str, alpha: float) -> str:
         rgb_1 = (int(x) / 256 for x in self._root.winfo_rgb(rgb_1))
         rgb_2 = (int(x) / 256 for x in self._root.winfo_rgb(rgb_2))
         new_rgb = [int(alpha * c1 + (1 - alpha) * c2) for (c1, c2) in zip(rgb_1, rgb_2)]

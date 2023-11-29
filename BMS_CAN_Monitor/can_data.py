@@ -89,7 +89,7 @@ class ChargerCanData(CanData):
         # BMS -> Charger
         self.bms_max_voltage = 0
         self.bms_max_current = 0
-        self.bms_control = 0
+        self.bms_control = 1
 
         # Charger -> BMS
         self.ccs_voltage = 0
@@ -113,8 +113,8 @@ class ChargerCanData(CanData):
     def ccs_status(self):
         status = [(self._ccs_status >> (7 - i)) & 1 for i in range(8)]
         return {
-            "hardware": status[0],
-            "temperature": status[1],
+            "hardware_failure": status[0],
+            "temperature_protection": status[1],
             "input_voltage": status[2],
             "start_state": status[3],
             "comm_state": status[4]
