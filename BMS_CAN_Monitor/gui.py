@@ -1,5 +1,5 @@
 from can_data import MonitorCanData
-from table import Table
+from bms_table import BmsTable
 import tkinter as tk
 
 class GUI:
@@ -11,5 +11,5 @@ class GUI:
         self.root.geometry(f"{GUI.WIDTH}x{GUI.HEIGHT}")
         self.root.title("BMS Serial Monitor")
 
-        self.table = Table(self.root, mcd)
+        self.table = BmsTable(self.root, mcd)
         self.root.after(0, self.table.update)

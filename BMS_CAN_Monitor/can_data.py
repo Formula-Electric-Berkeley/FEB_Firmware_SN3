@@ -1,17 +1,8 @@
+import accumulator
+from bank_statistic import BankStatistic
 import ctypes
 import feb_can_id
 import PCANBasic
-
-# TODO: Remove
-"""
-Files:
-- can_data.py
-- can_connection.py
-- feb_can_id.py
-- main.py
-
-"""
-# TODO: Remove
 
 class CanData:
     def store_message(self, message: PCANBasic.TPCANMsg) -> None:
@@ -30,26 +21,65 @@ class MonitorCanData(CanData):
 
 
 class BmsCanData(CanData):
+    STATE_MAP = {
+        0: "Pre-charge",
+        1: "Charge",
+        2: "Balance",
+        3: "Drive",
+        4: "Shutdown"
+    }
+
     def __init__(self):
-        self.state = None
-        self.relay_state = None
-        self.voltage = None
-        self.balance = None
-        self.temp = None
-        self.enabled_temp = None
+        self.state = ""
+        self.relay_state = dict()       # str -> str
+        self.voltage = BankStatistic()
+        self.balance = dict()           # bank -> list[bool]
+        self.balance_volt = 0
+        self.temp = BankStatistic()
+        self.enabled_temp = dict()      # bank -> list[bool]
 
     def store_message(self, message: PCANBasic.TPCANMsg) -> None:
         match message.ID.value:
             case feb_can_id.BMS_TEMPERATURE:
-                pass
+                data = list(message.DATA)
+                key = (data[0], data[1])
+                value_upper = -(data[2] & 0x80) + (data[2] & 0x7F)
+                value = ((value_upper << 8) + data[3]) * 10**-4
+                self.temp[key] = value
             case feb_can_id.BMS_ENABLED_TEMPERATURE_SENSORS:
-                pass
+                data = list(message.DATA)
+                key = data[0]
+                raw_value = (data[1] << 16) + (data[2] << 8) + data[3]
+                value = [((raw_value >> i) & 1) == 1 for i in range(accumulator.NUM_CELLS_PER_BANK)]
+                self.enabled_temp[key] = value
             case feb_can_id.BMS_VOLTAGE:
-                pass
+                data = list(message.DATA)
+                key = (data[0], data[1])
+                value = ((data[2] << 8) + data[3]) * 10**-4
+                self.voltage[key] = value
             case feb_can_id.BMS_STATE:
-                pass
+                data = list(message.DATA)
+                self.state = self._state_map(data[0])
+                self.relay_state = self._relay_state_map()
             case feb_can_id.BMS_BALANCE:
-                pass
+                data = list(message.DATA)
+                key = data[0]
+                raw_value = (data[1] << 16) + (data[2] << 8) + data[3]
+                value = [((raw_value >> i) & 1) == 1 for i in range(accumulator.NUM_CELLS_PER_BANK)]
+                self.balance[key] = value
+                self.balance_volt = ((data[4] << 8) + data[5]) * 10**-4
+        
+    def _state_map(self, value : int) -> str:
+        return BmsCanData.STATE_MAP[value]
+    
+    def _relay_state_map(self, value : int) -> dict[str, str]:
+        relay_open = "Open"
+        relay_closed = "Closed"
+        return {
+            "shutdown": relay_closed if ((value >> 2) & 1) == 0 else relay_open,
+            "air+": relay_closed if ((value >> 1) & 1) == 0 else relay_open,
+            "pre-charge": relay_closed if (value & 1) == 0 else relay_open
+        }
 
 class ChargerCanData(CanData):
     VOLT_FACTOR = 0.1

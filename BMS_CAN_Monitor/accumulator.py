@@ -1,6 +1,6 @@
 # Accumulator configuration
-NUM_BANKS = 8
-NUM_CELLS_PER_BANK = 17
+NUM_BANKS = 7
+NUM_CELLS_PER_BANK = 20
 
 # Limits
 CELL_VOLT_MIN = 2.5
