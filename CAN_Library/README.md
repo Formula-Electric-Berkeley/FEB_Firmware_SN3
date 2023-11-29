@@ -181,17 +181,34 @@ Other files:
   <tr>
     <th>Byte</th>
     <th>Value</th>
+    <th>Factor</th>
+    <th>Offset</th>
     <th>Datatype</th>
+    <th>Unit</th>
   </tr>
   <tr>
     <td>0</td>
     <td>Bank [1, 7]</td>
+    <td>1</td>
+    <td>0</td>
     <td>uint8_t</td>
+    <td>-</td>
   </tr>
   <tr>
     <td>1-3</td>
     <td>Cell balance state</td>
+    <td>1</td>
+    <td>0</td>
     <td>-</td>
+    <td>-</td>
+  </tr>
+  <tr>
+    <td>4-5</td>
+    <td>Target voltage</td>
+    <td>10<sup>-4</sup></td>
+    <td>0</td>
+    <td>uint16_t</td>
+    <td>V</td>
   </tr>
 </table>
 
