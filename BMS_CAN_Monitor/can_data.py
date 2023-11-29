@@ -73,8 +73,8 @@ class BmsCanData(CanData):
         return BmsCanData.STATE_MAP[value]
     
     def _relay_state_map(self, value : int) -> dict[str, str]:
-        relay_open = "Open"
-        relay_closed = "Closed"
+        relay_open = "open"
+        relay_closed = "close"
         return {
             "shutdown": relay_closed if ((value >> 2) & 1) == 0 else relay_open,
             "air+": relay_closed if ((value >> 1) & 1) == 0 else relay_open,

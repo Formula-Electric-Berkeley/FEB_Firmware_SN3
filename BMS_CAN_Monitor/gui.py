@@ -11,5 +11,5 @@ class GUI:
         self.root.geometry(f"{GUI.WIDTH}x{GUI.HEIGHT}")
         self.root.title("BMS Serial Monitor")
 
-        self.table = BmsTable(self.root, mcd)
-        self.root.after(0, self.table.update)
+        self.bms_table = BmsTable(self.root, mcd)
+        self.root.after(0, self.bms_table.update)

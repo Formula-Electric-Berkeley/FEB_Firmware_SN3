@@ -3,6 +3,9 @@ from can_data import MonitorCanData
 import tkinter as tk
 from VerticalScrolledFrame import VerticalScrolledFrame
 
+# TODO: Remove
+import random
+
 class BmsTable:
     # Cell size
     CELL_WIDTH = 8
@@ -10,55 +13,43 @@ class BmsTable:
 
     # Colors
     COLOR_DEFAULT = ""
-    COLOR_OUT_OF_RANGE = "#FF0000"
+    COLOR_OUT_OF_RANGE = "#DD0000"
+    COLOR_WARNING = "#F26D21"
+    COLOR_DEVIATION_VOLT = "#00DD00"
+    COLOR_DEVIATION_TEMP = "#DD0000"
+    COLOR_RELAY_OPEN = "#F26D21"
 
-    # Monitor State
+    # Monitor state
     STANDARD_STATE = "standard"
     RANGE_STATE = "range"
     BALANCE_STATE = "balance"
+    DEVIATION_STATE = "deviation"
 
     # Update rate (ms)
     UPDATE_INTERVAL = 1000
 
-    """
-    Atributes:
-        _state_cells [dict]: name [str] -> cell [tk.Label]
-
-        _volt_cells [dict]: (bank [int], cell [int]) -> cell [tk.Label]
-        _temp_cells [dict]: (bank [int], cell [int]) -> cell [tk.Label]
-        _volt_bank_stats_cells [dict]: (bank[int], type [str]) -> cell [tk.Label], processed voltage data for each bank
-        _temp_bank_stats_cells [dict]: (bank[int], type [str]) -> cell [tk.Label], processed temperature data for each bank
-        _volt_stats_cells [dict]: type [str] -> data [float]
-        _temp_stats_cells [dict]: type [str] -> data [float]
-        _relay_state_cells [dict]: type [str] -> cell [tk.Label]
-        _shutdown_state_cells [dict]: type [str] -> cell [tk.Label]
-        _ivt_data_cells [dict]: type [str] -> cell [tk.Label]
-        _charger_data_cells [dict]: type [str] -> cell [tk.Label]
-        _discharge_data_cells [dict]: type [str] -> cell [tk.Label]
-    """
     def __init__(self, root: tk.Tk, mcd: MonitorCanData):
         self._root = root
         self._mcd = mcd
         self._frame = self._create_table_frame()
 
-        # Monitor State
-        self.monitor_state = BmsTable.STANDARD_STATE
+        # Monitor
+        self._monitor_state = BmsTable.STANDARD_STATE
 
         # Cells
-        self._state_cells = dict()
-        self._volt_cells = dict()
-        self._temp_cells = dict()
-        self._volt_bank_stats_cells = dict()
-        self._temp_bank_stats_cells = dict()
-        self._volt_stats_cells = dict()
-        self._temp_stats_cells = dict()
-        self._relay_state_cells = dict()
-        self._shutdown_state_cells = dict()
-        self._ivt_data_cells = dict()
-        self._charger_data_cells = dict()
-        self._cell_balance_data_cells = dict()
+        self._state_cells = dict()              # str -> tk.Label
+        self._volt_cells = dict()               # (bank, cell) -> tk.Label
+        self._temp_cells = dict()               # (bank, cell) -> tk.Label
+        self._volt_bank_stats_cells = dict()    # bank -> dict[str -> tk.Label]
+        self._temp_bank_stats_cells = dict()    # bank -> dict[str -> tk.Label]
+        self._volt_stats_cells = dict()         # str -> tk.Label
+        self._temp_stats_cells = dict()         # str -> tk.Label
+        self._relay_state_cells = dict()        # str -> tk.Label
 
         self._setup()
+
+        # TODO: REMOVE
+        self.test_update()
         self._bind_key_press()
 
     ###############
@@ -66,35 +57,61 @@ class BmsTable:
     ###############
 
     def _bind_key_press(self):
-        self._root.bind("<KeyPress>", self.__key_press)
+        self._root.bind("<KeyPress>", self._key_press)
 
     def _key_press(self, e):
         match e.char:
             case 'r' | 'R':
-                self._range_state = True
+                self._monitor_state = BmsTable.RANGE_STATE
                 self._state_cells["monitor"].config(text="Range")
             case 's' | 'S':
-                self._range_state = False
+                self._monitor_state = BmsTable.STANDARD_STATE
                 self._state_cells["monitor"].config(text="Standard")
+            case 'd' | 'D':
+                self._monitor_state = BmsTable.DEVIATION_STATE
+                self._state_cells["monitor"].config(text="Deviation")
 
     ################
     # Update Table #
     ################
 
-    def update(self):
-        return
+    # TODO: Remove test
+    def test_update(self) -> None:
+        self._mcd.bms.state = "Standard"
 
+        for bank in range(1, accumulator.NUM_BANKS + 1):
+            for cell in range(1, accumulator.NUM_CELLS_PER_BANK + 1):
+                self._mcd.bms.temp[(bank, cell)] = random.random() * 60
+        
+        for bank in range(1, accumulator.NUM_BANKS + 1):
+            for cell in range(1, accumulator.NUM_CELLS_PER_BANK + 1):
+                self._mcd.bms.voltage[(bank, cell)] = random.random() * (4.2 - 2.5) + 2.5
+        
+        relay_open = "open"
+        relay_closed = "close"
+        self._mcd.bms.relay_state = {
+            "shutdown": relay_open,
+            "air+": relay_open,
+            "pre-charge": relay_closed
+        }
+    
+    def update(self) -> None:
         self._update_states_table()
         self._update_volt_temp_table()
         self._update_volt_temp_stats_table()
-        self._update_shutdown_state_table()
         self._update_relay_state_table()
+
+        self._root.after(BmsTable.UPDATE_INTERVAL, self.update)
+
+        return
+        self._update_shutdown_state_table()
+        
         self._update_IVT_table()
         self._update_charger_data_table()
         self._update_cell_balance_data_table()
 
         self._root.after(self.__update_interval, self.update)
-    
+
     ################
     # Create Table #
     ################
@@ -113,25 +130,25 @@ class BmsTable:
         row = self._create_volt_temp_table(row)
         row = self._create_blank_row(row)
         row = self._create_volt_temp_stats_table(row)
-        row = self._create_blank_row(row)
-        row = self._create_shutdown_state_table(row)
+        # row = self._create_blank_row(row)
+        # row = self._create_shutdown_state_table(row)
         row = self._create_blank_row(row)
         row = self._create_relay_state_table(row)
-        row = self._create_blank_row(row)
-        row = self._create_IVT_table(row)
-        row = self._create_blank_row(row)
-        row = self._create_charger_data_table(row)
-        row = self._create_blank_row(row)
-        row = self._create_cell_balance_data_table(row)
-        row = self._create_blank_row(row)
+        # row = self._create_blank_row(row)
+        # row = self._create_IVT_table(row)
+        # row = self._create_blank_row(row)
+        # row = self._create_charger_data_table(row)
+        # row = self._create_blank_row(row)
+        # row = self._create_cell_balance_data_table(row)
+        # row = self._create_blank_row(row)
 
-    #####################
-    # Controller States #
-    #####################
+    ##############################
+    # BMS / Monitor States Table #
+    ##############################
 
     def _update_states_table(self):
-        state = self._mcd.bms.state
-        self._state_cells["bms"].config(text=state)
+        self._state_cells["monitor"].config(text=self._monitor_state.title())
+        self._state_cells["bms"].config(text=self._mcd.bms.state)
 
     def _create_states_table(self, row):
         # Header
@@ -141,71 +158,86 @@ class BmsTable:
         row += 1
 
         # Body
-        self._state_cells["monitor"] = self._create_cell(row, 1, "Standard", cs=2)
+        self._state_cells["monitor"] = self._create_cell(row, 1, "", cs=2)
         self._state_cells["bms"] = self._create_cell(row, 3, "", cs=2)
         row += 1
 
         return row
-    
+
     #######################
     # Volt-Temp Cell Data #
     #######################
 
     def _update_volt_temp_table(self):
+        resolution = 4
+
         # Voltage
-        for bank in range(accumulator.NUM_BANKS):
-            for cell in range(accumulator.NUM_CELLS_PER_BANK):
-                value = self.__serial_data.voltage.get((bank, cell), '-')
+        for bank in range(1, accumulator.NUM_BANKS + 1):
+            for cell in range(1, accumulator.NUM_CELLS_PER_BANK + 1):
+                value = self._mcd.bms.voltage.get((bank, cell), '-')
                 bg = BmsTable.COLOR_DEFAULT
                 if value != '-':
-                    value = round(value, 3)
-                    if self.__range_state and not accumulator.CELL_VOLTAGE_MIN <= value <= accumulator.CELL_VOLTAGE_MAX:
-                        bg = BmsTable.COLOR_OUT_OF_RANGE
-                    elif self.__range_state:
-                        green = int((value - accumulator.CELL_VOLTAGE_MIN) / (accumulator.CELL_VOLTAGE_MAX - accumulator.CELL_VOLTAGE_MIN) * 135 + 120) % 256
-                        rgb = (0, green, 0)
-                        bg = "#%02x%02x%02x" % rgb 
-                self.__volt_cells[(bank, cell)].config(text=value, background=bg)
+                    value = round(value, resolution)
+                    if self._monitor_state == BmsTable.RANGE_STATE:
+                        if value < accumulator.CELL_VOLT_MIN or value > accumulator.CELL_VOLT_MAX:
+                            bg = BmsTable.COLOR_OUT_OF_RANGE
+                    if self._monitor_state == BmsTable.DEVIATION_STATE:
+                        if accumulator.CELL_VOLT_MIN <= value <= accumulator.CELL_VOLT_MAX:
+                            alpha = (value - accumulator.CELL_VOLT_MIN) / accumulator.CELL_VOLT_RANGE
+                            alpha = min(alpha + 0.1, 1)
+                            bg = self._rgb_mix(BmsTable.COLOR_DEVIATION_VOLT, BmsTable.COLOR_DEFAULT, alpha)
+                self._volt_cells[(bank, cell)].config(text=value, background=bg)
 
         # Temperature
-        for bank in range(accumulator.NUM_BANKS):
-            for cell in range(accumulator.NUM_CELLS_PER_BANK):
-                value = self.__serial_data.temperature.get((bank, cell), '-')
+        for bank in range(1, accumulator.NUM_BANKS + 1):
+            for cell in range(1, accumulator.NUM_CELLS_PER_BANK + 1):
+                value = self._mcd.bms.temp.get((bank, cell), '-')
                 bg = BmsTable.COLOR_DEFAULT
                 if value != '-':
-                    value = round(value, 3)
-                    if self.__range_state and not accumulator.CELL_TEMPERATURE_MIN <= value <= accumulator.CELL_TEMPERATURE_MAX:
-                        bg = BmsTable.COLOR_OUT_OF_RANGE
-                self.__temp_cells[(bank, cell)].config(text=value, background=bg)
+                    value = round(value, resolution)
+                    if self._monitor_state == BmsTable.RANGE_STATE:
+                        if value < accumulator.CELL_TEMP_CHARGE_MIN or value > accumulator.CELL_TEMP_DISCHARGE_MAX:
+                            bg = BmsTable.COLOR_OUT_OF_RANGE
+                        elif value > accumulator.CELL_TEMP_CHARGE_MAX:
+                            bg = BmsTable.COLOR_WARNING
+                    if self._monitor_state == BmsTable.DEVIATION_STATE:
+                        if accumulator.CELL_TEMP_CHARGE_MIN <= value <= accumulator.CELL_TEMP_DISCHARGE_MAX:
+                            cell_temp_range = accumulator.CELL_TEMP_DISCHARGE_MAX - accumulator.CELL_TEMP_CHARGE_MIN
+                            alpha = (value - accumulator.CELL_TEMP_CHARGE_MIN) / cell_temp_range
+                            alpha = min(alpha + 0.1, 1)
+                            bg = self._rgb_mix(BmsTable.COLOR_DEVIATION_TEMP, BmsTable.COLOR_DEFAULT, alpha)
+                self._temp_cells[(bank, cell)].config(text=value, background=bg)
 
     def _update_volt_temp_stats_table(self):
+        resolution = 4
+
         # Voltage
-        volt_stats = self.__serial_data.voltage.get_stats()
-        self._volt_stats_cells["mean"].config(text=volt_stats["mean"])
-        self._volt_stats_cells["min"].config(text=volt_stats["min"])
-        self._volt_stats_cells["max"].config(text=volt_stats["max"])
-        self._volt_stats_cells["stdev"].config(text=volt_stats["stdev"])
-        self._volt_stats_cells["range"].config(text=volt_stats["range"])
-        self._volt_stats_cells["sum"].config(text=volt_stats["sum"])
+        volt_stats = self._mcd.bms.voltage.get_stats()
+        self._volt_stats_cells["mean"].config(text=round(volt_stats["mean"], resolution))
+        self._volt_stats_cells["min"].config(text=round(volt_stats["min"], resolution))
+        self._volt_stats_cells["max"].config(text=round(volt_stats["max"], resolution))
+        self._volt_stats_cells["stdev"].config(text=round(volt_stats["stdev"], resolution))
+        self._volt_stats_cells["range"].config(text=round(volt_stats["range"], resolution))
+        self._volt_stats_cells["sum"].config(text=round(volt_stats["sum"], resolution))
 
         # Bank voltage
-        for bank in range(accumulator.NUM_BANKS):
-            bank_volt_stats = self.__serial_data.voltage.get_stats(bank=bank)
-            self._volt_bank_stats_cells[(bank, "mean")].config(text=bank_volt_stats["mean"])
-            self._volt_bank_stats_cells[(bank, "sum")].config(text=bank_volt_stats["sum"])
+        for bank in range(1, accumulator.NUM_BANKS + 1):
+            bank_volt_stats = self._mcd.bms.voltage.get_stats(bank)
+            self._volt_bank_stats_cells[(bank, "mean")].config(text=round(bank_volt_stats["mean"], resolution))
+            self._volt_bank_stats_cells[(bank, "sum")].config(text=round(bank_volt_stats["sum"], resolution))
 
-        # Temperature
-        temp_stats = self.__serial_data.temperature.get_stats()
-        self._temp_stats_cells["mean"].config(text=temp_stats["mean"])
-        self._temp_stats_cells["min"].config(text=temp_stats["min"])
-        self._temp_stats_cells["max"].config(text=temp_stats["max"])
-        self._temp_stats_cells["stdev"].config(text=temp_stats["stdev"])
-        self._temp_stats_cells["range"].config(text=temp_stats["range"])
+        # # Temperature
+        temp_stats = self._mcd.bms.temp.get_stats()
+        self._temp_stats_cells["mean"].config(text=round(temp_stats["mean"], resolution))
+        self._temp_stats_cells["min"].config(text=round(temp_stats["min"], resolution))
+        self._temp_stats_cells["max"].config(text=round(temp_stats["max"], resolution))
+        self._temp_stats_cells["stdev"].config(text=round(temp_stats["stdev"], resolution))
+        self._temp_stats_cells["range"].config(text=round(temp_stats["range"], resolution))
     
-        # Bank temperature
-        for bank in range(accumulator.NUM_BANKS):
-            bank_temp_stats = self._serial_data.temperature.get_stats(bank=bank)
-            self._temp_bank_stats_cells[(bank, "mean")].config(text=bank_temp_stats["mean"])
+        # # Bank temperature
+        for bank in range(1, accumulator.NUM_BANKS + 1):
+            bank_temp_stats = self._mcd.bms.voltage.get_stats(bank)
+            self._temp_bank_stats_cells[(bank, "mean")].config(text=round(bank_temp_stats["mean"], resolution))
 
     def _create_volt_temp_table(self, row):
         # Create header
@@ -224,21 +256,21 @@ class BmsTable:
         for i in range(accumulator.NUM_CELLS_PER_BANK):
             self._create_cell(row, 0, str(i + 1))
             for j in range(accumulator.NUM_BANKS):
-                self._volt_cells[(j, i)] = self._create_cell(row, j * 2 + 1, "")
-                self._temp_cells[(j, i)] = self._create_cell(row, j * 2 + 2, "")
+                self._volt_cells[(j + 1, i + 1)] = self._create_cell(row, j * 2 + 1, "")
+                self._temp_cells[(j + 1, i + 1)] = self._create_cell(row, j * 2 + 2, "")
             row += 1
 
         # Mean
         self._create_cell(row, 0, "Mean")
         for i in range(accumulator.NUM_BANKS):
-            self._volt_bank_stats_cells[(i, "mean")] = self._create_cell(row, i * 2 + 1, "")
-            self._temp_bank_stats_cells[(i, "mean")] = self._create_cell(row, i * 2 + 2, "")
+            self._volt_bank_stats_cells[(i + 1, "mean")] = self._create_cell(row, i * 2 + 1, "")
+            self._temp_bank_stats_cells[(i + 1, "mean")] = self._create_cell(row, i * 2 + 2, "")
         row += 1
 
         # Total
         self._create_cell(row, 0, "Total")
         for i in range(accumulator.NUM_BANKS):
-            self._volt_bank_stats_cells[(i, "sum")] = self._create_cell(row, i * 2 + 1, "")
+            self._volt_bank_stats_cells[(i + 1, "sum")] = self._create_cell(row, i * 2 + 1, "")
             self._create_cell(row, i * 2 + 2, "-")
         row += 1
 
@@ -277,156 +309,31 @@ class BmsTable:
 
         return row
 
-    ###################
-    # Shutdown States #
-    ###################
-
-    def _update_shutdown_state_table(self):
-        states = ["bms", "imd", "tsms"]
-        for s in states:
-            value = self.__serial_data.shutdown_state.get(s, "-")
-            bg = BmsTable.COLOR_DEFAULT if value == 0 else BmsTable.COLOR_OUT_OF_RANGE
-            self.__shutdown_state_cells[s].config(text=value, background=bg)
-
-    def _create_shutdown_state_table(self, row):
-        # Headers
-        self._create_cell(row, 0, "Shutdown", rs=2)
-        self._create_cell(row, 1, "BMS", cs=2)
-        self._create_cell(row, 3, "IMD", cs=2)
-        self._create_cell(row, 5, "TSMS", cs=2)
-        row += 1
-
-        # Body
-        self._shutdown_state_cells["bms"] = self._create_cell(row, 1, "", cs=2)
-        self._shutdown_state_cells["imd"] = self._create_cell(row, 3, "", cs=2)
-        self._shutdown_state_cells["tsms"] = self._create_cell(row, 5, "", cs=2)
-        row += 1
-
-        return row
-    
     ################
     # Relay States #
     ################
 
     def _update_relay_state_table(self):
-        states = ["pre_charge", "air_plus"]
+        states = ["pre-charge", "air+", "shutdown"]
         for s in states:
-            value = self.__serial_data.relay_state.get(s, "-")
-            bg = BmsTable.COLOR_DEFAULT if value == 0 else BmsTable.COLOR_OUT_OF_RANGE
-            self.__relay_state_cells[s].config(text=value, background=bg)
+            value = self._mcd.bms.relay_state.get(s, '-').title()
+            bg = BmsTable.COLOR_DEFAULT
+            if value != '-' and value == "Open":
+                bg = BmsTable.COLOR_RELAY_OPEN
+            self._relay_state_cells[s].config(text=value, background=bg)
 
     def _create_relay_state_table(self, row):
         # Headers
         self._create_cell(row, 0, "Relay", rs=2)
-        self._create_cell(row, 1, "Pre-charge Relay", cs=2)
-        self._create_cell(row, 3, "Air+ Relay", cs=2)
+        self._create_cell(row, 1, "Pre-charge", cs=2)
+        self._create_cell(row, 3, "Air+", cs=2)
+        self._create_cell(row, 5, "Shutdown", cs=2)
         row += 1
 
         # Body
-        self._relay_state_cells["pre_charge"] = self._create_cell(row, 1, "", cs=2)
-        self._relay_state_cells["air_plus"] = self._create_cell(row, 3, "", cs=2)
-        row += 1
-
-        return row
-    
-    ############
-    # IVT Data #
-    ############
-
-    def _update_IVT_table(self):
-        states = ["u1", "u2", "u3", "i1"]
-        for s in states:
-            value = self.__serial_data.ivt_data.get(s, 0)
-            self.__ivt_data_cells[s].config(text=value)
-
-    def _create_IVT_table(self, row):
-        # Headers
-        self._create_cell(row, 0, "IVT Data", rs=2)
-        self._create_cell(row, 1, "U1 [Name]", cs=2)
-        self._create_cell(row, 3, "U2 [Name]", cs=2)
-        self._create_cell(row, 5, "U3 [Name]", cs=2)
-        self._create_cell(row, 7, "I1 [Name]", cs=2)
-        row += 1
-
-        # Body
-        self._ivt_data_cells["u1"] = self._create_cell(row, 1, "", cs=2)
-        self._ivt_data_cells["u2"] = self._create_cell(row, 3, "", cs=2)
-        self._ivt_data_cells["u3"] = self._create_cell(row, 5, "", cs=2)
-        self._ivt_data_cells["i1"] = self._create_cell(row, 7, "", cs=2)
-
-        row += 1
-
-        return row
-
-    ################
-    # Charger Data #
-    ################
-
-    def _update_charger_data_table(self):
-        states = ["state", "max_current", "max_voltage", "output_current", "output_voltage",
-                  "hardware_failure", "temperature_protection", "input_voltage", "starting_state",
-                  "communication_state"]
-        for s in states:
-            value = self.__serial_data.charger_data.get(s, "-")
-            self.__charger_data_cells[s].config(text=value)
-
-    def _create_charger_data_table(self, row):
-        # Header 1
-        self._create_cell(row, 0, "Charger Data", rs=2)
-        self._create_cell(row, 1, "State (On / Off)", cs=2)
-        self._create_cell(row, 3, "Max Current", cs=2)
-        self._create_cell(row, 5, "Max Voltage", cs=2)
-        self._create_cell(row, 7, "Output Current", cs=2)
-        self._create_cell(row, 9, "Output Voltage", cs=2)
-        row += 1
-
-        # Body 1
-        self._charger_data_cells["state"] = self.__create_cell(row, 1, "", cs=2)
-        self._charger_data_cells["max_current"] = self.__create_cell(row, 3, "", cs=2)
-        self._charger_data_cells["max_voltage"] = self.__create_cell(row, 5, "", cs=2)
-        self._charger_data_cells["output_current"] = self.__create_cell(row, 7, "", cs=2)
-        self._charger_data_cells["output_voltage"] = self.__create_cell(row, 9, "", cs=2)
-        row += 1
-
-        # Header 2
-        self._create_cell(row, 0, "Charger Status Flags", rs=2)
-        self._create_cell(row, 1, "Hardware Failure", cs=2)
-        self._create_cell(row, 3, "Temperature Protection", cs=2)
-        self._create_cell(row, 5, "Input Voltage", cs=2)
-        self._create_cell(row, 7, "Starting State", cs=2)
-        self._create_cell(row, 9, "Communication State", cs=2)
-        row += 1
-
-        # Body 2
-        self._charger_data_cells["hardware_failure"] = self._create_cell(row, 1, "", cs=2)
-        self._charger_data_cells["temperature_protection"] = self._create_cell(row, 3, "", cs=2)
-        self._charger_data_cells["input_voltage"] = self._create_cell(row, 5, "", cs=2)
-        self._charger_data_cells["starting_state"] = self._create_cell(row, 7, "", cs=2)
-        self._charger_data_cells["communication_state"] = self._create_cell(row, 9, "", cs=2)
-        row += 1
-
-        return row
-    
-    #####################
-    # Cell Balance Data #
-    #####################
-
-    def _update_cell_balance_data_table(self):
-        states = ["target_voltage", "num_cells_discharging"]
-        for s in states:
-            value = self._serial_data.cell_balance_data.get(s, "-")
-            self._cell_balance_data_cells[s].config(text=value)
-
-    def _create_cell_balance_data_table(self, row):
-        # Headers
-        self._create_cell(row, 0, "Discharge Data", rs=2)
-        self._create_cell(row, 1, "Target Voltage", cs=2)
-        self._create_cell(row, 3, "No. Cells Discharging", cs=2)
-        row += 1
-
-        # Body
-        self._cell_balance_data_cells["target_voltage"] = self._create_cell(row, 1, "", cs=2)
-        self._cell_balance_data_cells["num_cells_discharging"] = self._create_cell(row, 3, "", cs=2)
+        self._relay_state_cells["pre-charge"] = self._create_cell(row, 1, "", cs=2)
+        self._relay_state_cells["air+"] = self._create_cell(row, 3, "", cs=2)
+        self._relay_state_cells["shutdown"] = self._create_cell(row, 5, "", cs=2)
         row += 1
 
         return row
@@ -461,5 +368,17 @@ class BmsTable:
         return cell
     
     def _create_blank_row(self, row):
-        self.__create_cell(row, 0, "", border=False)
+        self._create_cell(row, 0, "", border=False)
         return row + 1
+    
+    def _rgb_mix(self, rgb_1: str, rgb_2: str, alpha: float):
+        rgb_1 = (int(x) / 256 for x in self._root.winfo_rgb(rgb_1))
+        rgb_2 = (int(x) / 256 for x in self._root.winfo_rgb(rgb_2))
+        new_rgb = [int(alpha * c1 + (1 - alpha) * c2) for (c1, c2) in zip(rgb_1, rgb_2)]
+        return self._rgb_dec_to_hex(new_rgb)
+    
+    def _rgb_dec_to_hex(self, dec: tuple[int, int, int]) -> str:
+        return f"#{format(dec[0], '02x')}{format(dec[1], '02x')}{format(dec[2], '02x')}"
+    
+    def _rgb_hex_to_dec(self, hex: str) -> tuple[int, int, int]:
+        return ((int(hex[1:3], 16), int(hex[3:5], 16), int(hex[5:7], 16)))

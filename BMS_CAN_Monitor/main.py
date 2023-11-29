@@ -24,10 +24,15 @@ def main() -> None:
     sigint_handler()
 
 def sigint_handler(signum=None, frame=None) -> None:
-    #  Clean up
-    cc.stop_read_data()
-    cc.disconnect()
-    gui.root.destroy()
+    #  Terminate CAN connection
+    # cc.stop_read_data()
+    # cc.disconnect()
+
+    # Quit GUI
+    try:
+        gui.root.destroy()
+    except:
+        pass
 
     # Exit
     print("\nExiting...")
