@@ -20,13 +20,23 @@
 #define FEB_CAN_ID_IVT_CURRENT_COUNTER 0x527
 #define FEB_CAN_ID_IVT_ENERGY_COUNTER 0x528
 
+// SW
+#define FEB_CAN_ID_SW_ID 0x2
+#define FEB_CAN_ID_SW_READY_TO_DRIVE 0x20
+#define FEB_CAN_ID_SW_COOLANT_PUMP 0x21
+
+// RMS
+#define FEB_CAN_ID_RMS_ID 0xa
+#define FEB_CAN_ID_RMS_VOLTAGE 0xa7
+#define FEB_CAN_ID_RMS_MOTOR 0xa5
+
 // **************************************** Dynamic CAN IDs ****************************************
 
 // BMS
 #define FEB_CAN_ID_BMS_TEMPERATURE 0x0
 #define FEB_CAN_ID_BMS_ENABLED_TEMPERATURE_SENSORS 0x1
-#define FEB_CAN_ID_BMS_VOLTAGE 0x2
-#define FEB_CAN_ID_BMS_STATE 0x3
-#define FEB_CAN_ID_BMS_BALANCE 0x4
+#define FEB_CAN_ID_BMS_VOLTAGE 0x3
+#define FEB_CAN_ID_BMS_STATE 0x4
+#define FEB_CAN_ID_BMS_BALANCE 0x5
 
 #endif /* INC_FEB_CAN_ID_H_ */
