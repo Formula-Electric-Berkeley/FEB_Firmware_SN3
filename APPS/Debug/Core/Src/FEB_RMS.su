@@ -1,0 +1,7 @@
+../Core/Src/FEB_RMS.c:23:6:FEB_RMS_updateTorque	16	static
+../Core/Src/FEB_RMS.c:28:6:FEB_RMS_setTorque	16	static
+../Core/Src/FEB_RMS.c:33:6:FEB_RMS_enable	8	static
+../Core/Src/FEB_RMS.c:38:6:FEB_RMS_disable	8	static
+../Core/Src/FEB_RMS.c:43:6:FEB_RMS_Init	48	static
+../Core/Src/FEB_RMS.c:73:9:FEB_min	16	static
+../Core/Src/FEB_RMS.c:80:10:FEB_getMaxTorque	24	static
