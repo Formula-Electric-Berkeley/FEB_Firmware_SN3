@@ -21,7 +21,6 @@
 #define FEB_CAN_ID_IVT_ENERGY_COUNTER 0x528
 
 // RMS
-#define FEB_CAN_ID_RMS_ID 0xa
 #define FEB_CAN_ID_RMS_VOLTAGE 0xa7
 #define FEB_CAN_ID_RMS_MOTOR 0xa5
 

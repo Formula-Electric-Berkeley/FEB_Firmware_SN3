@@ -20,6 +20,5 @@ IVT Current Counter, 0x527
 IVT Energy Counter, 0x528
 
 // RMS
-RMS ID, 0xA
 RMS Voltage, 0xA7
 RMS Motor, 0xA5
