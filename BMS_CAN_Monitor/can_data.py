@@ -1,6 +1,6 @@
-import accumulator
 from bank_statistic import BankStatistic
 import ctypes
+import constants
 import feb_can_id
 import PCANBasic
 
@@ -19,10 +19,9 @@ class MonitorCanData(CanData):
         self.charger.store_message(message)
         self.ivt.store_message(message)
 
-
 class BmsCanData(CanData):
     STATE_MAP = {
-        0: "Pre-charge",
+        0: "Precharge",
         1: "Charge",
         2: "Balance",
         3: "Drive",
@@ -50,7 +49,7 @@ class BmsCanData(CanData):
                 data = list(message.DATA)
                 key = data[0]
                 raw_value = (data[1] << 16) + (data[2] << 8) + data[3]
-                value = [((raw_value >> i) & 1) == 1 for i in range(accumulator.NUM_CELLS_PER_BANK)]
+                value = [((raw_value >> i) & 1) == 1 for i in range(constants.NUM_CELLS_PER_BANK)]
                 self.enabled_temp[key] = value
             case feb_can_id.BMS_VOLTAGE:
                 data = list(message.DATA)
@@ -65,7 +64,7 @@ class BmsCanData(CanData):
                 data = list(message.DATA)
                 key = data[0]
                 raw_value = (data[1] << 16) + (data[2] << 8) + data[3]
-                value = [((raw_value >> i) & 1) == 1 for i in range(accumulator.NUM_CELLS_PER_BANK)]
+                value = [((raw_value >> i) & 1) == 1 for i in range(constants.NUM_CELLS_PER_BANK)]
                 self.balance[key] = value
                 self.balance_volt = ((data[4] << 8) + data[5]) * 10**-4
         

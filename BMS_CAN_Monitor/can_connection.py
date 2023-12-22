@@ -43,7 +43,7 @@ class CanConnection:
         self._read_thread_running = False
         self._read_thread.join()
 
-    def _read_data(self):
+    def _read_data(self) -> None:
         res = self._pcan.GetValue(CanConnection.CHANNEL, PCANBasic.PCAN_RECEIVE_EVENT)
         if res[0] == PCANBasic.PCAN_ERROR_OK:
             fd = res[1]
@@ -62,7 +62,7 @@ class CanConnection:
     
     # ****************************** Transmit ********************************
 
-    def send_data(self, message: PCANBasic.PCANBasic):
+    def send_data(self, message: PCANBasic.PCANBasic) -> None:
         status = self._pcan.Write(CanConnection.CHANNEL, message)
         if status == PCANBasic.PCAN_ERROR_OK:
             print("STATUS: Message sent")
