@@ -34,11 +34,11 @@ void FEB_Aux_Tester_Init(void) {
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET); //CS3
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET); //CS4
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_SET); //CS5
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET); //CS6
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET); //CS7
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET); //CS8
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET); //CS9
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET); //CS10
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET); //CS6
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_SET); //CS7
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET); //CS8
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_SET); //CS9
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //CS10
 }
 
 // ******************************** Test Voltages ********************************
@@ -65,25 +65,25 @@ void FEB_Aux_Tester_Test_Cell_Voltages(void) {
 	FEB_Aux_Tester_Test_Cell_Voltage(); //Test Cell Voltage
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_SET); //CS5 High
 	CURR_CELL++;
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET); //CS6 Low
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET); //CS6 Low
 	FEB_Aux_Tester_Test_Cell_Voltage(); //Test Cell Voltage
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET); //CS6 High
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET); //CS6 High
 	CURR_CELL++;
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET); //CS7 Low
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_RESET); //CS7 Low
 	FEB_Aux_Tester_Test_Cell_Voltage(); //Test Cell Voltage
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET); //CS7 High
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_SET); //CS7 High
 	CURR_CELL++;
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET); //CS8 Low
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET); //CS8 Low
 	FEB_Aux_Tester_Test_Cell_Voltage(); //Test Cell Voltage
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET); //CS8 High
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET); //CS8 High
 	CURR_CELL++;
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //CS9 Low
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_RESET); //CS9 Low
 	FEB_Aux_Tester_Test_Cell_Voltage(); //Test Cell Voltage
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET); //CS9 High
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_SET); //CS9 High
 	CURR_CELL++;
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //CS10 Low
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET); //CS10 Low
 	FEB_Aux_Tester_Test_Cell_Voltage(); //Test Cell Voltage
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET); //CS10 High
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //CS10 High
 }
 
 void FEB_Aux_Tester_Test_Cell_Voltage(void) {
@@ -107,16 +107,6 @@ void FEB_Aux_Tester_Read_Outputs(void) {
 	    READINGS[i] = adcResultsDMA[0]; //Out 1
 	    READINGS[i + 7] = adcResultsDMA[1]; //Out 2
 	    READINGS[i + 14] = adcResultsDMA[2]; //Out 3
-
-//		if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK) {
-//		    // Read the converted values
-//		    uint8_t reading1 = HAL_ADC_GetValue(&hadc1); //Out 1
-//		    uint8_t reading2 = HAL_ADC_GetValue(&hadc1); //Out 2
-//		    uint8_t reading3 = HAL_ADC_GetValue(&hadc1); //Out 3
-//		    READINGS[i] = reading1;
-//		    READINGS[i + 7] = reading2;
-//		    READINGS[i + 14] = reading3;
-//		}
 	}
 	FEB_Aux_Tester_selectMuxChannel(6); //Select MUX Channel 6
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adcResultsDMA, adcChannelCount); // Start the ADC conversion
@@ -139,30 +129,10 @@ void FEB_Aux_Tester_Validate_Voltage_Reading(void) {
 // ******************************** Test Temperatures ********************************
 
 void FEB_Aux_Tester_Test_Cell_Temps(void) {
-	//Reset arrays
+	//Reset readings
 	for (int i = 0; i < 19; i++) {
 		READINGS[i] = 0;
 	}
-	CURR_CELL = 1;
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET); //SRCLR high
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET); //Shift out 1 bit
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET); //Clock High
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET); //Clock Low
-	FEB_Aux_Tester_Test_Cell_Temp(); //Test first cell
-	CURR_CELL++;
-
-	//Shift 19 times
-	for (int i = 0; i < 19; i++) {
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); //Shift out 0 bit
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET); //Clock High
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET); //Clock Low
-		FEB_Aux_Tester_Test_Cell_Temp(); //Test remaining 19 cells
-		CURR_CELL++;
-	}
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET); //SRCLR Low
-}
-
-void FEB_Aux_Tester_Test_Cell_Temp(void) {
 	for (int i = 0; i < 256; i++) {
 		FEB_Aux_Tester_Set_Potentiometer_Resistance(i);
 		FEB_Aux_Tester_Validate_Temp_Reading();

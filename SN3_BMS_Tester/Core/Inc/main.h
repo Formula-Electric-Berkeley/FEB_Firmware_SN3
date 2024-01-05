@@ -65,6 +65,10 @@ void Error_Handler(void);
 #define Out_3_GPIO_Port GPIOA
 #define AUX_EN_Pin GPIO_PIN_6
 #define AUX_EN_GPIO_Port GPIOA
+#define SPI2_CS11_Pin GPIO_PIN_4
+#define SPI2_CS11_GPIO_Port GPIOC
+#define SPI2_CS10_Pin GPIO_PIN_5
+#define SPI2_CS10_GPIO_Port GPIOC
 #define SPI2_CS3_Pin GPIO_PIN_0
 #define SPI2_CS3_GPIO_Port GPIOB
 #define SPI2_CS4_Pin GPIO_PIN_1
@@ -87,8 +91,6 @@ void Error_Handler(void);
 #define SPI2_CS8_GPIO_Port GPIOA
 #define SPI2_CS9_Pin GPIO_PIN_12
 #define SPI2_CS9_GPIO_Port GPIOA
-#define SPI2_CS10_Pin GPIO_PIN_13
-#define SPI2_CS10_GPIO_Port GPIOA
 #define Start_Pin GPIO_PIN_11
 #define Start_GPIO_Port GPIOC
 #define SPI2_CS1_Pin GPIO_PIN_4
