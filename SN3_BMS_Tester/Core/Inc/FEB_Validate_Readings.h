@@ -1,0 +1,26 @@
+/*
+ * FEB_Validate_Readings.h
+ *
+ *  Created on: Jan 12, 2024
+ *      Author: andyyang
+ */
+
+#ifndef INC_FEB_VALIDATE_READINGS_H_
+#define INC_FEB_VALIDATE_READINGS_H_
+
+// ********************************** Includes **********************************
+
+#include <inttypes.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
+
+#include "bms_hardware.h"
+#include "FEB_LTC6811.h"
+
+
+// ********************************** Functions **********************************
+
+void FEB_Validate_Readings_Validate_Voltages(uint8_t ic, float expected_voltage);
+
+#endif /* INC_FEB_VALIDATE_READINGS_H_ */

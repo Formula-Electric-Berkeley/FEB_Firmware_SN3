@@ -16,7 +16,6 @@ extern SPI_HandleTypeDef hspi2;
 // ******************************** Global Variables ********************************
 
 int CURR_CELL = 0;
-
 const uint8_t AD5243_ADDRESS = 0x2F << 1; //Address of Potentiometer: 0101 1110. Last bit: W bit.
 
 // ******************************** Functions ********************************

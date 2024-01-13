@@ -71,3 +71,15 @@ float FEB_LTC6811_Convert_Voltage(uint16_t value) {
 	return value * 0.0001;
 }
 
+float FEB_LTC6811_Get_Voltage(uint8_t ic, uint8_t cell) {
+	return accumulator.chips[ic].cells[cell].voltage;
+}
+
+void FEB_LTC6811_Clear_Voltage(void) {
+	for (uint8_t ic = 0; ic < TOTAL_IC; ic++) {
+		for (uint8_t cell = 0; cell < CELLS_TO_TEST; cell++) {
+			accumulator.chips[ic].cells[cell].voltage = 0;
+		}
+	}
+}
+

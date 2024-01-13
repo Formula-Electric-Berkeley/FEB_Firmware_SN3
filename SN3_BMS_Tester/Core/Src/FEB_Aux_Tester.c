@@ -16,8 +16,6 @@ const float CELL_MAX_VOLTAGE = 4.5;
 const float CELL_MIN_TEMP_VOLTAGE = 1;
 const float CELL_MAX_TEMP_VOLTAGE = 2.7;
 
-const uint8_t CELL_VOLTAGE_THRESHOLD_mV = 60; //TBD
-const uint8_t CELL_TEMP_THRESHOLD_mV = 30; //TBD
 // ******************************** Functions ********************************
 
 void FEB_Aux_Tester_Test_Aux(void) {
@@ -39,8 +37,8 @@ void FEB_Aux_Tester_Test_Cell_Voltages(void) {
 	for (int cell = 1; cell <= NUM_CELLS; cell++) {
 		for (float voltage = CELL_MIN_VOLTAGE; voltage <= CELL_MAX_VOLTAGE; voltage += 0.1) { //TODO: Figure out how much to increment by
 			FEB_Input_Voltages_Input_Cell_Voltage(cell, voltage);
-			//READ OUTPUTS
-			//VALIDATE OUTPUTS
+			FEB_LTC6811_Poll_Voltage();
+			FEB_Validate_Readings_Validate_Voltages(0, cell); //TODO: Figure out which IC to pass in
 		}
 	}
 }

@@ -76,6 +76,8 @@ void FEB_LTC6811_Start_Cell_ADC_Measurement(void);
 void FEB_LTC6811_Read_Cell_Voltage_Registers(void);
 void FEB_LTC6811_Store_Voltage(void);
 float FEB_LTC6811_Convert_Voltage(uint16_t value);
+float FEB_LTC6811_Get_Voltage(uint8_t ic, uint8_t cell);
+void FEB_LTC6811_Clear_Voltage(void);
 
 #endif /* INC_FEB_LTC6811_H_ */
 

@@ -8,6 +8,7 @@
 #include <stdint.h>
 
 #include "FEB_Input_Voltages.h"
+#include "FEB_LTC6811.h"
 #include "stm32f4xx_hal.h"
 
 // ******************************** Functions ********************************
