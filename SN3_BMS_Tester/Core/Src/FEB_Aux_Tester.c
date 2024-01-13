@@ -8,8 +8,6 @@ extern SPI_HandleTypeDef hspi2;
 // ******************************** Global Variables ********************************
 const uint8_t NUM_CELLS = 10;
 
-const uint8_t AD5243_ADDRESS = 0x2F << 1; //Address of Potentiometer: 0101 1110. Last bit: W bit.
-
 const float CELL_DEFAULT_VOLTAGE = 3.75;
 const float TEMP_DEFAULT_VOLTAGE = 1.75;
 
