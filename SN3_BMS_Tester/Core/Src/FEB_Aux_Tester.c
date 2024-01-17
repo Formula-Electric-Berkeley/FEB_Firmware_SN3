@@ -49,7 +49,7 @@ void FEB_Aux_Tester_Test_Cell_Voltages(void) {
 void FEB_Aux_Tester_Test_Cell_Temps(void) {
 	for (float temp_voltage = CELL_MIN_TEMP_VOLTAGE; temp_voltage <= CELL_MAX_TEMP_VOLTAGE; temp_voltage += 0.1) { //TODO: Figure out how much to increment by
 		FEB_Input_Voltages_Input_Temp_Voltage(temp_voltage);
-		//READ OUTPUTS
+		FEB_LTC6811_Poll_Temperature();
 		//VALIDATE OUTPUTS
 	}
 }

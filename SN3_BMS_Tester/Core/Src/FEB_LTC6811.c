@@ -83,3 +83,77 @@ void FEB_LTC6811_Clear_Voltage(void) {
 	}
 }
 
+
+// ******************************** Read Temp ********************************
+
+void FEB_LTC6811_Poll_Temperature(void) {
+	for (uint8_t channel = 0; channel <= 4; channel++) {
+		FEB_LTC6811_Update_GPIO(channel);
+		FEB_LTC6811_Start_GPIO_ADC_Measurement();
+		FEB_LTC6811_Read_Aux_Voltages();
+		FEB_LTC6811_Store_Temperature(channel);
+	}
+}
+
+void FEB_LTC6811_Update_GPIO(uint8_t channel) {
+	gpioBits_a[0] = 0b1;					// ADC
+	gpioBits_a[1] = 0b1;					// ADC
+	gpioBits_a[2] = (channel >> 0) & 0b1;	// MUX Select
+	gpioBits_a[3] = (channel >> 1) & 0b1;	// MUX Select
+	gpioBits_a[4] = (channel >> 2) & 0b1;	// MUX Select
+    wakeup_sleep(TOTAL_IC);
+    wakeup_idle(TOTAL_IC);
+    LTC6811_wrcfg(TOTAL_IC, accumulator.IC_config);
+}
+
+void FEB_LTC6811_Start_GPIO_ADC_Measurement(void) {
+	wakeup_sleep(TOTAL_IC);
+	LTC6811_adax(ADC_CONVERSION_MODE, AUX_CH_TO_CONVERT);
+	LTC6811_pollAdc();
+}
+
+void FEB_LTC6811_Read_Aux_Voltages() {
+	wakeup_sleep(TOTAL_IC);
+	LTC6811_rdaux(NO_OF_REG, TOTAL_IC, accumulator.IC_config);
+}
+
+void FEB_LTC6811_Store_Temperature(uint8_t channel) {
+	//TODO: Figure out actual cell configuration. Below is just a guess
+	for (uint8_t ic = 0; ic < TOTAL_IC; ic++) {
+		switch (channel) {
+			case 0:
+				accumulator.chips[ic].cells[4].temp = FEB_LTC6811_Convert_Voltage(accumulator.IC_config[ic].aux.a_codes[0]);
+				accumulator.chips[ic].cells[9].temp = FEB_LTC6811_Convert_Voltage(accumulator.IC_config[ic].aux.a_codes[1]);
+				break;
+			case 1:
+				accumulator.chips[ic].cells[3].temp = FEB_LTC6811_Convert_Voltage(accumulator.IC_config[ic].aux.a_codes[0]);
+				accumulator.chips[ic].cells[8].temp = FEB_LTC6811_Convert_Voltage(accumulator.IC_config[ic].aux.a_codes[1]);;
+				break;
+			case 2:
+				accumulator.chips[ic].cells[2].temp = FEB_LTC6811_Convert_Voltage(accumulator.IC_config[ic].aux.a_codes[0]);
+				accumulator.chips[ic].cells[7].temp = FEB_LTC6811_Convert_Voltage(accumulator.IC_config[ic].aux.a_codes[1]);
+				break;
+			case 3:
+				accumulator.chips[ic].cells[1].temp = FEB_LTC6811_Convert_Voltage(accumulator.IC_config[ic].aux.a_codes[0]);
+				accumulator.chips[ic].cells[6].temp = FEB_LTC6811_Convert_Voltage(accumulator.IC_config[ic].aux.a_codes[1]);
+				break;
+			case 4:
+				accumulator.chips[ic].cells[0].temp = FEB_LTC6811_Convert_Voltage(accumulator.IC_config[ic].aux.a_codes[0]);
+				accumulator.chips[ic].cells[5].temp = FEB_LTC6811_Convert_Voltage(accumulator.IC_config[ic].aux.a_codes[1]);
+				break;
+		}
+	}
+}
+
+
+float FEB_LTC6811_Get_Temperature(uint8_t ic, uint8_t cell) {
+	return accumulator.chips[ic].cells[cell].temp;
+}
+
+void FEB_LTC6811_Clear_Temperature(void) {
+	for (uint8_t ic = 0; ic < TOTAL_IC; ic++) {
+		for (uint8_t cell = 0; cell < CELLS_TO_TEST; cell++) {
+			accumulator.chips[ic].cells[cell].temp = 0;
+		}
+	}
+}

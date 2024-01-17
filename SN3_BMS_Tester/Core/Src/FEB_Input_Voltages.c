@@ -30,14 +30,15 @@ void FEB_Input_Voltages_Input_Cell_Voltage(uint8_t cell, float voltage) {
 // ******************************** Test Temperatures ********************************
 
 void FEB_Input_Voltages_Input_Temp_Voltage(uint8_t voltage) {
-	//TODO: Set potentiometer resistance based on Temp LUT
+	//TODO: Set potentiometer resistance based on voltages corresponding
 	FEB_Aux_Tester_Set_Potentiometer_Resistance(voltage);
 }
 
-void FEB_Aux_Tester_Set_Potentiometer_Resistance(uint8_t resistance) {
+void FEB_Aux_Tester_Set_Potentiometer_Resistance(uint8_t voltage) {
+	//TODO: probably want to do the math in here
 	uint8_t buf[2];
 	buf[0] = 0x00; //MSB Low selects channel 1
-	buf[1] = resistance;
+	buf[1] = voltage;
 	HAL_I2C_Master_Transmit(&hi2c1, AD5243_ADDRESS, buf, 2, 100); //Write value to potentiometer
 }
 
