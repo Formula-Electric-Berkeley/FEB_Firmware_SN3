@@ -85,7 +85,7 @@ void FEB_LTC6811_Update_GPIO(uint8_t channel);
 void FEB_LTC6811_Start_GPIO_ADC_Measurement();
 void FEB_LTC6811_Read_Aux_Voltages();
 void FEB_LTC6811_Store_Temperature(uint8_t channel);
-float FEB_LTC6811_Get_Temperature(uint8_t ic, uint8_t cell);
+float FEB_LTC6811_Get_Temperature_Voltage(uint8_t ic, uint8_t cell);
 void FEB_LTC6811_Clear_Temperature(void);
 
 #endif /* INC_FEB_LTC6811_H_ */

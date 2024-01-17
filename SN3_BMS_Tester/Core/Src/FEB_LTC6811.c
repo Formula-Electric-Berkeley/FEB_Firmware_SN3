@@ -146,7 +146,7 @@ void FEB_LTC6811_Store_Temperature(uint8_t channel) {
 }
 
 
-float FEB_LTC6811_Get_Temperature(uint8_t ic, uint8_t cell) {
+float FEB_LTC6811_Get_Temperature_Voltage(uint8_t ic, uint8_t cell) {
 	return accumulator.chips[ic].cells[cell].temp;
 }
 
