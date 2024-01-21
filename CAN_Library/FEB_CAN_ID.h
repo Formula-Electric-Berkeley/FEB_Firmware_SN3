@@ -37,5 +37,6 @@
 #define FEB_CAN_ID_SW_ID 0x5
 #define FEB_CAN_ID_SW_READY_TO_DRIVE 0x6
 #define FEB_CAN_ID_SW_COOLANT_PUMP 0x7
+#define FEB_CAN_ID_SW_EXTRA 0x8
 
 #endif /* INC_FEB_CAN_ID_H_ */
