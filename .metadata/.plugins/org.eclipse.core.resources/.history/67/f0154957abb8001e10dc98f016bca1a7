@@ -1,0 +1,21 @@
+/*
+ * FEB_Main.h
+ *
+ *  Created on: Jan 21, 2024
+ *      Author: viploverahate
+ */
+
+#ifndef INC_FEB_MAIN_H_
+#define INC_FEB_MAIN_H_
+
+//************************* INCLUDES *****************
+#include "stdio.h"
+#include "stdbool.h"
+#include "FEB_CAN.h"
+
+extern TIM_HandleTypeDef htim2;
+
+extern TIM_HandleTypeDef htim13;
+extern TIM_HandleTypeDef htim14;
+
+#endif /* INC_FEB_MAIN_H_ */

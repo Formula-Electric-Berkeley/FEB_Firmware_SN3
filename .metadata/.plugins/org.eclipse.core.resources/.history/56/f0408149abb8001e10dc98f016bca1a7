@@ -1,0 +1,57 @@
+/*
+ * FEB_Main.c
+ *
+ *  Created on: Jan 21, 2024
+ *      Author: viploverahate
+ */
+
+//******************* INCLUDES & EXTERNS ****************
+#include "FEB_Main.h"
+
+
+// *********************** VARIABLES *********************
+static const uint8_t IOEXP2_ADDR = 0b0100001 << 1; // ask aslex what this is
+static const uint8_t VOLUME = 2; // volume of the buzzer (10%)
+static bool Button_Checking = false;
+static bool Button_Timer_Flag = false;
+
+//below is from user2, but needs to be accessed by other functions
+bool ready_to_drive = false;
+bool last_button_state = false;
+bool lock = false;
+
+bool lastButton_4 = 0; // coolant pump
+bool lastButton_5 = 0; // acumulator fans
+bool lastButton_6 = 0; // extra
+bool lock_4 = 0;
+bool lock_5 = 0;
+bool lock_6 = 0;
+bool coolant_pump = 0;
+bool accumulator_fans = 0;
+bool extra = 0;
+
+char buf[128];
+int buf_len;
+//uint8_t data1;
+uint8_t data2;
+HAL_StatusTypeDef ret;
+
+
+//******************  FUNCTIONS ****************************
+
+void FEB_Main_User2(void){
+
+
+	  HAL_TIM_Base_Start_IT(&htim13);
+	  HAL_TIM_Base_Stop_IT(&htim13);
+	  HAL_TIM_Base_Start_IT(&htim14);
+	  HAL_TIM_Base_Stop_IT(&htim14);
+	  Button_Checking = false;
+	  Button_Timer_Flag = false;
+	  // 0% PWM cycle to turnoff buzzer
+	  htim2.Instance->CCR2 = 0;
+	  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
+
+
+	  FEB_CAN_Init(&hcan1, SW_ID);
+}

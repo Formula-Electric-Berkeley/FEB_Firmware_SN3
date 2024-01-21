@@ -1,0 +1,20 @@
+/*
+ * FEB_Main.c
+ *
+ *  Created on: Jan 21, 2024
+ *      Author: viploverahate
+ */
+
+//******************* INCLUDES & EXTERNS ****************
+#include "FEB_Main.h"
+
+
+// *********************** VARIABLES *********************
+static const uint8_t IOEXP2_ADDR = 0b0100001 << 1; // ask aslex what this is
+static const uint8_t VOLUME = 2; // volume of the buzzer (10%)
+static bool Button_Checking = false;
+static bool Button_Timer_Flag = false;
+
+
+//******************  FUNCTIONS ****************************
+
