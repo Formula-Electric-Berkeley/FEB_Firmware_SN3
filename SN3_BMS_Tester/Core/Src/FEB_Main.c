@@ -11,7 +11,7 @@ void FEB_Main_Setup(void) {
 
 void FEB_Main_Loop(void) {
 	//If Start Pressed:
-	if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11) == GPIO_PIN_SET) {
+	if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11) == GPIO_PIN_SET) { //make hardware file to control pins
 		//If Aux:
 		FEB_Aux_Tester_Test_Aux();
 

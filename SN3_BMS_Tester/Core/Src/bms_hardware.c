@@ -62,11 +62,11 @@ void delay_m(uint16_t milli) {
 // ******************** SPI ********************
 
 void cs_low(uint8_t pin) {
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
 }
 
 void cs_high(uint8_t pin) {
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
 }
 
 void spi_write_array(uint8_t len, uint8_t data[]) {

@@ -53,8 +53,8 @@
 // ********************************** Structs **********************************
 
 typedef struct {
-	float temp; //voltage corresponding to temp
-	float voltage; //voltage
+	float temp; //voltage corresponding to temp. //temperature_volt
+	float voltage; //voltage //cell_volt
 } Cell;
 
 typedef struct {

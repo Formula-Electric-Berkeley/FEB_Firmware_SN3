@@ -21,9 +21,11 @@ const uint8_t AD5243_ADDRESS = 0x2F << 1; //Address of Potentiometer: 0101 1110.
 // ******************************** Functions ********************************
 
 void FEB_Input_Voltages_Input_Cell_Voltage(uint8_t cell, float voltage) {
+	uint16_t input = (voltage * (2 << 13) / 5) << 2;
 	char buf[2]; //Buffer for SPI
-	//TODO: Find a way to convert voltage into data to be sent to DAC
-	HAL_SPI_Transmit(&hspi2, (uint8_t *)buf, 1, 100); //Send data to DAC
+	buf[0] = ((uint16_t)i >> 0) & 0xFF;
+	buf[1] = ((uint16_t)i >> 8) & 0xFF;
+	HAL_SPI_Transmit(&hspi2, (uint8_t *)buf, 2, 100); //Send data to DAC
 }
 
 
