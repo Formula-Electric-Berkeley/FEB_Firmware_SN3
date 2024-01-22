@@ -5,19 +5,18 @@
 
 extern CAN_HandleTypeDef hcan1;
 
+
+
 // **************************************** CAN Configuration ****************************************
 
 CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
-//configre this
 
 static CAN_RxHeaderTypeDef FEB_CAN_Rx_Header;
-uint32_t APPS_CAN_ID = 0;
+uint32_t LVPDB_CAN_ID = 0;
 
-uint8_t FEB_CAN_Tx_Data[8];
+uint8_t FEB_CAN_Tx_Data[4];
 //data to configure
-//extern both of these
 
-//make new main.c file
 
 uint8_t FEB_CAN_Rx_Data[8];
 
@@ -45,27 +44,29 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan) {
 		FEB_CAN_APPS_Str_Msg(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);
 		//FEB_SW_APPS_Str_Message(&FEB_CAN_Tx_Header, FEB_CAN_Rx_Data);
 
-		//create files like feb can lvpdb for both apps and SW
-		// Store Message
-        // Function(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);
 	}
 }
 
-void FEB_CAN_Transmit(CAN_HandleTypeDef* hcan) {
+void FEB_CAN_Transmit(CAN_HandleTypeDef* hcan, uint32_t ID, float* current_reading){
 	// Initialize Transmission Header
-	FEB_CAN_Tx_Header.StdId = APPS_CAN_ID;
+	FEB_CAN_Tx_Header.StdId = LVPDB_CAN_ID;
 	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
-	FEB_CAN_Tx_Header.DLC = 8;
+	FEB_CAN_Tx_Header.DLC = 4;
 
 	// Configure FEB_CAN_Tx_Data
     // Write Code Here
-	FEB_CAN_Tx_Data[0] = 0;
-	FEB_CAN_Tx_Data[1] = 0;
-	FEB_CAN_Tx_Data[2] = 0;
-	FEB_CAN_Tx_Data[3] = 0;
 
-	// Delay until mailbox available
+	// convert float to 4 uint8_t
+    uint32_t floatAsUInt32;
+    memcpy(&floatAsUInt32, current_reading, sizeof(float));
+
+    FEB_CAN_Tx_Data[0] = (uint8_t)(floatAsUInt32);
+    FEB_CAN_Tx_Data[1] = (uint8_t)(floatAsUInt32 >> 8);
+    FEB_CAN_Tx_Data[2] = (uint8_t)(floatAsUInt32 >> 16);
+    FEB_CAN_Tx_Data[3] = (uint8_t)(floatAsUInt32 >> 24);
+
+    // Delay until mailbox available
 	while (HAL_CAN_GetTxMailboxesFreeLevel(hcan) == 0) {}
 
 	// Add Tx data to mailbox
@@ -73,6 +74,8 @@ void FEB_CAN_Transmit(CAN_HandleTypeDef* hcan) {
 		// Code Error - Shutdown
 	}
 }
+
+
 
 //// **************************************** Template Code [Other Files] ****************************************
 //

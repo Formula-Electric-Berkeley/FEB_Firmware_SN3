@@ -2,6 +2,10 @@
 
 FEB_CAN_APPS_Message_t FEB_CAN_APPS_Message;
 
+extern CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
+extern uint8_t FEB_CAN_Tx_Data[8];
+extern uint32_t APPS_CAN_ID;
+extern uint32_t FEB_CAN_Tx_Mailbox;
 
 uint8_t FEB_CAN_APPS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
     // For multiple filters, create array of filter IDs and loop over IDs.
@@ -33,6 +37,7 @@ uint8_t FEB_CAN_APPS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, ui
 
 	return filter_bank;
 }
+
 
 void FEB_CAN_APPS_Str_Msg(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_CAN_Rx_Data[]) {
 
