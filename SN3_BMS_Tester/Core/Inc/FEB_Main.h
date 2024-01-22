@@ -5,6 +5,7 @@
 
 #include "FEB_Aux_Tester.h"
 #include "FEB_Daughter_Tester.h"
+#include "FEB_BMS_Tester_Hardware.h"
 
 // ******************************** Functions ********************************
 

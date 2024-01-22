@@ -14,29 +14,41 @@ void FEB_Aux_Tester_Test_Aux(void) {
 }
 
 void FEB_Aux_Tester_Init(void) {
-	//all cs low
-	FEB_Input_Voltages_Input_Cell_Voltage(cell, CELL_DEFAULT_VOLTAGE);
-	FEB_Input_Voltages_Input_Temp_Voltage(TEMP_DEFAULT_VOLTAGE);
+	//set all cells to default values
+	for (uint8_t cell = 0; cell < 10; cell++) {
+		//voltage
+		FEB_BMS_Tester_Hardware_Set_DAC_CS_n(cell, 0); //CS low
+		HAL_Delay(5); //Delay 5ms
+		FEB_Input_Voltages_Input_Cell_Voltage(cell, CELL_DEFAULT_VOLTAGE);
+		HAL_Delay(5); //Delay 5ms
+		FEB_BMS_Tester_Hardware_Set_DAC_CS_n(cell, 0); //CS high
+
+		//temperature
+		FEB_BMS_Tester_Hardware_Configure_MUX(cell);
+		FEB_Input_Voltages_Input_Temp_Voltage(TEMP_DEFAULT_VOLTAGE);
+	}
 }
 
 // ******************************** Test Voltages ********************************
 
 void FEB_Aux_Tester_Test_Cell_Voltages(void) {
 
-	uint8_t curr_cell = 1;
-	for (float voltage = CELL_MIN_VOLTAGE; voltage <= CELL_MAX_VOLTAGE; voltage += 0.1) { //TODO: Figure out how much to increment by
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET); //CS1 Low
-		//add a delay 5 ms
-		FEB_Input_Voltages_Input_Cell_Voltage(curr_cell, voltage);
-		//add a delay 5 ms
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET); //CS1 High
-		FEB_LTC6811_Poll_Voltage();
-		FEB_Validate_Readings_Validate_Voltages(0, voltage, curr_cell); //TODO: Figure out which IC to pass in
+	for (uint8_t curr_cell = 0; curr_cell < NUM_CELLS; curr_cell++) {
+		for (float voltage = CELL_MIN_VOLTAGE; voltage <= CELL_MAX_VOLTAGE; voltage += 0.1) {
+				FEB_BMS_Tester_Hardware_Set_DAC_CS_n(curr_cell, 0); //CS low
+				HAL_Delay(5); //Delay 5ms
+				FEB_Input_Voltages_Input_Cell_Voltage(curr_cell, voltage);
+				HAL_Delay(5); //Delay 5ms
+				FEB_BMS_Tester_Hardware_Set_DAC_CS_n(curr_cell, 0); //CS high
+				FEB_LTC6811_Poll_Voltage();
+				FEB_Validate_Readings_Validate_Voltages(0, voltage, curr_cell);
+			}
+			FEB_BMS_Tester_Hardware_Set_DAC_CS_n(curr_cell, 0); //CS low
+			HAL_Delay(5); //Delay 5ms
+			FEB_Input_Voltages_Input_Cell_Voltage(curr_cell, CELL_DEFAULT_VOLTAGE); //Reset Cell Voltage
+			HAL_Delay(5); //Delay 5ms
+			FEB_BMS_Tester_Hardware_Set_DAC_CS_n(curr_cell, 1); //CS high
 	}
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET); //CS1 Low
-	FEB_Input_Voltages_Input_Cell_Voltage(curr_cell, CELL_DEFAULT_VOLTAGE); //Reset Cell Voltage
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET); //CS1 High
-
 }
 
 
@@ -44,7 +56,7 @@ void FEB_Aux_Tester_Test_Cell_Voltages(void) {
 
 void FEB_Aux_Tester_Test_Cell_Temps(void) {
 	for (uint8_t cell = 0; cell < NUM_CELLS; cell++) {
-		FEB_Aux_Tester_Configure_MUX(cell);
+		FEB_BMS_Tester_Hardware_Configure_MUX(cell);
 		for (float temp_voltage = CELL_MIN_TEMP_VOLTAGE; temp_voltage <= CELL_MAX_TEMP_VOLTAGE; temp_voltage += 0.05) { //TODO: Figure out how much to increment by
 			FEB_Input_Voltages_Input_Temp_Voltage(temp_voltage);
 			FEB_LTC6811_Poll_Temperature();
@@ -53,18 +65,6 @@ void FEB_Aux_Tester_Test_Cell_Temps(void) {
 	}
 }
 
-void FEB_Aux_Tester_Configure_MUX(uint8_t cell) {
-	uint8_t channel = cell;
-	uint8_t select0 = (channel & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET;
-	uint8_t select1 = ((channel >> 1) & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET;
-	uint8_t select2 = ((channel >> 2) & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET;
-	uint8_t select3 = ((channel >> 3) & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET;
-
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, select0);
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, select1);
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, select2);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, select3);
-}
 
 
 
