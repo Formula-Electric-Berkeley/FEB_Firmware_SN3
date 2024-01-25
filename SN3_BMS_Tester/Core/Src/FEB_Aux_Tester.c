@@ -41,6 +41,7 @@ void FEB_Aux_Tester_Test_Cell_Voltages(void) {
 				HAL_Delay(5); //Delay 5ms
 				FEB_BMS_Tester_Hardware_Set_DAC_CS_n(curr_cell, 1); //CS high
 				FEB_LTC6811_Poll_Voltage(); //Poll voltages
+				FEB_LTC6811_Poll_Temperature(); //Poll temperature
 				FEB_Validate_Readings_Validate_Voltages(0, voltage, curr_cell); //IC 0 for pseudo-daughter board
 			}
 			FEB_BMS_Tester_Hardware_Set_DAC_CS_n(curr_cell, 0); //CS low
@@ -59,9 +60,11 @@ void FEB_Aux_Tester_Test_Cell_Temps(void) {
 		FEB_BMS_Tester_Hardware_Configure_MUX(cell);
 		for (float temp_voltage = CELL_MIN_TEMP_VOLTAGE; temp_voltage <= CELL_MAX_TEMP_VOLTAGE; temp_voltage += 0.05) { //TODO: Figure out how much to increment by
 			FEB_Input_Voltages_Input_Temp_Voltage(temp_voltage);
+			FEB_LTC6811_Poll_Voltage(); //Poll voltages
 			FEB_LTC6811_Poll_Temperature(); //Poll temperatures
 			FEB_Validate_Readings_Validate_Temperatures(0, temp_voltage); //IC 0 for pseudo-daughter board
 		}
+		FEB_Input_Voltages_Input_Temp_Voltage(TEMP_DEFAULT_VOLTAGE);
 	}
 }
 

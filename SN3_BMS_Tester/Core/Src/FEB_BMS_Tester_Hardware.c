@@ -108,3 +108,11 @@ bool FEB_BMS_Tester_Hardware_Read_Start() {
 		return false;
 	}
 }
+
+bool FEB_BMS_Tester_Hardware_Read_Mode() {
+	if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_7) == GPIO_PIN_SET) {
+		return true; //daughter
+	} else {
+		return false; //aux
+	}
+}
