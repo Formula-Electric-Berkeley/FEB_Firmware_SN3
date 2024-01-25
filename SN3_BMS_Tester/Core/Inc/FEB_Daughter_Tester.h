@@ -7,6 +7,11 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "FEB_Input_Voltages.h"
+#include "FEB_Validate_Readings.h"
+#include "FEB_LTC6811.h"
+#include "FEB_Constant.h"
+#include "FEB_BMS_Tester_Hardware.h"
 #include "stm32f4xx_hal.h"
 
 // ******************************** Functions ********************************
