@@ -1,4 +1,5 @@
-../Core/Src/FEB_TPS2482.c:3:6:FEB_TPS2482_SETUP	1
-../Core/Src/FEB_TPS2482.c:31:6:FEB_TPS2482_shutdownIfError	4
-../Core/Src/FEB_TPS2482.c:55:6:FEB_TPS2482_pullLowIfOutOfBounds	5
-../Core/Src/FEB_TPS2482.c:82:7:FEB_TPS2482_PollBusCurrent	6
+../Core/Src/FEB_TPS2482.c:23:6:FEB_SETUP_TPS2482	1
+../Core/Src/FEB_TPS2482.c:51:6:FEB_TPS2482_shutdownIfError	4
+../Core/Src/FEB_TPS2482.c:75:6:FEB_TPS2482_pullLowIfOutOfBounds	5
+../Core/Src/FEB_TPS2482.c:102:7:FEB_TPS2482_PollBusCurrent	6
+../Core/Src/FEB_TPS2482.c:123:6:FEB_TPS2482_Poll_Currents	1

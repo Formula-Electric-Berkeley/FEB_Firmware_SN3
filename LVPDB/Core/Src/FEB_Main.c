@@ -1,35 +1,20 @@
 #include "FEB_Main.h"
-#include "stdio.h"
-#include "stdbool.h"
-
 
 extern FEB_CAN_APPS_Message_t FEB_CAN_APPS_Message;
-extern FEB_CAN_SW_Message_t FEB_CAN_SW_Message;
+
 extern I2C_HandleTypeDef hi2c1;
 extern CAN_HandleTypeDef hcan1;
 
-// I2C_HandleTypeDef* hi2c1p;
+extern int LV_ADDR;
+extern int CP_ADDR;
+extern int AF_ADDR;
+extern int EX_ADDR;
 
-/*
- * The LVPDB has multiple TPS chips on the bus. These are the addresses of
- * each of the TPS chips. The naming conventions is as follows:
- * 		LV - Low voltage bus (the main one)
- * 		CP - Coolant pump
- * 		AF - Accumulator fans
- * 		EX - extra radiator fans
- */
-#define LV_ADDR (0b1000000 << 1)
-#define CP_ADDR (0b1000100 << 1)
-#define AF_ADDR (0b1000101 << 1)
-#define EX_ADDR (0b1000001 << 1)
+extern float current_reading;
+extern float ex_current_reading;
+extern float cp_current_reading;
 
-static bool isDriving = false;
-
-float current_reading;
-float ex_current_reading;
-float cp_current_reading;
-float apps_current_reading;
-
+float apps_current_reading; //
 
 void FEB_Main_Setup(void) {
 
@@ -68,62 +53,23 @@ void FEB_Main_Setup(void) {
 	//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);// pull PB5 high to enable accumulator fans
 	//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_SET);// pull PC3 high to enable extra
 
-	FEB_TPS2482_SETUP(&hi2c1, LV_ADDR, CONFIG, MAIN_CAL, UNDERV, LV_LIMIT);
-	FEB_TPS2482_SETUP(&hi2c1, CP_ADDR, CONFIG, CP_CAL, OVERPWR, CP_LIMIT);
-	FEB_TPS2482_SETUP(&hi2c1, AF_ADDR, CONFIG, AF_CAL, OVERPWR, AF_LIMIT);
-	FEB_TPS2482_SETUP(&hi2c1, EX_ADDR, CONFIG, EX_CAL, OVERPWR, EX_LIMIT);
-
-
+	FEB_SETUP_TPS2482(&hi2c1, LV_ADDR, CONFIG, MAIN_CAL, UNDERV, LV_LIMIT);
+	FEB_SETUP_TPS2482(&hi2c1, CP_ADDR, CONFIG, CP_CAL, OVERPWR, CP_LIMIT);
+	FEB_SETUP_TPS2482(&hi2c1, AF_ADDR, CONFIG, AF_CAL, OVERPWR, AF_LIMIT);
+	FEB_SETUP_TPS2482(&hi2c1, EX_ADDR, CONFIG, EX_CAL, OVERPWR, EX_LIMIT);
 }
 
 
 void FEB_Main_Loop(void) {
 
+  FEB_Brake_Light_Control();
 
-  // Brake Light
-  if (FEB_CAN_APPS_Message.brake_pedal > BRAKE_THRE) {
-	  FEB_Brake_Light_On();
-  } else {
-	  FEB_Brake_Light_Off();
-  }
+  FEB_Peripherals_Control();
 
-
-  void Enable_Coolant_Pump();
-  void Disable_Coolant_Pump();
-  void Enable_Accumulator_Fans();
-  void Disable_Accumulator_Fans();
-  void Enable_Extra();
-  void Disable_Extra();
-  // activate peripheral devices if ready to drive
-  if (FEB_CAN_SW_Message.ready_to_drive == 1 && !isDriving) {
-	  isDriving = true;
-	  Enable_Coolant_Pump();
-	  Enable_Accumulator_Fans();
-	  Enable_Extra();
-
-  // de-activate if not ready to drive
-  } else if (FEB_CAN_SW_Message.ready_to_drive == 0 && isDriving) {
-	  isDriving = false;
-	  Disable_Coolant_Pump();
-	  Disable_Accumulator_Fans();
-	  Disable_Extra();
-  }
-
-
-
-  current_reading = FEB_TPS2482_PollBusCurrent(&hi2c1,LV_ADDR+1);
-  ex_current_reading = FEB_TPS2482_PollBusCurrent(&hi2c1,EX_ADDR+1);
-  cp_current_reading = FEB_TPS2482_PollBusCurrent(&hi2c1,CP_ADDR+1);
+  FEB_TPS2482_Poll_Currents();
 
   FEB_CAN_Transmit(&hcan1, LVPDB_LV_CURRENT, &current_reading);
   FEB_CAN_Transmit(&hcan1, LVPDB_EX_CURRENT, &ex_current_reading);
   FEB_CAN_Transmit(&hcan1, LVPDB_CP_CURRENT, &cp_current_reading);
   apps_current_reading = FEB_CAN_APPS_Message.current;
-
-  //make CAN_current file with these functions, one fnction per unqiue transmit
-  //file itself should delare hcan1
-  //configure tx header (check struct to see what to configure)
-  //then send message w/
-
-
 }

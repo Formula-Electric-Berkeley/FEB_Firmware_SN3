@@ -8,12 +8,11 @@ void FEB_Main_Loop(void);
 #include "FEB_CAN.h"
 #include "FEB_CAN_APPS.h"
 #include "FEB_CAN_SW.h"
-#include "stm32f4xx_hal.h"
-#include "FEB_Brake_Pedal.h"
-#include "FEB_GPIO_Sets.h"
-
+#include "FEB_Hardware.h"
 #include "FEB_TPS2482.h"
-#include "stdint.h"
+
+#include <stm32f4xx_hal.h>
+#include <stdint.h>
+#include <stdio.h>
 
 #define SLEEP_TIME 10
-#define BRAKE_THRE 0.2

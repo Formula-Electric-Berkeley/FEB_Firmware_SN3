@@ -1,5 +1,6 @@
-Core/Src/FEB_Brake_Pedal.o: ../Core/Src/FEB_Brake_Pedal.c \
- ../Core/Inc/FEB_Brake_Pedal.h \
+Core/Src/FEB_Hardware.o: ../Core/Src/FEB_Hardware.c \
+ ../Core/Inc/FEB_Hardware.h ../Core/Inc/FEB_CAN_APPS.h \
+ ../Core/Inc/FEB_CAN_ID.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -28,8 +29,11 @@ Core/Src/FEB_Brake_Pedal.o: ../Core/Src/FEB_Brake_Pedal.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
-../Core/Inc/FEB_Brake_Pedal.h:
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
+ ../Core/Inc/FEB_CAN_SW.h
+../Core/Inc/FEB_Hardware.h:
+../Core/Inc/FEB_CAN_APPS.h:
+../Core/Inc/FEB_CAN_ID.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:
@@ -59,3 +63,4 @@ Core/Src/FEB_Brake_Pedal.o: ../Core/Src/FEB_Brake_Pedal.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
+../Core/Inc/FEB_CAN_SW.h:

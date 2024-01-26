@@ -30,8 +30,8 @@ Core/Src/stm32f4xx_hal_msp.o: ../Core/Src/stm32f4xx_hal_msp.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/FEB_CAN_SW.h ../Core/Inc/FEB_Brake_Pedal.h \
- ../Core/Inc/FEB_GPIO_Sets.h ../Core/Inc/FEB_TPS2482.h
+ ../Core/Inc/FEB_CAN_SW.h ../Core/Inc/FEB_Hardware.h \
+ ../Core/Inc/FEB_TPS2482.h
 ../Core/Inc/main.h:
 ../Core/Inc/FEB_Main.h:
 ../Core/Inc/FEB_CAN.h:
@@ -67,6 +67,5 @@ Core/Src/stm32f4xx_hal_msp.o: ../Core/Src/stm32f4xx_hal_msp.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Core/Inc/FEB_CAN_SW.h:
-../Core/Inc/FEB_Brake_Pedal.h:
-../Core/Inc/FEB_GPIO_Sets.h:
+../Core/Inc/FEB_Hardware.h:
 ../Core/Inc/FEB_TPS2482.h:

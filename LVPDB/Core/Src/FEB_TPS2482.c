@@ -1,6 +1,26 @@
 #include "FEB_TPS2482.h"
 
-void FEB_TPS2482_SETUP(I2C_HandleTypeDef *hi2cp, uint8_t DEV_ADDR, uint8_t CONFIG[], uint8_t CAL_REG[], uint8_t ALERT[], uint8_t LIMIT[]) {
+/*
+ * The LVPDB has multiple TPS chips on the bus. These are the addresses of
+ * each of the TPS chips. The naming conventions is as follows:
+ * 		LV - Low voltage bus (the main one)
+ * 		CP - Coolant pump
+ * 		AF - Accumulator fans
+ * 		EX - extra radiator fans
+ */
+
+#define LV_ADDR (0b1000000 << 1) //add these to header file
+#define CP_ADDR (0b1000100 << 1)
+#define AF_ADDR (0b1000101 << 1)
+#define EX_ADDR (0b1000001 << 1)
+
+float current_reading;
+float ex_current_reading;
+float cp_current_reading;
+
+extern I2C_HandleTypeDef hi2c1;
+
+void FEB_SETUP_TPS2482(I2C_HandleTypeDef *hi2cp, uint8_t DEV_ADDR, uint8_t CONFIG[], uint8_t CAL_REG[], uint8_t ALERT[], uint8_t LIMIT[]) {
 	HAL_StatusTypeDef ret;
 	ret = HAL_I2C_Mem_Write(hi2cp, DEV_ADDR, 0x00, 1, CONFIG, 2, HAL_MAX_DELAY); // configure
 //	if (ret != HAL_OK) {
@@ -99,4 +119,18 @@ float FEB_TPS2482_PollBusCurrent(I2C_HandleTypeDef * hi2c, uint8_t DEV_ADDR){
 
 	return returnVal;
 }
+
+void FEB_TPS2482_Poll_Currents(){
+	current_reading = FEB_TPS2482_PollBusCurrent(&hi2c1,LV_ADDR+1);
+	ex_current_reading = FEB_TPS2482_PollBusCurrent(&hi2c1,EX_ADDR+1);
+	cp_current_reading = FEB_TPS2482_PollBusCurrent(&hi2c1,CP_ADDR+1);
+}
+
+
+
+
+
+
+
+
 
