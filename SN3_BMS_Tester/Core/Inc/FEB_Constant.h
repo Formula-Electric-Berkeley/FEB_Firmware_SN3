@@ -22,4 +22,9 @@
 #define CELL_VOLTAGE_THRESHOLD_mV 60 //TODO: TBD
 #define CELL_TEMP_THRESHOLD_mV 30 //TODO: TBD
 
+#define AUX_TESTER_IC 0
+#define DAUGHTER_TESTER_IC 1
+
+//all start with FEB_Constant
+
 #endif /* INC_FEB_CONSTANT_H_ */

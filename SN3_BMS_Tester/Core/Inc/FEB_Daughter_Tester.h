@@ -17,6 +17,7 @@
 // ******************************** Functions ********************************
 
 void FEB_Daughter_Tester_Init(void);
+void FEB_Daughter_Tester_Test_Daughter(void);
 void FEB_Daughter_Tester_Test_Cell_Voltages(void);
 void FEB_Daughter_Tester_Test_Cell_Temps(void);
 

@@ -28,7 +28,7 @@ void FEB_Validate_Readings_Validate_Voltages(uint8_t ic, float expected_voltage,
 			float voltage_threshold_low = expected_voltage - CELL_VOLTAGE_THRESHOLD_mV * 0.001;
 			if (polled_voltage > voltage_threshold_high || polled_voltage < voltage_threshold_low) {
 				char errmsg[256];
-				sprintf(errmsg, "Cell %d. Expected voltage: %f, actual voltage: %f\n", cell, expected_voltage, polled_voltage);
+				sprintf(errmsg, "Cell %d. Expected voltage: %f, actual voltage: %f\n", cell, expected_voltage, polled_voltage); //TODO: add which ic is being read from
 				HAL_UART_Transmit(&huart2, (uint8_t*) errmsg, strlen(errmsg), 100);
 			}
 		} else {
