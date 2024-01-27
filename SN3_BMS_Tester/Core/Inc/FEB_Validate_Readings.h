@@ -23,7 +23,7 @@
 // ********************************** Functions **********************************
 
 void FEB_Validate_Readings_Validate_Voltages(uint8_t ic, float expected_voltage, uint8_t curr_cell);
-void FEB_Validate_Readings_Validate_Temperatures(uint8_t ic, float expected_voltage);
-
+void FEB_Validate_Readings_Validate_Temperatures(uint8_t ic, float expected_voltage, uint8_t cell);
+void FEB_Validate_Readings_Validate_Cell(uint8_t cell, float expected_voltage, float polled_voltage, float threshold_high, float threshold_low);
 
 #endif /* INC_FEB_VALIDATE_READINGS_H_ */

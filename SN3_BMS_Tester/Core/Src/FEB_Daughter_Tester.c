@@ -62,7 +62,7 @@ void FEB_Daughter_Tester_Test_Cell_Temps(void) {
 			FEB_Input_Voltages_Input_Temp_Voltage(temp_voltage);
 			FEB_LTC6811_Poll_Temperature(); //Poll voltage
 			FEB_LTC6811_Poll_Temperature(); //Poll temperature
-			FEB_Validate_Readings_Validate_Temperatures(FEB_CONSTANT_DAUGHTER_TESTER_IC, temp_voltage); //IC for daughter board
+			FEB_Validate_Readings_Validate_Temperatures(FEB_CONSTANT_DAUGHTER_TESTER_IC, temp_voltage, cell); //IC for daughter board
 		}
 		FEB_Input_Voltages_Input_Temp_Voltage(FEB_CONSTANT_TEMP_DEFAULT_VOLTAGE);
 	}
