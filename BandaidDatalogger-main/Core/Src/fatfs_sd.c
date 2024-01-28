@@ -7,8 +7,6 @@
 #include "diskio.h"
 #include "fatfs_sd.h"
 
-
-
 uint16_t Timer1, Timer2;					/* 1ms Timer Counter */
 
 static volatile DSTATUS Stat = STA_NOINIT;	/* Disk Status */

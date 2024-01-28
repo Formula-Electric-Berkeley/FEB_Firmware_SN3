@@ -13,6 +13,12 @@
   * in the root directory of this software component.
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
+  *
+  *SD CARD PINOUTS
+  *SCK - PA5
+  *MISO - PA6
+  *MOSI - PA7
+  *CS - PC4
   ******************************************************************************
   */
 /* USER CODE END Header */
@@ -23,8 +29,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "fatfs_sd.h"
-#include "string.h"
-
+#include <string.h>
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -39,11 +45,12 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-UINT br, bw;  // File read/write count
 
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+CAN_HandleTypeDef hcan1;
+
 SPI_HandleTypeDef hspi1;
 
 UART_HandleTypeDef huart2;
@@ -55,42 +62,53 @@ UART_HandleTypeDef huart2;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_USART2_UART_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_USART2_UART_Init(void);
+static void MX_CAN1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-FATFS fs; //file system
-FIL fil; // file
-FRESULT fresult; //to store the result
-char buffer[1024]; //to store data
 
-/* capacity related variables*/
+FATFS fs;//file system
+FIL fil; //file
+FRESULT fres;//store result
+
+UINT br,bw; //file read/write count
+
+char buffer[1024]; // store data
+CircularBuffer* FEBBuffer;
+
+
+//Capacity related stuff
 FATFS *pfs;
 DWORD fre_clust;
-uint32_t total, free_space;
+uint32_t totalSpace, freeSpace;
 
-/* to send the data to the uart*/
+
 void send_uart(char *string){
 	uint8_t len = strlen(string);
-	HAL_UART_Transmit(&huart2, (uint8_t *) string, len, 2000); //transmit in block mode
+	HAL_UART_Transmit(&huart2, (uint8_t *)string, len, 2000);
 }
-
-/* to find the size of data in the buffer*/
-int bufsize (char *buf){
+// gets the size of the buffer
+int bufsize(char *buf){
 	int i = 0;
-	while(*buf++ != '\0') i++;
+	while (*buf++ != '\0') i++;
 	return i;
 }
-
-void bufclear(void){ //clear buffer
-	for(int i = 0; i<1024; i++){
+void bufclear(void){
+	for(int i = 0; i<1024; i++ ){
 		buffer[i] = '\0';
 	}
 }
+
+
+
+
+
+
 /* USER CODE END 0 */
 
 /**
@@ -100,6 +118,7 @@ void bufclear(void){ //clear buffer
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	FEBBuffer = (CircularBuffer*)malloc(sizeof(CircularBuffer));
 
   /* USER CODE END 1 */
 
@@ -121,136 +140,53 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART2_UART_Init();
   MX_SPI1_Init();
   MX_FATFS_Init();
+  MX_USART2_UART_Init();
+  MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
+  fres = f_mount(&fs, "", 0);
+  if (fres != FR_OK) send_uart ("error in mounting SD Card...\n");
+  else send_uart("SD Card mounted successfully...");
 
-  /*Mount SD Card*/
-  fresult = f_mount(&fs, "", 0);
-  if(fresult != FR_OK) send_uart("error in mounting SD CARD...\n");
-  else send_uart("SD CARD mounted succesfully...\n");
+  f_getfree("", &fre_clust, &pfs);
 
-  /*************** Card capacity details ********************/
+  totalSpace = (uint32_t)((pfs->n_fatent - 2) * pfs->csize * 0.5);
+  sprintf (buffer, "SD CARD Total Size: \t%lu\n", totalSpace);
+  send_uart(buffer);
+  bufclear();
+  freeSpace = (uint32_t)(fre_clust * pfs->csize * 0.5);
+  sprintf (buffer, "SD CARD Free Space: \t%lu\n",freeSpace);
+  send_uart(buffer);
 
-    /* Check free space */
-    f_getfree("", &fre_clust, &pfs);
+  //Open file to write/create a file it doesn't exist
+  fres = f_open(&fil, "file1.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
 
-   	total = (uint32_t)((pfs->n_fatent - 2) * pfs->csize * 0.5);
-   	sprintf (buffer, "SD CARD Total Size: \t%lu\n",total);
-   	send_uart(buffer);
-   	bufclear();
-   	free_space = (uint32_t)(fre_clust * pfs->csize * 0.5);
-   	sprintf (buffer, "SD CARD Free Space: \t%lu\n\n",free_space);
-   	send_uart(buffer);
+  // Writing text
+  fres = f_puts("This data is from the First FILE\n\n", &fil);
 
+  send_uart ("File1.txt created and the data is written \n");
 
+  //Close file
+  fres = f_close(&fil);
 
-  /************* The following operation is using PUTS and GETS *********************/
+ //Open file to read
+  fres = f_open(&fil, "file1.txt", FA_READ);
 
-   	/* Open file to write/ create a file if it doesn't exist */
-   	fresult = f_open(&fil, "file1.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
+  //Read string from the file
+  f_gets(buffer, sizeof(buffer), &fil);
 
-   	/* Writing text */
-   	f_puts("This data is from the FILE1.txt. And it was written using ...f_puts... ", &fil);
+  send_uart(buffer);
 
-  	/* Close file */
-   	fresult = f_close(&fil);
+  //Close file
+  f_close(&fil);
 
-   	if (fresult == FR_OK)send_uart ("File1.txt created and the data is written \n");
+  bufclear();
 
-   	/* Open file to read */
-   	fresult = f_open(&fil, "file1.txt", FA_READ);
+  /* UART testing */
+  uint8_t data[20];
 
-   	/* Read string from the file */
-   	f_gets(buffer, f_size(&fil), &fil);
-
-   	send_uart("File1.txt is opened and it contains the data as shown below\n");
-   	send_uart(buffer);
-   	send_uart("\n\n");
-
-   	/* Close file */
-   	f_close(&fil);
-
-   	bufclear();
-
-	/**************** The following operation is using f_write and f_read **************************/
-
-  	/* Create second file with read write access and open it */
-  	fresult = f_open(&fil, "file2.txt", FA_CREATE_ALWAYS | FA_WRITE);
-
-  	/* Writing text */
-  	strcpy (buffer, "This is File2.txt, written using ...f_write... and it says Hello from World\n");
-
-  	fresult = f_write(&fil, buffer, bufsize(buffer), &bw);
-
-  	send_uart ("File2.txt created and data is written\n");
-
-  	/* Close file */
-  	f_close(&fil);
-
-
-
-  	// clearing buffer to show that result obtained is from the file
-  	bufclear();
-
-  	/* Open second file to read */
-  	fresult = f_open(&fil, "file2.txt", FA_READ);
-  	if (fresult == FR_OK)send_uart ("file2.txt is open and the data is shown below\n");
-
-  	/* Read data from the file
-  	 * Please see the function details for the arguments */
-  	f_read (&fil, buffer, f_size(&fil), &br);
-  	send_uart(buffer);
-  	send_uart("\n\n");
-
-  	/* Close file */
-  	f_close(&fil);
-
-  	bufclear();
-
-  	/*********************UPDATING an existing file ***************************/
-
-  	  	/* Open the file with write access */
-  	  	fresult = f_open(&fil, "file2.txt", FA_OPEN_EXISTING | FA_READ | FA_WRITE);
-
-  	  	/* Move to offset to the end of the file */
-  	  	fresult = f_lseek(&fil, f_size(&fil));
-
-  	  	if (fresult == FR_OK)send_uart ("About to update the file2.txt\n");
-
-  	  	/* write the string to the file */
-  	  	fresult = f_puts("This is updated data and it should be in the end", &fil);
-
-  	  	f_close (&fil);
-
-  	  	bufclear();
-
-  	  	/* Open to read the file */
-  	  	fresult = f_open (&fil, "file2.txt", FA_READ);
-
-  	  	/* Read string from the file */
-  	  	fresult = f_read (&fil, buffer, f_size(&fil), &br);
-  	  	if (fresult == FR_OK)send_uart ("Below is the data from updated file2.txt\n");
-  	  	send_uart(buffer);
-  	  	send_uart("\n\n");
-
-  	  	/* Close file */
-  	  	f_close(&fil);
-
-  	  	bufclear();
-
-  	  /*************************REMOVING FILES FROM THE DIRECTORY ****************************/
-
-  	    	fresult = f_unlink("/file1.txt");
-  	    	if (fresult == FR_OK) send_uart("file1.txt removed successfully...\n");
-
-  	    	fresult = f_unlink("/file2.txt");
-  	    	if (fresult == FR_OK) send_uart("file2.txt removed successfully...\n");
-
-  	    	/* Unmount SDCARD */
-  	    	fresult = f_mount(NULL, "/", 1);
-  	    	if (fresult == FR_OK) send_uart ("SD CARD UNMOUNTED successfully...\n");
+  FEB_circBuf_init(FEBBuffer);
 
   /* USER CODE END 2 */
 
@@ -258,6 +194,11 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  //FEB_circBuf_write(&FEBBuffer, FEB_CAN_Receive() );
+	  strcpy((char*)data,"Hello!\r\n");
+
+	  HAL_UART_Transmit(&huart2, data, strlen((char*)data), HAL_MAX_DELAY);
+	  HAL_Delay(300);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -282,13 +223,12 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 72;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 4;
+  RCC_OscInitStruct.PLL.PLLN = 80;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 2;
   RCC_OscInitStruct.PLL.PLLR = 2;
@@ -304,12 +244,49 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief CAN1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_CAN1_Init(void)
+{
+
+  /* USER CODE BEGIN CAN1_Init 0 */
+
+  /* USER CODE END CAN1_Init 0 */
+
+  /* USER CODE BEGIN CAN1_Init 1 */
+
+  /* USER CODE END CAN1_Init 1 */
+  hcan1.Instance = CAN1;
+  hcan1.Init.Prescaler = 16;
+  hcan1.Init.Mode = CAN_MODE_NORMAL;
+  hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_1TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
+  hcan1.Init.TimeTriggeredMode = DISABLE;
+  hcan1.Init.AutoBusOff = DISABLE;
+  hcan1.Init.AutoWakeUp = DISABLE;
+  hcan1.Init.AutoRetransmission = DISABLE;
+  hcan1.Init.ReceiveFifoLocked = DISABLE;
+  hcan1.Init.TransmitFifoPriority = DISABLE;
+  if (HAL_CAN_Init(&hcan1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN CAN1_Init 2 */
+
+  /* USER CODE END CAN1_Init 2 */
+
 }
 
 /**
@@ -397,17 +374,17 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
 
-  /*Configure GPIO pin : PB0 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0;
+  /*Configure GPIO pin : PC4 */
+  GPIO_InitStruct.Pin = GPIO_PIN_4;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
