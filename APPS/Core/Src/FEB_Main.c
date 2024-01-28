@@ -41,7 +41,7 @@ void FEB_Main_User3(void){
 			  RMSControl.enabled = 1;
 		  }
 	  } else {
-		  normalized_acc = FEB_Normalized_Acc_Pedals();
+		  // normalized_acc = FEB_Normalized_Acc_Pedals(); redundant
 		  normalized_acc = 0.0;
 		  RMSControl.enabled = 0;
 	  }
