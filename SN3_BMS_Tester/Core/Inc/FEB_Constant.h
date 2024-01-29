@@ -25,6 +25,9 @@
 #define FEB_CONSTANT_AUX_TESTER_IC 0
 #define FEB_CONSTANT_DAUGHTER_TESTER_IC 1
 
+#define FEB_CONSTANT_DAUGHTER_MODE true
+#define FEB_CONSTANT_AUX_MODE false
+
 //all start with FEB_Constant
 
 #endif /* INC_FEB_CONSTANT_H_ */

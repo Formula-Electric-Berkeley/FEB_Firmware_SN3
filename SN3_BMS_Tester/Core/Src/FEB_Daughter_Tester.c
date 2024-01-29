@@ -33,22 +33,22 @@ void FEB_Daughter_Tester_Init(void) {
 
 void FEB_Daughter_Tester_Test_Cell_Voltages(void) {
 
-	for (uint8_t curr_cell = 0; curr_cell < FEB_CONSTANT_NUM_CELLS; curr_cell++) {
+	for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_CELLS; cell++) {
 		for (float voltage = FEB_CONSTANT_CELL_MIN_VOLTAGE; voltage <= FEB_CONSTANT_CELL_MAX_VOLTAGE; voltage += 0.1) {
-				FEB_BMS_Tester_Hardware_Set_DAC_CS_n(curr_cell, false); //CS low
+				FEB_BMS_Tester_Hardware_Set_DAC_CS_n(cell, false); //CS low
 				HAL_Delay(5); //Delay 5ms
-				FEB_Input_Voltages_Input_Cell_Voltage(curr_cell, voltage);
+				FEB_Input_Voltages_Input_Cell_Voltage(cell, voltage);
 				HAL_Delay(5); //Delay 5ms
-				FEB_BMS_Tester_Hardware_Set_DAC_CS_n(curr_cell, true); //CS high
+				FEB_BMS_Tester_Hardware_Set_DAC_CS_n(cell, true); //CS high
 				FEB_LTC6811_Poll_Voltage(); //Poll voltage
 				FEB_LTC6811_Poll_Temperature(); //Poll temperature
-				FEB_Validate_Readings_Validate_Voltages(FEB_CONSTANT_DAUGHTER_TESTER_IC, voltage, curr_cell); //IC for daughter board
+				FEB_Validate_Readings_Validate_Voltages(FEB_CONSTANT_DAUGHTER_TESTER_IC, voltage, cell); //IC for daughter board
 			}
-			FEB_BMS_Tester_Hardware_Set_DAC_CS_n(curr_cell, false); //CS low
+			FEB_BMS_Tester_Hardware_Set_DAC_CS_n(cell, false); //CS low
 			HAL_Delay(5); //Delay 5ms
-			FEB_Input_Voltages_Input_Cell_Voltage(curr_cell, FEB_CONSTANT_CELL_DEFAULT_VOLTAGE); //Reset Cell Voltage
+			FEB_Input_Voltages_Input_Cell_Voltage(cell, FEB_CONSTANT_CELL_DEFAULT_VOLTAGE); //Reset Cell Voltage
 			HAL_Delay(5); //Delay 5ms
-			FEB_BMS_Tester_Hardware_Set_DAC_CS_n(curr_cell, true); //CS high
+			FEB_BMS_Tester_Hardware_Set_DAC_CS_n(cell, true); //CS high
 	}
 }
 
@@ -64,7 +64,7 @@ void FEB_Daughter_Tester_Test_Cell_Temps(void) {
 			FEB_LTC6811_Poll_Temperature(); //Poll temperature
 			FEB_Validate_Readings_Validate_Temperatures(FEB_CONSTANT_DAUGHTER_TESTER_IC, temp_voltage, cell); //IC for daughter board
 		}
-		FEB_Input_Voltages_Input_Temp_Voltage(FEB_CONSTANT_TEMP_DEFAULT_VOLTAGE);
+		FEB_Input_Voltages_Input_Temp_Voltage(FEB_CONSTANT_TEMP_DEFAULT_VOLTAGE); //Reset temp voltage
 	}
 }
 

@@ -26,11 +26,11 @@ void FEB_Validate_Readings_Validate_Voltages(uint8_t ic, float expected_voltage,
 		if (curr_cell == cell) {
 			float voltage_threshold_high = expected_voltage + FEB_CONSTANT_CELL_VOLTAGE_THRESHOLD_mV * 0.001;
 			float voltage_threshold_low = expected_voltage - FEB_CONSTANT_CELL_VOLTAGE_THRESHOLD_mV * 0.001;
-			FEB_Validate_Readings_Validate_Cell(cell, expected_voltage, polled_voltage, voltage_threshold_high, voltage_threshold_low);
+			FEB_Validate_Readings_Validate_Cell(ic, cell, expected_voltage, polled_voltage, voltage_threshold_high, voltage_threshold_low);
 		} else {
 			float voltage_threshold_high = FEB_CONSTANT_CELL_DEFAULT_VOLTAGE + FEB_CONSTANT_CELL_VOLTAGE_THRESHOLD_mV * 0.001;
 			float voltage_threshold_low = FEB_CONSTANT_CELL_DEFAULT_VOLTAGE - FEB_CONSTANT_CELL_VOLTAGE_THRESHOLD_mV * 0.001;
-			FEB_Validate_Readings_Validate_Cell(cell, expected_voltage, polled_voltage, voltage_threshold_high, voltage_threshold_low);
+			FEB_Validate_Readings_Validate_Cell(ic, cell, expected_voltage, polled_voltage, voltage_threshold_high, voltage_threshold_low);
 		}
 
 	}
@@ -43,20 +43,20 @@ void FEB_Validate_Readings_Validate_Temperatures(uint8_t ic, float expected_temp
 		if (curr_cell == cell) {
 			float temp_voltage_threshold_high = expected_temperature_voltage + FEB_CONSTANT_CELL_TEMP_THRESHOLD_mV * 0.001;
 			float temp_voltage_threshold_low = expected_temperature_voltage - FEB_CONSTANT_CELL_TEMP_THRESHOLD_mV * 0.001;
-			FEB_Validate_Readings_Validate_Cell(cell, expected_temperature_voltage, polled_temperature_voltage, temp_voltage_threshold_high, temp_voltage_threshold_low);
+			FEB_Validate_Readings_Validate_Cell(ic, cell, expected_temperature_voltage, polled_temperature_voltage, temp_voltage_threshold_high, temp_voltage_threshold_low);
 		} else {
 			float temp_voltage_threshold_high = FEB_CONSTANT_TEMP_DEFAULT_VOLTAGE + FEB_CONSTANT_CELL_TEMP_THRESHOLD_mV * 0.001;
 			float temp_voltage_threshold_low = FEB_CONSTANT_TEMP_DEFAULT_VOLTAGE  - FEB_CONSTANT_CELL_TEMP_THRESHOLD_mV * 0.001;
-			FEB_Validate_Readings_Validate_Cell(cell, expected_temperature_voltage, polled_temperature_voltage, temp_voltage_threshold_high, temp_voltage_threshold_low);
+			FEB_Validate_Readings_Validate_Cell(ic, cell, expected_temperature_voltage, polled_temperature_voltage, temp_voltage_threshold_high, temp_voltage_threshold_low);
 		}
 
 	}
 }
 
-void FEB_Validate_Readings_Validate_Cell(uint8_t cell, float expected_voltage, float polled_voltage, float threshold_high, float threshold_low) {
+void FEB_Validate_Readings_Validate_Cell(uint8_t ic, uint8_t cell, float expected_voltage, float polled_voltage, float threshold_high, float threshold_low) {
 	if (polled_voltage > threshold_high || polled_voltage < threshold_low) {
 		char errmsg[256];
-		sprintf(errmsg, "Cell %d. Expected Voltage: %f, Actual Voltage: %f\n", cell, expected_voltage, polled_voltage); //TODO: add which ic is being read from
+		sprintf(errmsg, "Cell: %d. IC: %d. Expected Voltage: %f, Actual Voltage: %f\n", cell, ic, expected_voltage, polled_voltage);
 		HAL_UART_Transmit(&huart2, (uint8_t*) errmsg, strlen(errmsg), 100);
 	}
 }
