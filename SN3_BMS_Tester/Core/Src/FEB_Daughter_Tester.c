@@ -11,6 +11,7 @@ void FEB_Daughter_Tester_Test_Daughter(void) {
 	FEB_Daughter_Tester_Init();
 	FEB_Daughter_Tester_Test_Cell_Voltages(); //Test cell voltages
 	FEB_Daughter_Tester_Test_Cell_Temps(); //Test cell temperatures
+	FEB_Daughter_Tester_Test_Discharge(); //Test discharge
 }
 
 void FEB_Daughter_Tester_Init(void) {
@@ -70,6 +71,18 @@ void FEB_Daughter_Tester_Test_Cell_Temps(void) {
 		FEB_Input_Voltages_Input_Temp_Voltage(FEB_CONSTANT_TEMP_DEFAULT_VOLTAGE); //Reset temp voltage
 	}
 	FEB_BMS_Tester_Hardware_Transmit_Done_Testing("Daughter", "temperatures");
+}
+
+// ******************************** Test Discharge ********************************
+
+void FEB_Daughter_Tester_Test_Discharge(void) {
+	FEB_BMS_Tester_Hardware_Transmit_Start_Testing("Daughter", "discharge");
+	for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_CELLS; cell++) {
+		FEB_LTC6811_Set_Discharge(cell); //set discharge
+		HAL_Delay(2000); //Delay 2s
+	}
+	FEB_BMS_Tester_Hardware_Transmit_Done_Testing("Daughter", "discharge");
+
 }
 
 

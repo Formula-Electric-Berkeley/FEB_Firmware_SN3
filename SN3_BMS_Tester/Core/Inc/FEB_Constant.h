@@ -28,6 +28,9 @@
 #define FEB_CONSTANT_DAUGHTER_MODE true
 #define FEB_CONSTANT_AUX_MODE false
 
+#define FEB_CONSTANT_START true
+#define FEB_CONSTANT_NOT_START false
+
 //all start with FEB_Constant
 
 #endif /* INC_FEB_CONSTANT_H_ */

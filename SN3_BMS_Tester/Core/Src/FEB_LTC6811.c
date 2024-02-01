@@ -157,3 +157,23 @@ void FEB_LTC6811_Clear_Temperature(void) {
 		}
 	}
 }
+
+// ******************************** Seet Discharge ********************************
+
+//Change dccBits_a[cell] to 1, set rest to zero
+void FEB_LTC6811_Configure_dccBits_a(uint8_t cell) {
+	for (uint8_t i = 0; i < CELLS_TO_TEST; i++) {
+		if (i == cell) {
+			dccBits_a[i] = true;
+		} else {
+			dccBits_a[i] = false;
+		}
+	}
+}
+
+void FEB_LTC6811_Set_Discharge(uint8_t cell) {
+	FEB_LTC6811_Configure_dccBits_a(cell); //set dccBits
+	LTC6811_set_cfgr(FEB_CONSTANT_DAUGHTER_TESTER_IC, accumulator.IC_config, REFON, ADCOPT, gpioBits_a, dccBits_a, dctoBits, UV, OV); //set all configuration bits w/ updated dccBits
+	wakeup_idle(TOTAL_IC); //wakeup ics
+	LTC6811_wrcfg(TOTAL_IC, accumulator.IC_config); //write configuration bits to ics.
+}

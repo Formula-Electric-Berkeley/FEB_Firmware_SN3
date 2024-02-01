@@ -16,6 +16,7 @@
 
 #include "stm32f4xx_hal.h"
 #include "LTC6811.h"
+#include "FEB_Constant.h"
 
 // ********************************** Test Accumulator Config **********************************
 
@@ -70,7 +71,7 @@ typedef struct {
 
 void FEB_LTC6811_Init(void);
 
-// Read voltage
+// Read Voltage
 void FEB_LTC6811_Poll_Voltage(void);
 void FEB_LTC6811_Start_Cell_ADC_Measurement(void);
 void FEB_LTC6811_Read_Cell_Voltage_Registers(void);
@@ -87,6 +88,11 @@ void FEB_LTC6811_Read_Aux_Voltages();
 void FEB_LTC6811_Store_Temperature(uint8_t channel);
 float FEB_LTC6811_Get_Temperature_Voltage(uint8_t ic, uint8_t cell);
 void FEB_LTC6811_Clear_Temperature(void);
+
+// Test Discharge
+void FEB_LTC6811_Configure_dccBits_a(uint8_t cell);
+void FEB_LTC6811_Set_Discharge(uint8_t cell);
+
 
 #endif /* INC_FEB_LTC6811_H_ */
 

@@ -11,7 +11,7 @@ void FEB_Main_Setup(void) {
 
 void FEB_Main_Loop(void) {
 	//If Start Pressed:
-	if (FEB_BMS_Tester_Hardware_Read_Start()) {
+	if (FEB_BMS_Tester_Hardware_Read_Start() == FEB_CONSTANT_START) {
 
 		bool mode = FEB_BMS_Tester_Hardware_Read_Mode();
 		//If Daughter:
