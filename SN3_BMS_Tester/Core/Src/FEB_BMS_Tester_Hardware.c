@@ -10,6 +10,7 @@
 #include "FEB_BMS_Tester_Hardware.h"
 
 extern SPI_HandleTypeDef hspi2;
+extern UART_HandleTypeDef huart2;
 
 // ********************************** Functions **********************************
 
@@ -61,4 +62,16 @@ bool FEB_BMS_Tester_Hardware_Read_Mode() {
 	} else {
 		return false; //aux
 	}
+}
+
+void FEB_BMS_Tester_Hardware_Transmit_Start_Testing(char *board, char *mode) {
+	char msg[256];
+	sprintf(msg, "Starting to test cell %s %s", board, mode);
+	HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg), 100);
+}
+
+void FEB_BMS_Tester_Hardware_Transmit_Done_Testing(char *board, char *mode) {
+	char msg[256];
+	sprintf(msg, "Starting to test cell %s %s", board, mode);
+	HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg), 100);
 }

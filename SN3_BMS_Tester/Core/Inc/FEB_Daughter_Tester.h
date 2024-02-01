@@ -6,6 +6,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #include "FEB_Input_Voltages.h"
 #include "FEB_Validate_Readings.h"
