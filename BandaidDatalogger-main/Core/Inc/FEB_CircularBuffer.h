@@ -3,7 +3,7 @@
 #include <string.h> 
 
 //typedef struct circBuffer CircularBuffer;
-typedef struct circBuffer
+typedef struct febircBuffer
 {
     char *buffer[16];     // start of data buffer
     size_t capacity;  // max capacity of buffer -- number of string pointers buffer will contain
@@ -15,5 +15,5 @@ typedef struct circBuffer
 void FEB_circBuf_init(CircularBuffer *cb);
 
 void FEB_circBuf_write(CircularBuffer *cb, const char *item);
-void FEB_circBuf_read(CircularBuffer *cb);
+char* FEB_circBuf_read(CircularBuffer *cb);
 

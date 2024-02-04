@@ -160,26 +160,26 @@ int main(void)
   send_uart(buffer);
 
   //Open file to write/create a file it doesn't exist
-  fres = f_open(&fil, "file1.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
+  fres = f_open(&fil, "test.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
 
   // Writing text
-  fres = f_puts("This data is from the First FILE\n\n", &fil);
+  //fres = f_puts("This data is from the First FILE\n\n", &fil);
 
-  send_uart ("File1.txt created and the data is written \n");
+  //send_uart ("File1.txt created and the data is written \n");
 
   //Close file
-  fres = f_close(&fil);
+  //fres = f_close(&fil);
 
  //Open file to read
-  fres = f_open(&fil, "file1.txt", FA_READ);
+  //fres = f_open(&fil, "file1.txt", FA_READ);
 
   //Read string from the file
-  f_gets(buffer, sizeof(buffer), &fil);
+  //f_gets(buffer, sizeof(buffer), &fil);
 
-  send_uart(buffer);
+  //send_uart(buffer);
 
   //Close file
-  f_close(&fil);
+  //f_close(&fil);
 
   bufclear();
 
@@ -187,6 +187,13 @@ int main(void)
   uint8_t data[20];
 
   FEB_circBuf_init(FEBBuffer);
+  //uint8_t bytesToWrite = strlen(FEBBuffer);
+  //uint8_t bytesToWriten;
+
+  //FEB_circBuf_write(FEBBuffer, "hello\n");
+  //FEB_circBuf_write(FEBBuffer,"world\n");
+
+  //FEB_CAN_Init(); ??
 
   /* USER CODE END 2 */
 
@@ -194,11 +201,36 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  //FEB_circBuf_write(&FEBBuffer, FEB_CAN_Receive() );
+	  FEB_circBuf_write(FEBBuffer, "hello\n");
+	  FEB_circBuf_write(FEBBuffer,"world\n");
+
 	  strcpy((char*)data,"Hello!\r\n");
 
+	  char* lastRead = FEB_circBuf_read(FEBBuffer);
+	  f_puts(lastRead, &fil);
+
+	  //Hopefully frees up the section in the circularBuffer
+	  free(lastRead);
+	  FEBBuffer->read = (FEBBuffer->read + 1) % FEBBuffer->capacity;
+	  FEBBuffer->count--;
+	  //f_write(&fil, FEBBuffer, bytesToWrite, bytesToWriten);
+	  f_sync(&fil);
+	  send_uart ("File1.txt created and the data is written \n");
+
+	  lastRead = FEB_circBuf_read(FEBBuffer);
+	  f_puts(lastRead, &fil);
+
+	  //Hopefully frees up the section in the circularBuffer
+	  free(lastRead);
+	  FEBBuffer->read = (FEBBuffer->read + 1) % FEBBuffer->capacity;
+	  FEBBuffer->count--;
+	  //f_write(&fil, FEBBuffer, bytesToWrite, bytesToWriten);
+	  f_sync(&fil);
+	  send_uart ("File1.txt created and the data is written \n");
+
+
 	  HAL_UART_Transmit(&huart2, data, strlen((char*)data), HAL_MAX_DELAY);
-	  HAL_Delay(300);
+//	  HAL_Delay(10);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

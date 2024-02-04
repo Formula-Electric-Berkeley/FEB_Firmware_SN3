@@ -1,4 +1,5 @@
-#include "FEB_CircularBuffer.h" 
+#include "FEB_CircularBuffer.h"
+
 
 
 //typedef struct circBuffer
@@ -11,6 +12,9 @@
 //} CircularBuffer;
 
 // initialize buffer on heap given capacity input. Set all string pointers to NULL 
+//extern CircularBuffer* FEBBuffer;
+
+
 void FEB_circBuf_init(CircularBuffer *cb)
 {
 
@@ -42,17 +46,16 @@ void FEB_circBuf_write(CircularBuffer *cb, const char *item)
 }
 
 // Check if buffer isn't full. Print earliest written string then free its space on heap. Increment read index and decrement count of pointers.
-void FEB_circBuf_read(CircularBuffer *cb)
-{
-
-    if(cb->count == 0){
-        printf("Error! Nothing to read.");
-        return;
-    }
-
-    printf("%s", cb->buffer[cb->read]);
-    free(cb->buffer[cb->read]);
-    cb->read = (cb->read + 1) % cb->capacity;
-    cb->count--;
+char* FEB_circBuf_read(CircularBuffer *cb){
+	if(cb->count == 0){
+	        printf("Error! Nothing to read.");
+	        return;
+	    }
+	return cb->buffer[cb->read];
+	//printf("%s", cb->buffer[cb->read]);
+	//free(cb->buffer[cb->read]);
+	//cb->read = (cb->read + 1) % cb->capacity;
+	//cb->count--;
 }
+
 
