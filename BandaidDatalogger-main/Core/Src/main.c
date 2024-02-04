@@ -19,6 +19,8 @@
   *MISO - PA6
   *MOSI - PA7
   *CS - PC4
+  *CAN TX - PA12
+  *CAN RX - PA11
   ******************************************************************************
   */
 /* USER CODE END Header */
@@ -184,7 +186,7 @@ int main(void)
   bufclear();
 
   /* UART testing */
-  uint8_t data[20];
+  uint8_t data[20] ="transmitted";
 
   FEB_circBuf_init(FEBBuffer);
   //uint8_t bytesToWrite = strlen(FEBBuffer);
@@ -193,7 +195,7 @@ int main(void)
   //FEB_circBuf_write(FEBBuffer, "hello\n");
   //FEB_circBuf_write(FEBBuffer,"world\n");
 
-  //FEB_CAN_Init(); ??
+  FEB_CAN_Init();
 
   /* USER CODE END 2 */
 
@@ -201,10 +203,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  FEB_circBuf_write(FEBBuffer, "hello\n");
+	  /*FEB_circBuf_write(FEBBuffer, "hello\n");
 	  FEB_circBuf_write(FEBBuffer,"world\n");
 
-	  strcpy((char*)data,"Hello!\r\n");
 
 	  char* lastRead = FEB_circBuf_read(FEBBuffer);
 	  f_puts(lastRead, &fil);
@@ -227,10 +228,24 @@ int main(void)
 	  //f_write(&fil, FEBBuffer, bytesToWrite, bytesToWriten);
 	  f_sync(&fil);
 	  send_uart ("File1.txt created and the data is written \n");
+	  */
+	  float transmit_data = 0;
+	  FEB_CAN_Transmit_Test_Float(&hcan1,transmit_data);
 
+	  char* lastRead = FEB_circBuf_read(FEBBuffer);
+	  strcat(lastRead, '\0');
+	  f_puts(lastRead, &fil);
 
+	  //Hopefully frees up the section in the circularBuffer
+	  free(lastRead);
+	  FEBBuffer->read = (FEBBuffer->read + 1) % FEBBuffer->capacity;
+	  FEBBuffer->count--;
+	  //f_write(&fil, FEBBuffer, bytesToWrite, bytesToWriten);
+	  f_sync(&fil);
 	  HAL_UART_Transmit(&huart2, data, strlen((char*)data), HAL_MAX_DELAY);
 //	  HAL_Delay(10);
+
+	  transmit_data = transmit_data + 0.5;
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -301,7 +316,7 @@ static void MX_CAN1_Init(void)
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
   hcan1.Init.Prescaler = 16;
-  hcan1.Init.Mode = CAN_MODE_NORMAL;
+  hcan1.Init.Mode = CAN_MODE_LOOPBACK;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
   hcan1.Init.TimeSeg1 = CAN_BS1_1TQ;
   hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
