@@ -1,0 +1,66 @@
+// ********************************** Includes & External **********************************
+
+#include "FEB_CAN_RMS.h"
+
+
+// *********************************** Struct ************************************
+
+struct {
+  uint16_t torque;
+  uint8_t enabled;
+} RMSControl;
+
+typedef struct RMS_MESSAGE_TYPE {
+    int16_t HV_Bus_Voltage;
+    int16_t Motor_Speed;
+} RMS_MESSAGE_TYPE;
+RMS_MESSAGE_TYPE RMS_MESSAGE;
+
+// ********************************** Functions **********************************
+
+void FEB_CAN_RMS_Init(void){
+	 RMSControl.enabled = 0;
+	 RMSControl.torque= 0.0;
+}
+
+uint8_t FEB_CAN_RMS_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
+	uint16_t ids[] = {FEB_CAN_ID_RMS_VOLTAGE, FEB_CAN_ID_RMS_MOTOR};
+
+	for (uint8_t i = 0; i < 2; i++) {
+		CAN_FilterTypeDef filter_config;
+
+	    // Standard CAN - 2.0A - 11 bit
+	    filter_config.FilterActivation = CAN_FILTER_ENABLE;
+		filter_config.FilterBank = filter_bank;
+		filter_config.FilterFIFOAssignment = FIFO_assignment;
+		filter_config.FilterIdHigh = ids[i] << 5;
+		filter_config.FilterIdLow = 0;
+		filter_config.FilterMaskIdHigh = 0xFFE0;
+		filter_config.FilterMaskIdLow = 0;
+		filter_config.FilterMode = CAN_FILTERMODE_IDMASK;
+		filter_config.FilterScale = CAN_FILTERSCALE_32BIT;
+		filter_config.SlaveStartFilterBank = 27;
+	    filter_bank++;
+
+		if (HAL_CAN_ConfigFilter(hcan, &filter_config) != HAL_OK) {
+			//Code Error - shutdown
+		}
+	}
+
+	return filter_bank;
+}
+
+void Store_RMS_Msg(AddressIdType RxId, uint8_t *RxData, uint32_t data_length) {
+	switch (RxId){
+		case RMS_VOLTAGE_INFO:
+			memcpy(&(RMS_MESSAGE.HV_Bus_Voltage), RxData, 2);
+			break;
+		case RMS_MOTOR_INFO:
+			memcpy(&(RMS_MESSAGE.Motor_Speed), RxData+2, 2);
+			break;
+	}
+}
+
+
+
+

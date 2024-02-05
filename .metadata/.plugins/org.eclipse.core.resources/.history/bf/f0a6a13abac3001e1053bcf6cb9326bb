@@ -1,0 +1,12 @@
+
+#ifndef INC_FEB_CAN_RMS_H_
+#define INC_FEB_CAN_RMS_H_
+
+// ********************************** Includes **********************************
+
+
+// ********************************** Functions **********************************
+void FEB_CAN_RMS_Init(void);
+
+
+#endif /* INC_FEB_CAN_RMS_H_ */

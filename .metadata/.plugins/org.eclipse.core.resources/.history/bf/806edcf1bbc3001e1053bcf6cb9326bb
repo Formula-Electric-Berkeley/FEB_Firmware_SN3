@@ -1,0 +1,19 @@
+// ********************************** Includes & External **********************************
+
+#include "FEB_Main.h"
+
+
+// ********************************** Functions **********************************
+
+void FEB_Main_Setup(void){
+	HAL_ADCEx_InjectedStart(&hadc1); //@lovehate - where does this go
+	FEB_Timer_Init();
+	//@lovhate - where do bottom two go
+	char buf[128];
+	uint8_t buf_len;
+
+
+	  FEB_CAN_Init(&hcan1, APPS_ID); //FEB_CAN_APPS_Init() // The transceiver must be connected otherwise you get sent into an infinite loop
+	  RMSControl.enabled = 0; // FEB_RMS_Init()
+	  RMSControl.torque= 0.0;
+}
