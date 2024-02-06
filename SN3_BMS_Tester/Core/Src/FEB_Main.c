@@ -10,10 +10,10 @@ void FEB_Main_Setup(void) {
 }
 
 void FEB_Main_Loop(void) {
-	//If Start Pressed:
+	//If Start Pressed, we start testing process, based on mode: either aux or daughter
 	if (FEB_BMS_Tester_Hardware_Read_Start() == FEB_CONSTANT_START) {
 
-		bool mode = FEB_BMS_Tester_Hardware_Read_Mode();
+		bool mode = FEB_BMS_Tester_Hardware_Read_Mode(); //read mode
 		//If Daughter:
 		if (mode == FEB_CONSTANT_DAUGHTER_MODE) {
 			FEB_Daughter_Tester_Test_Daughter();
@@ -22,4 +22,5 @@ void FEB_Main_Loop(void) {
 			FEB_Aux_Tester_Test_Aux();
 		}
 	}
+	HAL_Delay(500); //Delay 500ms
 }

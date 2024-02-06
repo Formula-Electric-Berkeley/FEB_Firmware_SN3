@@ -20,6 +20,12 @@ extern UART_HandleTypeDef huart2;
 
 // ******************************** Functions ********************************
 
+/*
+ * Validate cell voltage readings based on expected voltage
+ * Loop through all cells. If current cell is equal to the cell currently being tested, check if polled voltage
+ * is within threshold of inputed voltage. Else, check if polled voltage is within threshold of default voltage.
+ * If polled voltage is out of range, log error message to user.
+ */
 void FEB_Validate_Readings_Validate_Voltages(uint8_t ic, float expected_voltage, uint8_t curr_cell) {
 	for (uint8_t cell = 0; cell < CELLS_TO_TEST; cell++) {
 		float polled_voltage = FEB_LTC6811_Get_Voltage(ic, cell);
@@ -36,7 +42,12 @@ void FEB_Validate_Readings_Validate_Voltages(uint8_t ic, float expected_voltage,
 	}
 }
 
-
+/*
+ * Validate cell temperature voltage readings based on expected temperature voltage
+ * Loop through all cells. If current cell is equal to the cell currently being tested, check if polled voltage
+ * is within threshold of inputed voltage. Else, check if polled voltage is within threshold of default voltage.
+ * If polled voltage is out of range, log error message to user.
+ */
 void FEB_Validate_Readings_Validate_Temperatures(uint8_t ic, float expected_temperature_voltage, uint8_t curr_cell) {
 	for (uint8_t cell = 0; cell < CELLS_TO_TEST; cell++) {
 		float polled_temperature_voltage = FEB_LTC6811_Get_Temperature_Voltage(ic, cell);
@@ -53,6 +64,10 @@ void FEB_Validate_Readings_Validate_Temperatures(uint8_t ic, float expected_temp
 	}
 }
 
+/*
+ * If inputed polled voltage is greater than threshold high or lower than threshold low,
+ * log error to serial monitor.
+ */
 void FEB_Validate_Readings_Validate_Cell(uint8_t ic, uint8_t cell, float expected_voltage, float polled_voltage, float threshold_high, float threshold_low) {
 	if (polled_voltage > threshold_high || polled_voltage < threshold_low) {
 		char errmsg[256];

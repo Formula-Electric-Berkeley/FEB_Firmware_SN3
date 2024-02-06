@@ -7,6 +7,7 @@ extern SPI_HandleTypeDef hspi2;
 
 // ******************************** Functions ********************************
 
+//Test external daughter board
 void FEB_Daughter_Tester_Test_Daughter(void) {
 	FEB_Daughter_Tester_Init();
 	FEB_Daughter_Tester_Test_Cell_Voltages(); //Test cell voltages
@@ -14,8 +15,8 @@ void FEB_Daughter_Tester_Test_Daughter(void) {
 	FEB_Daughter_Tester_Test_Discharge(); //Test discharge
 }
 
+//Set all cell voltages and temperatures to the default values
 void FEB_Daughter_Tester_Init(void) {
-	//TODO:
 	//set all cells to default values
 	for (uint8_t cell = 0; cell < 10; cell++) {
 		//voltage
@@ -33,6 +34,15 @@ void FEB_Daughter_Tester_Init(void) {
 
 // ******************************** Test Voltages ********************************
 
+/*
+ * Test cell voltages:
+ * We loop through all cells
+ * For each cell, we input a range of voltages, starting from min voltage, ending at max voltage
+ * incrementing by 0.1 volts each time
+ * After inputting voltage, read voltages and temperatures from all 10 cells via external daughter board
+ * that is currently being tested, and make sure that current cell voltage is equal to expected voltage,
+ * and all other cells are equal to default value.
+ */
 void FEB_Daughter_Tester_Test_Cell_Voltages(void) {
 	FEB_BMS_Tester_Hardware_Transmit_Start_Testing("Daughter", "voltages");
 	for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_CELLS; cell++) {
@@ -58,6 +68,15 @@ void FEB_Daughter_Tester_Test_Cell_Voltages(void) {
 
 // ******************************** Test Temperatures ********************************
 
+/*
+ * Test cell temperatures:
+ * We loop through all cells
+ * For each cell, we input a range of voltages corresponding to temperatures, starting from min voltage, ending at max voltage
+ * incrementing by 0.05 volts each time
+ * After inputting voltage, read voltages and temperatures from all 10 cells via external daughter board
+ * that is currently being tested, and make sure that current cell voltage is equal to expected voltage,
+ * and all other cells are equal to default value.
+ */
 void FEB_Daughter_Tester_Test_Cell_Temps(void) {
 	FEB_BMS_Tester_Hardware_Transmit_Start_Testing("Daughter", "temperatures");
 	for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_CELLS; cell++) {
@@ -75,6 +94,11 @@ void FEB_Daughter_Tester_Test_Cell_Temps(void) {
 
 // ******************************** Test Discharge ********************************
 
+/*
+ * Test cell discharge
+ * For each cell, set corresponding dccBit to 1, and transmit that to external daughter board
+ * Observe if corresponding LED on external Aux board blinks for 2 seconds.
+ */
 void FEB_Daughter_Tester_Test_Discharge(void) {
 	FEB_BMS_Tester_Hardware_Transmit_Start_Testing("Daughter", "discharge");
 	for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_CELLS; cell++) {
