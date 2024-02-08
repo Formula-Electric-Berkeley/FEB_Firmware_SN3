@@ -20,15 +20,11 @@ void FEB_Daughter_Tester_Init(void) {
 	//set all cells to default values
 	for (uint8_t cell = 0; cell < 10; cell++) {
 		//voltage
-		FEB_BMS_Tester_Hardware_Set_DAC_CS_n(cell, false); //CS low
-		HAL_Delay(5); //Delay 5ms
 		FEB_Input_Voltages_Input_Cell_Voltage(cell, FEB_CONSTANT_CELL_DEFAULT_VOLTAGE);
-		HAL_Delay(5); //Delay 5ms
-		FEB_BMS_Tester_Hardware_Set_DAC_CS_n(cell, true); //CS high
 
 		//temperature
 		FEB_BMS_Tester_Hardware_Configure_MUX(cell);
-		FEB_Input_Voltages_Input_Temp_Voltage(FEB_CONSTANT_TEMP_DEFAULT_VOLTAGE);
+		FEB_Input_Voltages_Input_Temp_Voltage(cell, FEB_CONSTANT_TEMP_DEFAULT_VOLTAGE);
 	}
 }
 
@@ -45,22 +41,18 @@ void FEB_Daughter_Tester_Init(void) {
  */
 void FEB_Daughter_Tester_Test_Cell_Voltages(void) {
 	FEB_BMS_Tester_Hardware_Transmit_Start_Testing("Daughter", "voltages");
+
+	//Loop through all cells
 	for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_CELLS; cell++) {
+
+		//Loop through range of voltages
 		for (float voltage = FEB_CONSTANT_CELL_MIN_VOLTAGE; voltage <= FEB_CONSTANT_CELL_MAX_VOLTAGE; voltage += 0.1) {
-				FEB_BMS_Tester_Hardware_Set_DAC_CS_n(cell, false); //CS low
-				HAL_Delay(5); //Delay 5ms
-				FEB_Input_Voltages_Input_Cell_Voltage(cell, voltage);
-				HAL_Delay(5); //Delay 5ms
-				FEB_BMS_Tester_Hardware_Set_DAC_CS_n(cell, true); //CS high
+				FEB_Input_Voltages_Input_Cell_Voltage(cell, voltage); //Input voltage
 				FEB_LTC6811_Poll_Voltage(); //Poll voltage
 				FEB_LTC6811_Poll_Temperature(); //Poll temperature
 				FEB_Validate_Readings_Validate_Voltages(FEB_CONSTANT_DAUGHTER_TESTER_IC, voltage, cell); //IC for daughter board
 			}
-			FEB_BMS_Tester_Hardware_Set_DAC_CS_n(cell, false); //CS low
-			HAL_Delay(5); //Delay 5ms
 			FEB_Input_Voltages_Input_Cell_Voltage(cell, FEB_CONSTANT_CELL_DEFAULT_VOLTAGE); //Reset Cell Voltage
-			HAL_Delay(5); //Delay 5ms
-			FEB_BMS_Tester_Hardware_Set_DAC_CS_n(cell, true); //CS high
 	}
 	FEB_BMS_Tester_Hardware_Transmit_Done_Testing("Daughter", "voltages");
 }
@@ -79,15 +71,18 @@ void FEB_Daughter_Tester_Test_Cell_Voltages(void) {
  */
 void FEB_Daughter_Tester_Test_Cell_Temps(void) {
 	FEB_BMS_Tester_Hardware_Transmit_Start_Testing("Daughter", "temperatures");
+
+	//Loop through all cells
 	for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_CELLS; cell++) {
-		FEB_BMS_Tester_Hardware_Configure_MUX(cell);
+		FEB_BMS_Tester_Hardware_Configure_MUX(cell); //Configure MUX based on cell
+		//Loop through range of voltages
 		for (float temp_voltage = FEB_CONSTANT_CELL_MIN_TEMP_VOLTAGE; temp_voltage <= FEB_CONSTANT_CELL_MAX_TEMP_VOLTAGE; temp_voltage += 0.05) { //TODO: Figure out how much to increment by
-			FEB_Input_Voltages_Input_Temp_Voltage(temp_voltage);
+			FEB_Input_Voltages_Input_Temp_Voltage(cell, temp_voltage);
 			FEB_LTC6811_Poll_Temperature(); //Poll voltage
 			FEB_LTC6811_Poll_Temperature(); //Poll temperature
 			FEB_Validate_Readings_Validate_Temperatures(FEB_CONSTANT_DAUGHTER_TESTER_IC, temp_voltage, cell); //IC for daughter board
 		}
-		FEB_Input_Voltages_Input_Temp_Voltage(FEB_CONSTANT_TEMP_DEFAULT_VOLTAGE); //Reset temp voltage
+		FEB_Input_Voltages_Input_Temp_Voltage(cell, FEB_CONSTANT_TEMP_DEFAULT_VOLTAGE); //Reset temp voltage
 	}
 	FEB_BMS_Tester_Hardware_Transmit_Done_Testing("Daughter", "temperatures");
 }

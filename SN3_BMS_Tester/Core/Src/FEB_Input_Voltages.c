@@ -38,8 +38,11 @@ void FEB_Input_Voltages_Input_Cell_Voltage(uint8_t cell, float voltage) {
 	buf[0] = ((uint16_t)input >> 0) & 0xFF;
 	buf[1] = ((uint16_t)input >> 8) & 0xFF;
 
-	//Send data to DAC
-	HAL_SPI_Transmit(&hspi2, (uint8_t *)buf, 2, 100);
+	FEB_BMS_Tester_Hardware_Set_DAC_CS_n(cell, false); //CS low
+	HAL_Delay(5); //Delay 5ms
+	HAL_SPI_Transmit(&hspi2, (uint8_t *)buf, 2, 100); //Send data to DAC
+	HAL_Delay(5); //Delay 5ms
+	FEB_BMS_Tester_Hardware_Set_DAC_CS_n(cell, true); //CS high
 }
 
 
@@ -49,7 +52,7 @@ void FEB_Input_Voltages_Input_Cell_Voltage(uint8_t cell, float voltage) {
  * We use a digital potentiometer and voltage divider to input a voltage
  * corresponding to a temperature for a specified cell.
  */
-void FEB_Input_Voltages_Input_Temp_Voltage(uint8_t voltage) {
+void FEB_Input_Voltages_Input_Temp_Voltage(uint8_t cell, float voltage) {
 	//TODO: Set potentiometer resistance based on voltages corresponding
 	FEB_Aux_Tester_Set_Potentiometer_Resistance(voltage);
 }
@@ -64,7 +67,7 @@ void FEB_Aux_Tester_Set_Potentiometer_Resistance(uint8_t voltage) {
 	buf[0] = AD5259_INSTRUCTION_BYTE;
 	//buf[1] =
 
-	HAL_I2C_Master_Transmit(&hi2c1, AD5259_ADDRESS, buf, 2, 100); //Write value to potentiometer
+	HAL_I2C_Master_Transmit(&hi2c1, AD5259_ADDRESS, (uint8_t *)buf, 2, 100); //Write value to potentiometer
 }
 
 
