@@ -52,7 +52,7 @@ uint8_t FEB_CAN_RMS_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignme
 	return filter_bank;
 }
 // @lovehate TODO: update below function to fit with call
-void Store_RMS_Msg(AddressIdType RxId, uint8_t *RxData, uint32_t data_length) {
+void FEB_CAN_RMS_Store_Msg(AddressIdType RxId, uint8_t *RxData) {
 	switch (RxId){
 		case RMS_VOLTAGE_INFO:
 			memcpy(&(RMS_MESSAGE.HV_Bus_Voltage), RxData, 2);

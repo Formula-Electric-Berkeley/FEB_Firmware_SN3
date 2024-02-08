@@ -101,7 +101,7 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
-
+  FEB_Main_Setup();
   /* USER CODE END 2 */
 
   /* Infinite loop */
