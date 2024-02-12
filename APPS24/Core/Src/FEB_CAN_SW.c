@@ -1,0 +1,70 @@
+// **************************************** Includes & External ****************************************
+
+#include "FEB_CAN_SW.h"
+
+// *********************************** Struct ************************************
+
+typedef struct SW_MESSAGE_TYPE {
+    SW_READY_TO_DRIVE_TYPE ready_to_drive;
+    SW_COOLANT_PUMP_TYPE coolant_pump;
+    SW_ACUMULATOR_FANS_TYPE acumulator_fans;
+    SW_EXTRA_TYPE extra;
+} SW_MESSAGE_TYPE;
+SW_MESSAGE_TYPE SW_MESSAGE;
+
+// **************************************** Functions ****************************************
+
+void FEB_CAN_SW_Process(){
+	if (SW_MESSAGE.ready_to_drive == 1){
+		FEB_Normalized_Update_Acc();
+		FEB_CAN_RMS_Process(); //TODO: Finish
+
+	} // TODO: add remaining stuff from main.c SN2
+}
+
+
+// ***** CAN FUNCTIONS ****
+
+uint8_t FEB_CAN_SW_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
+	uint16_t ids[] = {FEB_CAN_ID_SW_READY_TO_DRIVE, FEB_CAN_ID_SW_COOLANT_PUMP, FEB_CAN_ID_SW_ACUMULATOR_FANS, FEB_CAN_ID_SW_EXTRA};
+
+	for (uint8_t i = 0; i < 4; i++) {
+		CAN_FilterTypeDef filter_config;
+
+	    // Standard CAN - 2.0A - 11 bit
+	    filter_config.FilterActivation = CAN_FILTER_ENABLE;
+		filter_config.FilterBank = filter_bank;
+		filter_config.FilterFIFOAssignment = FIFO_assignment;
+		filter_config.FilterIdHigh = ids[i] << 5;
+		filter_config.FilterIdLow = 0;
+		filter_config.FilterMaskIdHigh = 0xFFE0;
+		filter_config.FilterMaskIdLow = 0;
+		filter_config.FilterMode = CAN_FILTERMODE_IDMASK;
+		filter_config.FilterScale = CAN_FILTERSCALE_32BIT;
+		filter_config.SlaveStartFilterBank = 27;
+	    filter_bank++;
+
+		if (HAL_CAN_ConfigFilter(hcan, &filter_config) != HAL_OK) {
+			//Code Error - shutdown
+		}
+	}
+
+	return filter_bank;
+}
+
+void FEB_CAN_SW_Store_Msg(AddressIdType RxId, uint8_t *RxData, uint32_t data_length) {
+    switch (RxId){
+        case SW_READY_TO_DRIVE:
+            memcpy(&(SW_MESSAGE.ready_to_drive), RxData, data_length);
+            break;
+        case SW_COOLANT_PUMP:
+            memcpy(&(SW_MESSAGE.coolant_pump), RxData, data_length);
+            break;
+        case SW_ACUMULATOR_FANS:
+            memcpy(&(SW_MESSAGE.acumulator_fans), RxData, data_length);
+            break;
+        case SW_EXTRA:
+            memcpy(&(SW_MESSAGE.extra), RxData, data_length);
+            break;
+    }
+}
