@@ -18,5 +18,15 @@ void FEB_Main_Setup(void){
 }
 
 void FEB_Main_While(void){
-	FEB_CAN_SW_Process() //TODO: FINISH
+	if (FEB_CAN_SW_Ready()){
+		FEB_Normalized_updateAcc();
+		FEB_CAN_RMS_Process();
+	} else {
+		FEB_Normalized_setAcc0();
+		FEB_CAN_RMS_Disable();
+	}
+	FEB_Normalized_updateAcc();
+	FEB_CAN_RMS_Torque();
+	FEB_CAN_sendBrake(); //TODO: create transmit function on CAN file for sending brake
+	FEB_CAN_RMS_torqueTransmit();
 }

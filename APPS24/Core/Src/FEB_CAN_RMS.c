@@ -2,6 +2,7 @@
 
 #include "FEB_CAN_RMS.h"
 
+extern UART_HandleTypeDef huart2;
 
 // *********************************** Struct ************************************
 
@@ -16,7 +17,13 @@ typedef struct RMS_MESSAGE_TYPE {
 } RMS_MESSAGE_TYPE;
 RMS_MESSAGE_TYPE RMS_MESSAGE;
 
+extern char buf[128];
+extern uint8_t buf_len;
+
 // ********************************** Functions **********************************
+
+
+
 
 void FEB_CAN_RMS_Setup(void){
 	 RMSControl.enabled = 0;
@@ -30,11 +37,49 @@ void FEB_CAN_RMS_Process(void){
 	}
 }
 
+void FEB_CAN_RMS_Disable(){
+	RMSControl.enabled = 0;
+}
+// **** TORQUE FUNCTIONS****
+int16_t min(int16_t x1, int16_t x2) {
+	if (x1 < x2) {
+		return x1;
+	}
+	return x2;
+}
+uint16_t FEB_CAN_RMS_getMaxTorque(){
+	int16_t accumulator_voltage = min(INIT_VOLTAGE, (RMS_MESSAGE.HV_Bus_Voltage-50) / 10);
+	int16_t motor_speed = -1 * RMS_MESSAGE.Motor_Speed * RPM_TO_RAD_S;
+  // If speed is less than 15, we should command max torque
+  // This catches divide by 0 errors and also negative speeds (which may create very high negative torque values)
+	if (motor_speed < 15) {
+		return MAX_TORQUE;
+	}
+	uint16_t maxTorque = min(MAX_TORQUE, (accumulator_voltage * PEAK_CURRENT) / motor_speed);
+	return maxTorque;
+}
 
+FEB_CAN_RMS_Torque(){
+	RMSControl.torque = 10*FEB_Normalized_Get_Acc()*FEB_CAN_RMS_getMaxTorque();
+	FEB_CAN_RMS_updateTorque()
+}
+// ***** OTHER FUNCS ***
 
+void FEB_CAN_RMS_updateTorque() { //TODO: Create Custom Transmit function and update below call
+  uint8_t message_data[8] = {RMSControl.torque & 0xFF, RMSControl.torque >> 8, 0, 0, 0, RMSControl.enabled, 0, 0};
+  FEB_CAN_Transmit(&hcan1, 0x0C0, message_data, 8);
+}
+
+void FEB_CAN_RMS_torqueTransmit(){
+	//	  buf_len = sprintf(buf, "rtd:%d, enable:%d lockout:%d impl:%d acc: %.3f brake: %.3f Bus Voltage: %d Motor Speed: %d\n", SW_MESSAGE.ready_to_drive, Inverter_enable, Inverter_enable_lockout, isImpl, normalized_acc, normalized_brake, RMS_MESSAGE.HV_Bus_Voltage, RMS_MESSAGE.Motor_Speed);
+
+		  buf_len = sprintf(buf, "Evan's Max Torque: %d\n", FEB_CAN_RMS_getMaxTorque());
+		  HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, 1000);
+		  HAL_Delay(SLEEP_TIME);
+}
 // ***** CAN FUNCTIONS ****
 //TODO: CREATE FEB_CAN_SW_Trasnmit Function and update below function
-void FEB_RMS_Init(){
+void FEB_CAN_RMS_Init(){
 	// Clear fault in case inverter is powered up before disable command is sent
 	uint8_t fault_clear_addr = 20;
 	uint8_t fault_clear_data = 0;

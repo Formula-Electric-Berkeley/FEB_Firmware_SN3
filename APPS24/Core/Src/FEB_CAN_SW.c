@@ -13,15 +13,9 @@ typedef struct SW_MESSAGE_TYPE {
 SW_MESSAGE_TYPE SW_MESSAGE;
 
 // **************************************** Functions ****************************************
-
-void FEB_CAN_SW_Process(){
-	if (SW_MESSAGE.ready_to_drive == 1){
-		FEB_Normalized_Update_Acc();
-		FEB_CAN_RMS_Process(); //TODO: Finish
-
-	} // TODO: add remaining stuff from main.c SN2
+bool FEB_CAN_SW_Ready(){
+	return SW_MESSAGE.ready_to_drive == 1
 }
-
 
 // ***** CAN FUNCTIONS ****
 

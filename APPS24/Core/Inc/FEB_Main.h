@@ -4,6 +4,12 @@
 // ******************************** Includes ********************************
 
 #include "FEB_Timer.h"
+#include "FEB_CAN.h"
+#include "FEB_CAN_RMS.h"
+#include "FEB_CAN_SW.h"
+#include "FEB_Normalized.h"
+
+#include "stm32f4xx_hal.h"
 
 // ******************************** Functions ********************************
 

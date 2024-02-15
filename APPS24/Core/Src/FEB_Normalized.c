@@ -15,7 +15,16 @@ float normalized_brake;
 bool isImpl = false;
 
 // **************************************** Functions ****************************************
-void FEB_Normalized_Update_Acc(){
+
+float FEB_Normalized_getAcc(){
+	return normalized_acc
+}
+
+void FEB_Normalized_setAcc0(){
+	normalized_acc = 0.0
+}
+
+void FEB_Normalized_updateAcc(){
 	normalized_acc = FEB_Normalized_Acc_Pedals();
 }
 
