@@ -52,23 +52,13 @@ void FEB_Input_Voltages_Input_Cell_Voltage(uint8_t cell, float voltage) {
  * We use a digital potentiometer and voltage divider to input a voltage
  * corresponding to a temperature for a specified cell.
  */
-void FEB_Input_Voltages_Input_Temp_Voltage(uint8_t cell, float voltage) {
-	//TODO: Set potentiometer resistance based on voltages corresponding
-	FEB_Aux_Tester_Set_Potentiometer_Resistance(voltage);
-}
-
-void FEB_Aux_Tester_Set_Potentiometer_Resistance(uint8_t voltage) {
-	//TODO: probably want to do the math in here
-
-	//Buffer for I2C
+void FEB_Input_Voltages_Input_Temp_Voltage(uint8_t decimal_value) {
 	char buf[2];
-
-	//TODO: Figure out buf[1];
 	buf[0] = AD5259_INSTRUCTION_BYTE;
-	//buf[1] =
-
+	buf[1] = decimal_value;
 	HAL_I2C_Master_Transmit(&hi2c1, AD5259_ADDRESS, (uint8_t *)buf, 2, 100); //Write value to potentiometer
 }
+
 
 
 

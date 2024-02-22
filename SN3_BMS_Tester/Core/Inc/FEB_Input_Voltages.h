@@ -20,7 +20,7 @@
 // ********************************** Functions **********************************
 
 void FEB_Input_Voltages_Input_Cell_Voltage(uint8_t cell, float voltage);
-void FEB_Input_Voltages_Input_Temp_Voltage(uint8_t cell, float voltage);
-void FEB_Aux_Tester_Set_Potentiometer_Resistance(uint8_t resistance);
+void FEB_Input_Voltages_Input_Temp_Voltage(uint8_t decimal_value);
+
 
 #endif /* INC_FEB_INPUT_VOLTAGES_H_ */

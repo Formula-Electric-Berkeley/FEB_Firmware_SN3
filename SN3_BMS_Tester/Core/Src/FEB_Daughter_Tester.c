@@ -76,13 +76,15 @@ void FEB_Daughter_Tester_Test_Cell_Temps(void) {
 	for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_ACC_CELLS_PER_IC; cell++) {
 		FEB_BMS_Tester_Hardware_Configure_MUX(cell); //Configure MUX based on cell
 
-		//Loop through range of voltages
-		for (float temp_voltage_V = FEB_CONSTANT_CELL_MIN_TEMP_VOLTAGE_V; temp_voltage_V <= FEB_CONSTANT_CELL_MAX_TEMP_VOLTAGE_V + 0.05; temp_voltage_V += 0.05) { //TODO: Figure out how much to increment by
-			FEB_Input_Voltages_Input_Temp_Voltage(cell, temp_voltage_V);
-			HAL_Delay(10); //delay so voltage can stabilize
+		//Loop through range of potentiometer decimal values
+		for (uint8_t d_value = 17; d_value <= 70; d_value++) {
+			FEB_Input_Voltages_Input_Temp_Voltage(d_value);
+			HAL_Delay(10);
+			float resistance = d_value * 10000 / 256;
+			float expected_temp_voltage_V = 5 * 680 / (resistance + 680);
 			FEB_LTC6811_Poll_Temperature(); //Poll voltage
 			FEB_LTC6811_Poll_Temperature(); //Poll temperature
-			FEB_Validate_Readings_Validate_Temperatures(FEB_CONSTANT_DAUGHTER_TESTER_IC, temp_voltage_V, cell); //IC for daughter board
+			FEB_Validate_Readings_Validate_Temperatures(FEB_CONSTANT_DAUGHTER_TESTER_IC, expected_temp_voltage_V, cell); //IC for daughter board
 			FEB_LTC6811_Clear_Voltage();
 			FEB_LTC6811_Clear_Temperature();
 		}
