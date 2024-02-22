@@ -30,7 +30,7 @@ void FEB_BMS_Tester_Hardware_Transmit_Done_Testing(char *board, char *mode);
 typedef struct {
 	GPIO_TypeDef* pin_type;
 	uint16_t pin_num;
-} cs_pins;
+} cs_pins_t;
 //define struct for all CS pins
 
 #endif /* INC_FEB_BMS_TESTER_HARDWARE_H_ */

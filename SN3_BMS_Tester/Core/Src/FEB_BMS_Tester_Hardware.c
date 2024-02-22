@@ -36,7 +36,7 @@ void FEB_BMS_Tester_Hardware_Configure_MUX(uint8_t cell) {
 void FEB_BMS_Tester_Hardware_Set_DAC_CS_n(uint8_t cell, bool status) {
 
 	//Struct representing all pins. pins[cell] returns CS pin corresponding to cell.
-	static cs_pins pins[] = {
+	static cs_pins_t pins[] = {
 			{GPIOA, GPIO_PIN_7}, //CS 1
 			{GPIOC, GPIO_PIN_4}, //CS 2
 			{GPIOC, GPIO_PIN_5}, //CS 3
@@ -60,11 +60,18 @@ void FEB_BMS_Tester_Hardware_Set_DAC_CS_n(uint8_t cell, bool status) {
  * Function to read if the start button has been pressed.
  */
 bool FEB_BMS_Tester_Hardware_Read_Start() {
-	if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11) == GPIO_PIN_SET) {
-		return FEB_CONSTANT_START; //start
+
+	static GPIO_PinState previousStatus = GPIO_PIN_RESET;
+	GPIO_PinState currentStatus = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11);
+	bool start = false;
+
+	if (currentStatus == GPIO_PIN_SET && previousStatus == GPIO_PIN_RESET) {
+		start = FEB_CONSTANT_START; //start
 	} else {
-		return FEB_CONSTANT_NOT_START; //not start
+		start = FEB_CONSTANT_NOT_START; //not start
 	}
+	previousStatus = currentStatus;
+	return start;
 }
 
 /*
@@ -83,7 +90,7 @@ bool FEB_BMS_Tester_Hardware_Read_Mode() {
  */
 void FEB_BMS_Tester_Hardware_Transmit_Start_Testing(char *board, char *mode) {
 	char msg[256];
-	sprintf(msg, "Starting to test %s %s", board, mode);
+	sprintf(msg, "Starting to test %s %s\n", board, mode);
 	HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg), 100);
 }
 
@@ -92,6 +99,6 @@ void FEB_BMS_Tester_Hardware_Transmit_Start_Testing(char *board, char *mode) {
  */
 void FEB_BMS_Tester_Hardware_Transmit_Done_Testing(char *board, char *mode) {
 	char msg[256];
-	sprintf(msg, "Done testing %s %s", board, mode);
+	sprintf(msg, "Done testing %s %s\n", board, mode);
 	HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg), 100);
 }

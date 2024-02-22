@@ -20,8 +20,6 @@
 
 // ********************************** Test Accumulator Config **********************************
 
-#define CELLS_TO_TEST 10
-
 // ********************************** LTC6811 Config **********************************
 
 #define TOTAL_IC 2//!< Number of ICs in the daisy chain. One on
@@ -51,22 +49,6 @@
 #define MEASURE_STAT DISABLED //!< Loop Measurement Setup
 #define PRINT_PEC DISABLED //!< Loop Measurement Setup
 
-// ********************************** Structs **********************************
-
-typedef struct {
-	float temp; //voltage corresponding to temp. //temperature_volt
-	float voltage; //voltage //cell_volt
-} Cell;
-
-typedef struct {
-	Cell cells[CELLS_TO_TEST];
-} Chip;
-
-typedef struct {
-	cell_asic IC_config[TOTAL_IC];
-	Chip chips[TOTAL_IC];
-} TestAccumulator;
-
 // ********************************** Functions **********************************
 
 void FEB_LTC6811_Init(void);
@@ -88,10 +70,6 @@ void FEB_LTC6811_Read_Aux_Voltages();
 void FEB_LTC6811_Store_Temperature(uint8_t channel);
 float FEB_LTC6811_Get_Temperature_Voltage(uint8_t ic, uint8_t cell);
 void FEB_LTC6811_Clear_Temperature(void);
-
-// Test Discharge
-void FEB_LTC6811_Configure_dccBits_a(uint8_t cell);
-void FEB_LTC6811_Set_Discharge(uint8_t cell);
 
 
 #endif /* INC_FEB_LTC6811_H_ */

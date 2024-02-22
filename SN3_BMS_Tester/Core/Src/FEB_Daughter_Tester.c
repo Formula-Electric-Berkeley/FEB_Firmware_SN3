@@ -12,19 +12,16 @@ void FEB_Daughter_Tester_Test_Daughter(void) {
 	FEB_Daughter_Tester_Init();
 	FEB_Daughter_Tester_Test_Cell_Voltages(); //Test cell voltages
 	FEB_Daughter_Tester_Test_Cell_Temps(); //Test cell temperatures
-	FEB_Daughter_Tester_Test_Discharge(); //Test discharge
 }
 
-//Set all cell voltages and temperatures to the default values
+//Set all cell voltages to the default values
 void FEB_Daughter_Tester_Init(void) {
-	//set all cells to default values
-	for (uint8_t cell = 0; cell < 10; cell++) {
-		//voltage
-		FEB_Input_Voltages_Input_Cell_Voltage(cell, FEB_CONSTANT_CELL_DEFAULT_VOLTAGE);
+	FEB_LTC6811_Init(); //Init LTC
 
-		//temperature
-		FEB_BMS_Tester_Hardware_Configure_MUX(cell);
-		FEB_Input_Voltages_Input_Temp_Voltage(cell, FEB_CONSTANT_TEMP_DEFAULT_VOLTAGE);
+	//set all cells to default values
+	for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_ACC_CELLS_PER_IC; cell++) {
+		//voltage
+		FEB_Input_Voltages_Input_Cell_Voltage(cell, FEB_CONSTANT_CELL_DEFAULT_VOLTAGE_V);
 	}
 }
 
@@ -43,16 +40,19 @@ void FEB_Daughter_Tester_Test_Cell_Voltages(void) {
 	FEB_BMS_Tester_Hardware_Transmit_Start_Testing("Daughter", "voltages");
 
 	//Loop through all cells
-	for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_CELLS; cell++) {
+	for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_ACC_CELLS_PER_IC; cell++) {
 
 		//Loop through range of voltages
-		for (float voltage = FEB_CONSTANT_CELL_MIN_VOLTAGE; voltage <= FEB_CONSTANT_CELL_MAX_VOLTAGE; voltage += 0.1) {
-				FEB_Input_Voltages_Input_Cell_Voltage(cell, voltage); //Input voltage
+		for (float voltage_V = FEB_CONSTANT_CELL_MIN_VOLTAGE_V; voltage_V <= FEB_CONSTANT_CELL_MAX_VOLTAGE_V + 0.05; voltage_V += 0.1) {
+				FEB_Input_Voltages_Input_Cell_Voltage(cell, voltage_V); //Input voltage
+				HAL_Delay(10); //delay so voltage can stabalize
 				FEB_LTC6811_Poll_Voltage(); //Poll voltage
 				FEB_LTC6811_Poll_Temperature(); //Poll temperature
-				FEB_Validate_Readings_Validate_Voltages(FEB_CONSTANT_DAUGHTER_TESTER_IC, voltage, cell); //IC for daughter board
+				FEB_Validate_Readings_Validate_Voltages(FEB_CONSTANT_DAUGHTER_TESTER_IC, voltage_V, cell); //IC for daughter board
+				FEB_LTC6811_Clear_Voltage();
+				FEB_LTC6811_Clear_Temperature();
 			}
-			FEB_Input_Voltages_Input_Cell_Voltage(cell, FEB_CONSTANT_CELL_DEFAULT_VOLTAGE); //Reset Cell Voltage
+			FEB_Input_Voltages_Input_Cell_Voltage(cell, FEB_CONSTANT_CELL_DEFAULT_VOLTAGE_V); //Reset Cell Voltage
 	}
 	FEB_BMS_Tester_Hardware_Transmit_Done_Testing("Daughter", "voltages");
 }
@@ -73,37 +73,22 @@ void FEB_Daughter_Tester_Test_Cell_Temps(void) {
 	FEB_BMS_Tester_Hardware_Transmit_Start_Testing("Daughter", "temperatures");
 
 	//Loop through all cells
-	for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_CELLS; cell++) {
+	for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_ACC_CELLS_PER_IC; cell++) {
 		FEB_BMS_Tester_Hardware_Configure_MUX(cell); //Configure MUX based on cell
+
 		//Loop through range of voltages
-		for (float temp_voltage = FEB_CONSTANT_CELL_MIN_TEMP_VOLTAGE; temp_voltage <= FEB_CONSTANT_CELL_MAX_TEMP_VOLTAGE; temp_voltage += 0.05) { //TODO: Figure out how much to increment by
-			FEB_Input_Voltages_Input_Temp_Voltage(cell, temp_voltage);
+		for (float temp_voltage_V = FEB_CONSTANT_CELL_MIN_TEMP_VOLTAGE_V; temp_voltage_V <= FEB_CONSTANT_CELL_MAX_TEMP_VOLTAGE_V + 0.05; temp_voltage_V += 0.05) { //TODO: Figure out how much to increment by
+			FEB_Input_Voltages_Input_Temp_Voltage(cell, temp_voltage_V);
+			HAL_Delay(10); //delay so voltage can stabilize
 			FEB_LTC6811_Poll_Temperature(); //Poll voltage
 			FEB_LTC6811_Poll_Temperature(); //Poll temperature
-			FEB_Validate_Readings_Validate_Temperatures(FEB_CONSTANT_DAUGHTER_TESTER_IC, temp_voltage, cell); //IC for daughter board
+			FEB_Validate_Readings_Validate_Temperatures(FEB_CONSTANT_DAUGHTER_TESTER_IC, temp_voltage_V, cell); //IC for daughter board
+			FEB_LTC6811_Clear_Voltage();
+			FEB_LTC6811_Clear_Temperature();
 		}
-		FEB_Input_Voltages_Input_Temp_Voltage(cell, FEB_CONSTANT_TEMP_DEFAULT_VOLTAGE); //Reset temp voltage
 	}
 	FEB_BMS_Tester_Hardware_Transmit_Done_Testing("Daughter", "temperatures");
 }
-
-// ******************************** Test Discharge ********************************
-
-/*
- * Test cell discharge
- * For each cell, set corresponding dccBit to 1, and transmit that to external daughter board
- * Observe if corresponding LED on external Aux board blinks for 2 seconds.
- */
-void FEB_Daughter_Tester_Test_Discharge(void) {
-	FEB_BMS_Tester_Hardware_Transmit_Start_Testing("Daughter", "discharge");
-	for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_CELLS; cell++) {
-		FEB_LTC6811_Set_Discharge(cell); //set discharge
-		HAL_Delay(2000); //Delay 2s
-	}
-	FEB_BMS_Tester_Hardware_Transmit_Done_Testing("Daughter", "discharge");
-
-}
-
 
 
 

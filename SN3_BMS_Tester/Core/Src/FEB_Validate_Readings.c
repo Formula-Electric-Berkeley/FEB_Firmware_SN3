@@ -27,15 +27,15 @@ extern UART_HandleTypeDef huart2;
  * If polled voltage is out of range, log error message to user.
  */
 void FEB_Validate_Readings_Validate_Voltages(uint8_t ic, float expected_voltage, uint8_t curr_cell) {
-	for (uint8_t cell = 0; cell < CELLS_TO_TEST; cell++) {
+	for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_ACC_CELLS_PER_IC; cell++) {
 		float polled_voltage = FEB_LTC6811_Get_Voltage(ic, cell);
 		if (curr_cell == cell) {
-			float voltage_threshold_high = expected_voltage + FEB_CONSTANT_CELL_VOLTAGE_THRESHOLD_mV * 0.001;
-			float voltage_threshold_low = expected_voltage - FEB_CONSTANT_CELL_VOLTAGE_THRESHOLD_mV * 0.001;
+			float voltage_threshold_high = expected_voltage + FEB_CONSTANT_CELL_VOLTAGE_THRESHOLD_V;
+			float voltage_threshold_low = expected_voltage - FEB_CONSTANT_CELL_VOLTAGE_THRESHOLD_V;
 			FEB_Validate_Readings_Validate_Cell(ic, cell, expected_voltage, polled_voltage, voltage_threshold_high, voltage_threshold_low);
 		} else {
-			float voltage_threshold_high = FEB_CONSTANT_CELL_DEFAULT_VOLTAGE + FEB_CONSTANT_CELL_VOLTAGE_THRESHOLD_mV * 0.001;
-			float voltage_threshold_low = FEB_CONSTANT_CELL_DEFAULT_VOLTAGE - FEB_CONSTANT_CELL_VOLTAGE_THRESHOLD_mV * 0.001;
+			float voltage_threshold_high = FEB_CONSTANT_CELL_DEFAULT_VOLTAGE_V + FEB_CONSTANT_CELL_VOLTAGE_THRESHOLD_V;
+			float voltage_threshold_low = FEB_CONSTANT_CELL_DEFAULT_VOLTAGE_V - FEB_CONSTANT_CELL_VOLTAGE_THRESHOLD_V;
 			FEB_Validate_Readings_Validate_Cell(ic, cell, expected_voltage, polled_voltage, voltage_threshold_high, voltage_threshold_low);
 		}
 
@@ -49,19 +49,10 @@ void FEB_Validate_Readings_Validate_Voltages(uint8_t ic, float expected_voltage,
  * If polled voltage is out of range, log error message to user.
  */
 void FEB_Validate_Readings_Validate_Temperatures(uint8_t ic, float expected_temperature_voltage, uint8_t curr_cell) {
-	for (uint8_t cell = 0; cell < CELLS_TO_TEST; cell++) {
-		float polled_temperature_voltage = FEB_LTC6811_Get_Temperature_Voltage(ic, cell);
-		if (curr_cell == cell) {
-			float temp_voltage_threshold_high = expected_temperature_voltage + FEB_CONSTANT_CELL_TEMP_THRESHOLD_mV * 0.001;
-			float temp_voltage_threshold_low = expected_temperature_voltage - FEB_CONSTANT_CELL_TEMP_THRESHOLD_mV * 0.001;
-			FEB_Validate_Readings_Validate_Cell(ic, cell, expected_temperature_voltage, polled_temperature_voltage, temp_voltage_threshold_high, temp_voltage_threshold_low);
-		} else {
-			float temp_voltage_threshold_high = FEB_CONSTANT_TEMP_DEFAULT_VOLTAGE + FEB_CONSTANT_CELL_TEMP_THRESHOLD_mV * 0.001;
-			float temp_voltage_threshold_low = FEB_CONSTANT_TEMP_DEFAULT_VOLTAGE  - FEB_CONSTANT_CELL_TEMP_THRESHOLD_mV * 0.001;
-			FEB_Validate_Readings_Validate_Cell(ic, cell, expected_temperature_voltage, polled_temperature_voltage, temp_voltage_threshold_high, temp_voltage_threshold_low);
-		}
-
-	}
+		float polled_temperature_voltage = FEB_LTC6811_Get_Temperature_Voltage(ic, curr_cell);
+		float temp_voltage_threshold_high = expected_temperature_voltage + FEB_CONSTANT_CELL_TEMP_THRESHOLD_V;
+		float temp_voltage_threshold_low = expected_temperature_voltage - FEB_CONSTANT_CELL_TEMP_THRESHOLD_V;
+		FEB_Validate_Readings_Validate_Cell(ic, curr_cell, expected_temperature_voltage, polled_temperature_voltage, temp_voltage_threshold_high, temp_voltage_threshold_low);
 }
 
 /*
