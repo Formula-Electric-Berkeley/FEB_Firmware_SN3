@@ -5,6 +5,8 @@
 
 #include "stm32f4xx_hal.h"
 
+#include "FEB_CAN_ICS.h"
+
 // **************************************** Functions ****************************************
 
 void FEB_CAN_Init(void);

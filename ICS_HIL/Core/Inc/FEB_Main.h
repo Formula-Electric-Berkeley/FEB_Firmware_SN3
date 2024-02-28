@@ -5,6 +5,8 @@
 
 #include "FEB_UART_Transmit.h"
 
+#include "FEB_CAN_ICS.h"
+
 #include "FEB_CAN.h"
 
 #include "stm32f4xx_hal.h"

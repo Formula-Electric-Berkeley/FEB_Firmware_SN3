@@ -19,3 +19,11 @@ void FEB_UART_Transmit_Process(void) {
 
 	counter++;
 }
+
+void FEB_UART_Transmit_Speed(void) {
+	char str[1024];
+
+	sprintf(str, "Speed: %u\n", FEB_CAN_ICS_Get_Speed());
+
+	HAL_UART_Transmit(&huart2, (uint8_t *) str, strlen(str), 100);
+}
