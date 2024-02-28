@@ -14,8 +14,8 @@
 // ********************************** Structs **********************************
 
 typedef struct {
-	float temp; //voltage corresponding to temp. //temperature_volt. TODO: add units
-	float voltage; //voltage //cell_volt
+	float temp_volt_V; //voltage corresponding to temp. //temperature_volt. TODO: add units
+	float voltage_V; //voltage //cell_volt
 } Cell;
 
 typedef struct {
@@ -128,7 +128,7 @@ void FEB_LTC6811_Read_Cell_Voltage_Registers(void) {
 void FEB_LTC6811_Store_Voltage(void) {
     for (uint8_t ic = 0; ic < TOTAL_IC; ic++) {
     	for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_ACC_CELLS_PER_IC; cell++) {
-    		accumulator.chips[ic].cells[cell].voltage = FEB_LTC6811_Convert_Voltage(accumulator.IC_config[ic].cells.c_codes[get_LTC6811_cell(cell)]);
+    		accumulator.chips[ic].cells[cell].voltage_V = FEB_LTC6811_Convert_Voltage(accumulator.IC_config[ic].cells.c_codes[get_LTC6811_cell(cell)]);
     	}
     }
 }
@@ -142,13 +142,13 @@ float FEB_LTC6811_Convert_Voltage(uint16_t value) {
 }
 
 float FEB_LTC6811_Get_Voltage(uint8_t ic, uint8_t cell) {
-	return accumulator.chips[ic].cells[cell].voltage;
+	return accumulator.chips[ic].cells[cell].voltage_V;
 }
 
 void FEB_LTC6811_Clear_Voltage(void) {
 	for (uint8_t ic = 0; ic < TOTAL_IC; ic++) {
 		for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_ACC_CELLS_PER_IC; cell++) {
-			accumulator.chips[ic].cells[cell].voltage = 0;
+			accumulator.chips[ic].cells[cell].voltage_V = 0;
 		}
 	}
 }
@@ -190,12 +190,11 @@ void FEB_LTC6811_Read_Aux_Voltages() {
 }
 
 void FEB_LTC6811_Store_Temperature(uint8_t channel) {
-	//TODO: Figure out actual cell configuration. Below is just a guess
 	for (uint8_t ic = 0; ic < TOTAL_IC; ic++) {
 		for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_ACC_CELLS_PER_IC; cell++) {
 			if (get_channel(cell) == channel) {
 				uint8_t mux = get_mux(cell);
-				accumulator.chips[ic].cells[cell].temp = FEB_LTC6811_Convert_Voltage(accumulator.IC_config[ic].aux.a_codes[mux]);
+				accumulator.chips[ic].cells[cell].temp_volt_V = FEB_LTC6811_Convert_Voltage(accumulator.IC_config[ic].aux.a_codes[mux]);
 			}
 		}
 	}
@@ -203,13 +202,13 @@ void FEB_LTC6811_Store_Temperature(uint8_t channel) {
 
 
 float FEB_LTC6811_Get_Temperature_Voltage(uint8_t ic, uint8_t cell) {
-	return accumulator.chips[ic].cells[cell].temp;
+	return accumulator.chips[ic].cells[cell].temp_volt_V;
 }
 
 void FEB_LTC6811_Clear_Temperature(void) {
 	for (uint8_t ic = 0; ic < TOTAL_IC; ic++) {
 		for (uint8_t cell = 0; cell < FEB_CONSTANT_NUM_ACC_CELLS_PER_IC; cell++) {
-			accumulator.chips[ic].cells[cell].temp = 0;
+			accumulator.chips[ic].cells[cell].temp_volt_V = 0;
 		}
 	}
 }

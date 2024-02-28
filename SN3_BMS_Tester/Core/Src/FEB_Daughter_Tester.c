@@ -63,11 +63,9 @@ void FEB_Daughter_Tester_Test_Cell_Voltages(void) {
 /*
  * Test cell temperatures:
  * We loop through all cells
- * For each cell, we input a range of voltages corresponding to temperatures, starting from min voltage, ending at max voltage
- * incrementing by 0.05 volts each time
- * After inputting voltage, read voltages and temperatures from all 10 cells via external daughter board
- * that is currently being tested, and make sure that current cell voltage is equal to expected voltage,
- * and all other cells are equal to default value.
+ * For each cell, we input a range of decimal values corresponding to temperatures to a potentiometer
+ * After inputting decimal value, read voltages and temperatures from all 10 cells via external daughter board
+ * that is currently being tested, and make sure that current cell voltage is equal to expected voltage.
  */
 void FEB_Daughter_Tester_Test_Cell_Temps(void) {
 	FEB_BMS_Tester_Hardware_Transmit_Start_Testing("Daughter", "temperatures");
@@ -82,7 +80,7 @@ void FEB_Daughter_Tester_Test_Cell_Temps(void) {
 			HAL_Delay(10);
 			float resistance = d_value * 10000 / 256;
 			float expected_temp_voltage_V = 5 * 680 / (resistance + 680);
-			FEB_LTC6811_Poll_Temperature(); //Poll voltage
+			FEB_LTC6811_Poll_Voltage(); //Poll voltage
 			FEB_LTC6811_Poll_Temperature(); //Poll temperature
 			FEB_Validate_Readings_Validate_Temperatures(FEB_CONSTANT_DAUGHTER_TESTER_IC, expected_temp_voltage_V, cell); //IC for daughter board
 			FEB_LTC6811_Clear_Voltage();

@@ -35,8 +35,8 @@ void FEB_Input_Voltages_Input_Cell_Voltage(uint8_t cell, float voltage) {
 	char buf[2];
 
 	//Separate 16 bit input into two bytes
-	buf[0] = ((uint16_t)input >> 0) & 0xFF;
-	buf[1] = ((uint16_t)input >> 8) & 0xFF;
+	buf[0] = ((uint16_t)input >> 8) & 0xFF;
+	buf[1] = ((uint16_t)input >> 0) & 0xFF;
 
 	FEB_BMS_Tester_Hardware_Set_DAC_CS_n(cell, false); //CS low
 	HAL_Delay(5); //Delay 5ms

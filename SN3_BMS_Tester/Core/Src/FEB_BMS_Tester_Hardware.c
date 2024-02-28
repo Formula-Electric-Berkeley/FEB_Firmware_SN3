@@ -19,10 +19,10 @@ extern UART_HandleTypeDef huart2;
  * and 4 selects, 2^4 = 16, so there are enough combinations.
  */
 void FEB_BMS_Tester_Hardware_Configure_MUX(uint8_t cell) {
-	uint8_t select0 = (cell & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET;
-	uint8_t select1 = ((cell >> 1) & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET;
-	uint8_t select2 = ((cell >> 2) & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET;
-	uint8_t select3 = ((cell >> 3) & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET;
+	GPIO_PinState select0 = (cell & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET;
+	GPIO_PinState select1 = ((cell >> 1) & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET;
+	GPIO_PinState select2 = ((cell >> 2) & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET;
+	GPIO_PinState select3 = ((cell >> 3) & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET;
 
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, select0);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, select1);
