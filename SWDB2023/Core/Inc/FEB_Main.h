@@ -3,11 +3,12 @@
 
 // ******************************** Includes ********************************
 
-
+#include "FEB_Timer.h"
+#include "stm32f4xx_hal.h"
 #include "stdio.h"
 #include "stdbool.h"
 #include "FEB_IOExpander.h"
-//#include FEB_CAN
+#include "FEB_CAN.h"`
 
 // ******************************** Functions ********************************
 
