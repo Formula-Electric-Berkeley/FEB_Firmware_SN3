@@ -2,8 +2,7 @@
 
 #include "FEB_TPS2482.h"
 
-extern I2C_HandleTypeDef hi2c1; //TODO: Add I2C handler to IOC file
-
+extern I2C_HandleTypeDef hi2c1;
 // *********************************** Variables ************************************
 const uint8_t TPS_ADDR = 0b1000000 << 1;
 
