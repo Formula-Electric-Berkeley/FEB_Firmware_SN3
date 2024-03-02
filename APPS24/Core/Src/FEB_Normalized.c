@@ -3,9 +3,11 @@
 #include "FEB_Normalized.h"
 
 extern CAN_HandleTypeDef hcan1;
+extern ADC_HandleTypeDef hadc1;
+extern UART_HandleTypeDef huart2;
 
-extern uint16_t Sensor_Min;
-extern uint16_t Sensor_Max;
+const uint16_t Sensor_Min = 4095.0/5.0*0.5;
+const uint16_t Sensor_Max = 4095.0/5.0*4.5;
 
 // **************************************** Configuration ****************************************
 
@@ -17,11 +19,11 @@ bool isImpl = false;
 // **************************************** Functions ****************************************
 
 float FEB_Normalized_getAcc(){
-	return normalized_acc
+	return normalized_acc;
 }
 
 void FEB_Normalized_setAcc0(){
-	normalized_acc = 0.0
+	normalized_acc = 0.0;
 }
 
 void FEB_Normalized_updateAcc(){
@@ -84,9 +86,9 @@ float FEB_Normalized_Acc_Pedals(){
 float FEB_Normalized_Brake_Pedals(){
 	uint16_t brake_pedal_1 = HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
 	char buf[128];
-		uint8_t buf_len;
-		buf_len = sprintf(buf, "brake%d\n", brake_pedal_1);
-		HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+	uint8_t buf_len;
+	buf_len = sprintf(buf, "brake%d\n", brake_pedal_1);
+	HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 
 	float final_normalized = (brake_pedal_1 - BRAKE_PEDAL_1_START)/ (BRAKE_PEDAL_1_END - BRAKE_PEDAL_1_START);
 	final_normalized = final_normalized > 1 ? 1 : final_normalized;

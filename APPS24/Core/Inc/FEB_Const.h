@@ -1,6 +1,11 @@
 #ifndef INC_FEB_CONST_H_
 #define INC_FEB_CONST_H_
 
+//***************************************** INCLUDES *****************************8
+
+#include <stdint.h>
+
+
 // **************************************** Definitions ****************************************
 
 #define SLEEP_TIME 10
@@ -27,8 +32,5 @@
 #define PEAK_CURRENT 95  // max current (in amps) we want to pull
 #define MAX_TORQUE 230
 #define RPM_TO_RAD_S .10472
-
-const uint16_t Sensor_Min = 4095.0/5.0*0.5;
-const uint16_t Sensor_Max = 4095.0/5.0*4.5;
 
 #endif /* INC_FEB_CONST_H_ */

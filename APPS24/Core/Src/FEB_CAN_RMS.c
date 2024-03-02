@@ -2,6 +2,7 @@
 
 #include "FEB_CAN_RMS.h"
 
+extern CAN_HandleTypeDef hcan1;
 extern UART_HandleTypeDef huart2;
 
 // *********************************** Struct ************************************
@@ -37,7 +38,7 @@ void FEB_CAN_RMS_Process(void){
 	}
 }
 
-void FEB_CAN_RMS_Disable(){
+void FEB_CAN_RMS_Disable(void){
 	RMSControl.enabled = 0;
 }
 // **** TORQUE FUNCTIONS****
@@ -47,7 +48,7 @@ int16_t min(int16_t x1, int16_t x2) {
 	}
 	return x2;
 }
-uint16_t FEB_CAN_RMS_getMaxTorque(){
+uint16_t FEB_CAN_RMS_getMaxTorque(void){
 	int16_t accumulator_voltage = min(INIT_VOLTAGE, (RMS_MESSAGE.HV_Bus_Voltage-50) / 10);
 	int16_t motor_speed = -1 * RMS_MESSAGE.Motor_Speed * RPM_TO_RAD_S;
   // If speed is less than 15, we should command max torque
@@ -59,18 +60,18 @@ uint16_t FEB_CAN_RMS_getMaxTorque(){
 	return maxTorque;
 }
 
-FEB_CAN_RMS_Torque(){
+void FEB_CAN_RMS_Torque(void){
 	RMSControl.torque = 10*FEB_Normalized_Get_Acc()*FEB_CAN_RMS_getMaxTorque();
 	FEB_CAN_RMS_updateTorque()
 }
 // ***** OTHER FUNCS ***
 
-void FEB_CAN_RMS_updateTorque() { //TODO: Create Custom Transmit function and update below call
+void FEB_CAN_RMS_updateTorque(void) { //TODO: Create Custom Transmit function and update below call
   uint8_t message_data[8] = {RMSControl.torque & 0xFF, RMSControl.torque >> 8, 0, 0, 0, RMSControl.enabled, 0, 0};
   FEB_CAN_Transmit(&hcan1, 0x0C0, message_data, 8);
 }
 
-void FEB_CAN_RMS_torqueTransmit(){
+void FEB_CAN_RMS_torqueTransmit(void){
 	//	  buf_len = sprintf(buf, "rtd:%d, enable:%d lockout:%d impl:%d acc: %.3f brake: %.3f Bus Voltage: %d Motor Speed: %d\n", SW_MESSAGE.ready_to_drive, Inverter_enable, Inverter_enable_lockout, isImpl, normalized_acc, normalized_brake, RMS_MESSAGE.HV_Bus_Voltage, RMS_MESSAGE.Motor_Speed);
 
 		  buf_len = sprintf(buf, "Evan's Max Torque: %d\n", FEB_CAN_RMS_getMaxTorque());
@@ -79,7 +80,7 @@ void FEB_CAN_RMS_torqueTransmit(){
 }
 // ***** CAN FUNCTIONS ****
 //TODO: CREATE FEB_CAN_SW_Trasnmit Function and update below function
-void FEB_CAN_RMS_Init(){
+void FEB_CAN_RMS_Init(void){
 	// Clear fault in case inverter is powered up before disable command is sent
 	uint8_t fault_clear_addr = 20;
 	uint8_t fault_clear_data = 0;
