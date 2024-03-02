@@ -14,7 +14,7 @@ SW_MESSAGE_TYPE SW_MESSAGE;
 
 // **************************************** Functions ****************************************
 bool FEB_CAN_SW_Ready(){
-	return SW_MESSAGE.ready_to_drive == 1
+	return SW_MESSAGE.ready_to_drive == 1;
 }
 
 // ***** CAN FUNCTIONS ****
