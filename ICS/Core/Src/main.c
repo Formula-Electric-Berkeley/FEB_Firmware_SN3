@@ -166,12 +166,12 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  char str[20];
-
-	  sprintf(str, "%d", counter);
-	  lv_label_set_text(ui_speedField, str);
-	  HAL_Delay(100);
-	  counter++;
+//	  char str[1];
+//
+//	  sprintf(str, "%d", counter);
+//	  lv_label_set_text(ui_speedField, str);
+//	  HAL_Delay(100);
+//	  counter++;
   }
   /* USER CODE END 3 */
 }
