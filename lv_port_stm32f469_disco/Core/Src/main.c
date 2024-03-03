@@ -27,7 +27,7 @@
 #include "./demos/lv_demos.h"
 #include <screen_driver.h>
 #include <touch_sensor_driver.h>
-#include "ui.h"
+#include <ui.h>
 
 /* USER CODE END Includes */
 
@@ -106,6 +106,87 @@ static void MX_USART3_UART_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+//Update Speedometer
+int indx = 0;
+char text[50];
+bool speedgoingDown = false;
+
+void update_mph (void) {
+	// Update text based on direction
+	    if (speedgoingDown) {
+	        indx--;
+	    } else {
+	        indx++;
+	    }
+
+	    // Toggle direction when reaching boundaries
+	    if (indx <= 0) {
+	        speedgoingDown = false;
+	    } else if (indx >= 100) {
+	        speedgoingDown = true;
+	    }
+	sprintf (text, " %d \nmph", indx);
+	lv_textarea_set_text(ui_TextArea2, text);
+}
+
+
+//Bar Updates
+bool increasing = true;
+int fillValue = 0;
+
+
+void update_fill () {
+	lv_bar_set_value(ui_Bar1, fillValue, LV_ANIM_ON);
+	lv_bar_set_value(ui_Bar2, fillValue, LV_ANIM_ON);
+}
+
+
+//Update Ammeter
+void update_labels_based_on_bar(void) {
+    // Get the value of the bar
+    int barValue = lv_bar_get_value(ui_Bar2); //Bar 2 is Ammeter
+
+    // Convert the value to a string with a percent symbol at the end
+    char text[10];
+    snprintf(text, sizeof(text), "%d%%", barValue);
+
+    // Update the label with the value of the bar
+    lv_label_set_text(ui_Label5, text);
+
+    // Update the DSG/CHG label based on the bar value
+    if (barValue < 60) {
+        lv_label_set_text(ui_Label8, "DSG"); //Discharge < 60
+        // Apply red background directly to the second bar
+        lv_obj_set_style_bg_color(ui_Bar2, lv_palette_main(LV_PALETTE_RED), LV_PART_INDICATOR);
+
+    } else {
+        lv_label_set_text(ui_Label8, "CHG"); // Charge otherwise
+
+         // Apply blue background directly to the second bar
+        lv_obj_set_style_bg_color(ui_Bar2, lv_palette_main(LV_PALETTE_GREEN), LV_PART_INDICATOR);
+
+    }
+}
+
+
+void update_bars (void) {
+	if (increasing) {
+	        fillValue += 2;
+	        if (fillValue >= 100) {
+	            increasing = false;
+	        }
+	    } else {
+	        fillValue -= 2;
+	        if (fillValue <= 0) {
+	            increasing = true;
+	        }
+	    }
+
+	update_fill();
+	update_labels_based_on_bar();
+}
+
+
 /* USER CODE END 0 */
 
 /**
@@ -115,7 +196,6 @@ static void MX_USART3_UART_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -150,8 +230,9 @@ int main(void)
   screen_driver_init();
   touch_sensor_driver_init();
 
-//  lv_demo_benchmark();
+  //lv_demo_benchmark();
 
+  //lv_textarea_1();
   ui_init();
   /* USER CODE END 2 */
 
@@ -159,8 +240,11 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  HAL_Delay(5);
-	  lv_timer_handler();
+	  HAL_Delay(100);
+	  update_mph();
+	  update_bars();
+	  //lv_timer_handler();
+	  lv_task_handler();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
