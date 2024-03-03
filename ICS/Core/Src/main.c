@@ -153,6 +153,7 @@ int main(void)
 //  lv_demo_benchmark();
 
   ui_init();
+  int counter = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -164,6 +165,12 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  char str[20];
+
+	  sprintf(str, "%d", counter);
+	  lv_label_set_text(ui_speedField, str);
+	  HAL_Delay(100);
+	  counter++;
   }
   /* USER CODE END 3 */
 }

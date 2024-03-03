@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>LVGL_STM32f469I_Disco</name>
+	<name>ICS</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -33,37 +33,37 @@
 		<link>
 			<name>Drivers/BSP/Components/ft6x06.c</name>
 			<type>1</type>
-			<locationURI>PROJECT_LOC/Drivers/BSP/Components/ft6x06/ft6x06.c</locationURI>
+			<locationURI>copy_PROJECT_LOC/Drivers/BSP/Components/ft6x06/ft6x06.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP/Components/nt35510.c</name>
 			<type>1</type>
-			<locationURI>PROJECT_LOC/Drivers/BSP/Components/nt35510/nt35510.c</locationURI>
+			<locationURI>copy_PROJECT_LOC/Drivers/BSP/Components/nt35510/nt35510.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP/Components/otm8009a.c</name>
 			<type>1</type>
-			<locationURI>PROJECT_LOC/Drivers/BSP/Components/otm8009a/otm8009a.c</locationURI>
+			<locationURI>copy_PROJECT_LOC/Drivers/BSP/Components/otm8009a/otm8009a.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP/STM32469I-Discovery/stm32469i_discovery.c</name>
 			<type>1</type>
-			<locationURI>PROJECT_LOC/Drivers/BSP/STM32469I-Discovery/stm32469i_discovery.c</locationURI>
+			<locationURI>copy_PROJECT_LOC/Drivers/BSP/STM32469I-Discovery/stm32469i_discovery.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP/STM32469I-Discovery/stm32469i_discovery_lcd.c</name>
 			<type>1</type>
-			<locationURI>PROJECT_LOC/Drivers/BSP/STM32469I-Discovery/stm32469i_discovery_lcd.c</locationURI>
+			<locationURI>copy_PROJECT_LOC/Drivers/BSP/STM32469I-Discovery/stm32469i_discovery_lcd.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP/STM32469I-Discovery/stm32469i_discovery_ts.c</name>
 			<type>1</type>
-			<locationURI>PROJECT_LOC/Drivers/BSP/STM32469I-Discovery/stm32469i_discovery_ts.c</locationURI>
+			<locationURI>copy_PROJECT_LOC/Drivers/BSP/STM32469I-Discovery/stm32469i_discovery_ts.c</locationURI>
 		</link>
 	</linkedResources>
 	<filteredResources>
 		<filter>
-			<id>1676576590488</id>
+			<id>0</id>
 			<name>Drivers/BSP/Components</name>
 			<type>13</type>
 			<matcher>
@@ -71,7 +71,7 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1676576580039</id>
+			<id>0</id>
 			<name>Drivers/BSP/STM32469I-Discovery</name>
 			<type>13</type>
 			<matcher>
@@ -79,4 +79,10 @@
 			</matcher>
 		</filter>
 	</filteredResources>
+	<variableList>
+		<variable>
+			<name>copy_PROJECT_LOC</name>
+			<value>$%7BPARENT-3-PROJECT_LOC%7D/Developer/FEB_Firmware_SN3/ICS</value>
+		</variable>
+	</variableList>
 </projectDescription>
