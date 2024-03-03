@@ -61,8 +61,8 @@ uint16_t FEB_CAN_RMS_getMaxTorque(void){
 }
 
 void FEB_CAN_RMS_Torque(void){
-	RMSControl.torque = 10*FEB_Normalized_Get_Acc()*FEB_CAN_RMS_getMaxTorque();
-	FEB_CAN_RMS_updateTorque()
+	RMSControl.torque = 10*FEB_Normalized_getAcc()*FEB_CAN_RMS_getMaxTorque();
+	FEB_CAN_RMS_updateTorque();
 }
 // ***** OTHER FUNCS ***
 
@@ -138,12 +138,13 @@ uint8_t FEB_CAN_RMS_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignme
 	return filter_bank;
 }
 // @lovehate TODO: update below function to fit with call
-void FEB_CAN_RMS_Store_Msg(AddressIdType RxId, uint8_t *RxData) {
-	switch (RxId){
-		case RMS_VOLTAGE_INFO:
+
+void FEB_CAN_RMS_Store_Msg(CAN_RxHeaderTypeDef* pHeader, uint8_t *RxData) {
+	switch (pHeader -> StdId){
+		case FEB_CAN_ID_RMS_VOLTAGE:
 			memcpy(&(RMS_MESSAGE.HV_Bus_Voltage), RxData, 2);
 			break;
-		case RMS_MOTOR_INFO:
+		case FEB_CAN_ID_RMS_MOTOR:
 			memcpy(&(RMS_MESSAGE.Motor_Speed), RxData+2, 2);
 			break;
 	}

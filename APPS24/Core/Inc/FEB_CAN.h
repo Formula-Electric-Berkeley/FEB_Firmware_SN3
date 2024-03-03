@@ -7,7 +7,7 @@
 #include "FEB_CAN_IVT.h"
 #include "FEB_SM.h"
 */
-
+#include "stm32f4xx_hal.h"
 #include "FEB_CAN_RMS.h"
 #include "FEB_CAN_SW.h"
 

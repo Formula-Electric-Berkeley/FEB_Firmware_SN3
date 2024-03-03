@@ -20,9 +20,9 @@ bool FEB_CAN_SW_Ready(){
 // ***** CAN FUNCTIONS ****
 
 uint8_t FEB_CAN_SW_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
-	uint16_t ids[] = {FEB_CAN_ID_SW_READY_TO_DRIVE, FEB_CAN_ID_SW_COOLANT_PUMP, FEB_CAN_ID_SW_ACUMULATOR_FANS, FEB_CAN_ID_SW_EXTRA};
+	uint16_t ids[] = {FEB_CAN_ID_SW_READY_TO_DRIVE};
 
-	for (uint8_t i = 0; i < 4; i++) {
+	for (uint8_t i = 0; i < 1; i++) {
 		CAN_FilterTypeDef filter_config;
 
 	    // Standard CAN - 2.0A - 11 bit
@@ -46,19 +46,11 @@ uint8_t FEB_CAN_SW_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignmen
 	return filter_bank;
 }
 
-void FEB_CAN_SW_Store_Msg(AddressIdType RxId, uint8_t *RxData, uint32_t data_length) {
-    switch (RxId){
-        case SW_READY_TO_DRIVE:
-            memcpy(&(SW_MESSAGE.ready_to_drive), RxData, data_length);
-            break;
-        case SW_COOLANT_PUMP:
-            memcpy(&(SW_MESSAGE.coolant_pump), RxData, data_length);
-            break;
-        case SW_ACUMULATOR_FANS:
-            memcpy(&(SW_MESSAGE.acumulator_fans), RxData, data_length);
-            break;
-        case SW_EXTRA:
-            memcpy(&(SW_MESSAGE.extra), RxData, data_length);
+//TODO: check if "datalength" is 4
+void FEB_CAN_SW_Store_Msg(CAN_RxHeaderTypeDef* pHeader, uint8_t *RxData) {
+    switch (pHeader -> StdId){
+        case FEB_CAN_ID_SW_READY_TO_DRIVE :
+            memcpy(&(SW_MESSAGE.ready_to_drive), RxData, 4);
             break;
     }
 }

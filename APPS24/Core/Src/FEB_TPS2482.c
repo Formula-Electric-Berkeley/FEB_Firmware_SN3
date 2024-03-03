@@ -27,25 +27,25 @@ float shunt_voltage;
 
 void FEB_TPS2482_Setup() {
 	HAL_StatusTypeDef ret;
-	ret = HAL_I2C_Mem_Write(hi2c1, TPS_ADDR, 0x00, 1, CONFIG, 2, HAL_MAX_DELAY); // configure
+	ret = HAL_I2C_Mem_Write(&hi2c1, TPS_ADDR, 0x00, 1, CONFIG, 2, HAL_MAX_DELAY); // configure
 //	if (ret != HAL_OK) {
 //			// error handler
 //		__disable_irq();
 //		while(1);
 //	}
-	ret = HAL_I2C_Mem_Write(hi2c1, TPS_ADDR, 0x05, 1, MAIN_CAL, 2, HAL_MAX_DELAY); // calibrate
+	ret = HAL_I2C_Mem_Write(&hi2c1, TPS_ADDR, 0x05, 1, MAIN_CAL, 2, HAL_MAX_DELAY); // calibrate
 //	if (ret != HAL_OK) {
 //			// error handler
 //		__disable_irq();
 //		while(1);
 //	}
-	ret = HAL_I2C_Mem_Write(hi2c1, TPS_ADDR, 0x06, 1, UNDERV, 2, HAL_MAX_DELAY); // set alert
+	ret = HAL_I2C_Mem_Write(&hi2c1, TPS_ADDR, 0x06, 1, UNDERV, 2, HAL_MAX_DELAY); // set alert
 //	if (ret != HAL_OK) {
 //			// error handler
 //		__disable_irq();
 //		while(1);
 //	}
-	ret = HAL_I2C_Mem_Write(hi2c1, TPS_ADDR, 0x07, 1, TPS_LIMIT, 2, HAL_MAX_DELAY); // set limit
+	ret = HAL_I2C_Mem_Write(&hi2c1, TPS_ADDR, 0x07, 1, TPS_LIMIT, 2, HAL_MAX_DELAY); // set limit
 //	if (ret != HAL_OK) {
 //		// error handler
 //		__disable_irq();
@@ -159,6 +159,6 @@ void FEB_TPS2482_sendReadings(){
 	current_reading = FEB_TPS2482_PollBusCurrent(&hi2c1,TPS_ADDR+1); // can abstract away if needed
 	voltage_reading = FEB_TPS2482_PollBusVoltage(&hi2c1, TPS_ADDR+1); // can abstract away if needed
 	shunt_voltage = FEB_TPS2482_GetShunt(&hi2c1, TPS_ADDR+1); //can abstract away if needed
-	FEB_TPS2482_canTransmit(); // FEB_CAN_Transmit(&hcan1,APPS_TPS,&current_reading,sizeof(float));
+	//FEB_CAN_Transmit(&hcan1,APPS_TPS,&current_reading,sizeof(float)); //TODO: convert to custom Transmit Funciton
 	//TODO: create transmit function for FEB_TPS2482
 }

@@ -28,12 +28,12 @@ void FEB_CAN_Filter_Config(void) {
 	uint8_t filter_bank = 0;
 	// Assign Filter
     // filter_bank = Function(&hcan1, CAN_RX_FIFO0, filter_bank);
-	filter_bank = FEB_CAN_RMS_Filter_Config();
-	filter_bank = FEB_CAN_SW_Filter_Config();
+	filter_bank = FEB_CAN_RMS_Filter_Config(&hcan1, CAN_RX_FIFO0, filter_bank);
+	filter_bank = FEB_CAN_SW_Filter_Config(&hcan1, CAN_RX_FIFO0, filter_bank);
 }
 
-void HAL_CAN_RxFifo0MsgPendingCallback() {
-	if (HAL_CAN_GetRxMessage(hcan1, CAN_RX_FIFO0, &FEB_CAN_Rx_Header, FEB_CAN_Rx_Data) == HAL_OK) {
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan) {
+	if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &FEB_CAN_Rx_Header, FEB_CAN_Rx_Data) == HAL_OK) {
 		FEB_CAN_RMS_Store_Msg(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);
 		FEB_CAN_SW_Store_Msg(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);
 		//add CAN Store for SW?

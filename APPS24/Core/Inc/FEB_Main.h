@@ -13,12 +13,10 @@
 #include "FEB_Normalized.h"
 #include "FEB_TPS2482.h"
 
-extern CAN_HandleTypeDef hcan1;
-extern UART_HandleTypeDef huart2;
-extern ADC_HandleTypeDef hadc1;
-extern TIM_HandleTypeDef htim5;
+
 // ******************************** Functions ********************************
 
 void FEB_Main_Setup(void);
+void FEB_Main_While(void);
 
 #endif /* INC_FEB_MAIN_H_ */

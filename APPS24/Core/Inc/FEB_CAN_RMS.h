@@ -4,9 +4,14 @@
 
 // ********************************** Includes **********************************
 
+#include "stm32f4xx_hal.h"
+#include <stdint.h>
+#include <string.h>
+#include <stdio.h>
 #include "FEB_CAN_ID.h"
 #include "FEB_Const.h"
-#include <stdint.h>
+#include "FEB_Normalized.h"
+
 
 
 // ********************************** Functions **********************************
@@ -19,7 +24,7 @@ void FEB_CAN_RMS_updateTorque(void);
 void FEB_CAN_RMS_torqueTransmit(void);
 void FEB_CAN_RMS_Init(void);
 uint8_t FEB_CAN_RMS_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank);
-void FEB_CAN_RMS_Store_Msg(AddressIdType RxId, uint8_t *RxData);
+void FEB_CAN_RMS_Store_Msg(CAN_RxHeaderTypeDef* pHeader, uint8_t *RxData);
 
 
 
