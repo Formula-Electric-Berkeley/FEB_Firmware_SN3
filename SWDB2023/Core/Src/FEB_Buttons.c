@@ -3,12 +3,15 @@
 #include "FEB_Buttons.h"
 
 extern uint8_t data2;
+extern CAN_HandleTypeDef hcan1;
 
 
 // ********************************** Variables **********************************
 
 static bool Button_Checking = false;
 static bool Button_Timer_Flag = false;
+
+//TODO: coolant_pump and accumulator_fans, radiator_fans need to be transmitted from swithces 1-3
 
 //coolant pump
 bool lastButton_1 = 0;
@@ -53,6 +56,34 @@ bool lock = false;
 
 // ********************************** Functions **********************************
 
+//TODO: could reassign all buttons through this skeleton function
+FEB_Button_Skeleton(bool buttonName, bool buttonLock, bool lastButton, uint8_t arrLocation, ){ //arrlocation should be number in lock variable
+	if (!(data2 & (1<<arrLocation))) { //BUT_1 --> IO P1, coolant pump
+		if (!buttonName){
+			buttonLock = true;
+			buttonName = !buttonName;
+			switch (arrLocation){ // 5, 6, 7 should be coded to transmit functions for coolant_pump and accumulator_fans, radiator_fans
+			case 5:
+				//FEB_CAN_Transmit(&hcan1, SW_COOLANT_PUMP, (uint8_t *) &buttonName, 1);
+			case 6:
+				//FEB_CAN_Transmit(&hcan1, SW_COOLANT_PUMP, (uint8_t *) &buttonName, 1);
+			case 7:
+				//FEB_CAN_Transmit(&hcan1, SW_COOLANT_PUMP, (uint8_t *) &buttonName, 1);
+			}
+		}
+		lastButton = true;
+	} else {
+		if (lastButton){
+			buttonLock = false;
+		}
+		lastButton = false;
+	}
+	*out_buttonName = buttonName;
+	*out_buttonLock = buttonLock;
+	*out_lastButton = lastButton;
+}
+
+
 FEB_Buttons_coolantPump(){
 	if (!(data2 & (1<<1))) { //BUT_1 --> IO P1, coolant pump
 		if (!lastButton_1){
@@ -92,7 +123,7 @@ FEB_Buttons_extra_1(){
 		if (!lastButton_3){
 			lock_3 = true;
 			extra_1 = !extra_1;
-			//FEB_CAN_Transmit(&hcan1, SW_ACUMULATOR_FANS, (uint8_t *) &extra_1, 1);
+			//FEB_CAN_Transmit(&hcan1, SW_EXTRA, (uint8_t *) &extra, 1);
 		}
 		lastButton_3 = true;
 	} else {
@@ -109,7 +140,7 @@ FEB_Buttons_extra_2(){
 		if (!lastButton_4){
 			lock_4 = true;
 			extra_2 = !extra_2;
-			//FEB_CAN_Transmit(&hcan1, SW_ACUMULATOR_FANS, (uint8_t *) &extra_1, 1);
+			//FEB_CAN_Transmit(&hcan1, SW_EXTRA, (uint8_t *) &extra, 1);
 		}
 		lastButton_4 = true;
 	} else {
@@ -126,7 +157,7 @@ FEB_Buttons_switch_1(){
 		if (!lastSwitch_1){
 			lock_5 = true;
 			switch_1 = !switch_1;
-			//FEB_CAN_Transmit(&hcan1, SW_ACUMULATOR_FANS, (uint8_t *) &extra_1, 1);
+			//FEB_CAN_Transmit(&hcan1, SW_EXTRA, (uint8_t *) &extra, 1);
 		}
 		lastSwitch_1 = true;
 	} else {
@@ -143,7 +174,7 @@ FEB_Buttons_switch_2(){
 		if (!lastSwitch_2){
 			lock_6 = true;
 			switch_2 = !switch_2;
-			//FEB_CAN_Transmit(&hcan1, SW_ACUMULATOR_FANS, (uint8_t *) &extra_1, 1);
+			//FEB_CAN_Transmit(&hcan1, SW_EXTRA, (uint8_t *) &extra, 1);
 		}
 		lastSwitch_2 = true;
 	} else {
@@ -160,7 +191,7 @@ FEB_Buttons_switch_3(){
 		if (!lastSwitch_3){
 			lock_7 = true;
 			switch_3 = !switch_3;
-			//FEB_CAN_Transmit(&hcan1, SW_ACUMULATOR_FANS, (uint8_t *) &extra_1, 1);
+			//FEB_CAN_Transmit(&hcan1, SW_EXTRA, (uint8_t *) &extra, 1);
 		}
 		lastSwitch_3 = true;
 	} else {
