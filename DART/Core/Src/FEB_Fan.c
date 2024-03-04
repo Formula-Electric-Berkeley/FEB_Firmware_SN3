@@ -28,10 +28,13 @@ static uint8_t Fan_5_section_temp = 30;
 // ********************************** Initialize **********************************
 
 void FEB_Fan_Init(){
+
 	FEB_Fan_PWM_Init();
 	FEB_Fan_All_Speed_Set(255 * 0.5);
-	FEB_PID_Init_All();
+	//FEB_PID_Init_All();
+
 }
+// ********************************** Testing**********************************
 
 // ********************************** Setpoint Generation **********************************
 // Using average temperature
@@ -112,7 +115,7 @@ void FEB_Update_PWM_All_Fans(){
 
 void FEB_Update_PWM_Fan_1(){
 	uint32_t setpoint = FEB_Get_Fan_1_Setpoint();
-	uint32_t tachometer_reading = FEB_Fan_Read_Tachometer_Fan_1();
+	uint32_t tachometer_reading = FEB_Read_Tachometer_Fan_1();
 	float new_PWM = FEB_PID_Update(&FEB_Fan_1_PID, setpoint, tachometer_reading);
 	FEB_Fan_1_Speed_Set(new_PWM);
 }
@@ -121,6 +124,7 @@ void FEB_Update_PWM_Fan_1(){
 void FEB_Fan_PWM_Init(void) {
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
 	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
 }
@@ -130,6 +134,7 @@ void FEB_Fan_All_Speed_Set(uint8_t speed) {
 	FEB_Fan_2_Speed_Set(speed);
 	FEB_Fan_3_Speed_Set(speed);
 	FEB_Fan_4_Speed_Set(speed);
+	FEB_Fan_5_Speed_Set(speed);
 }
 
 void FEB_Fan_1_Speed_Set(uint8_t speed) {
@@ -144,7 +149,7 @@ void FEB_Fan_2_Speed_Set(uint8_t speed) {
 
 void FEB_Fan_3_Speed_Set(uint8_t speed) {
 	FEB_Fan_3_Speed = speed;
-	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, FEB_Fan_3_Speed);
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, FEB_Fan_3_Speed);
 }
 
 void FEB_Fan_4_Speed_Set(uint8_t speed) {
@@ -154,13 +159,5 @@ void FEB_Fan_4_Speed_Set(uint8_t speed) {
 
 void FEB_Fan_5_Speed_Set(uint8_t speed) {
 	FEB_Fan_5_Speed = speed;
-	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, FEB_Fan_5_Speed);
-}
-
-
-// ********************************** Tachometer **********************************
-
-
-uint32_t FEB_Fan_Read_Tachometer_Fan_1() {
-	return 0;
+	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, FEB_Fan_5_Speed);
 }
