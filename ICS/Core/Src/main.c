@@ -21,6 +21,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
+#include "FEB_Main.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <lvgl.h>
@@ -148,6 +151,8 @@ int main(void)
   MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
 
+  FEB_Main_Setup();
+
   lv_init();
 
   screen_driver_init();
@@ -165,8 +170,8 @@ int main(void)
   while (1)
   {
 	  HAL_Delay(100);
-	  //lv_timer_handler();
-	  lv_task_handler();
+//	  lv_timer_handler();
+//	  lv_task_handler();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -176,6 +181,7 @@ int main(void)
 //	  lv_label_set_text(ui_speedField, str);
 //	  HAL_Delay(100);
 //	  counter++;
+	  FEB_Main_Loop();
   }
   /* USER CODE END 3 */
 }
