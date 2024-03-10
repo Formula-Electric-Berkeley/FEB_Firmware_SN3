@@ -22,7 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
-#include "FEB_Main.h"
+//#include "FEB_Main.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -154,26 +154,26 @@ int main(void)
   MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
 
-  FEB_Main_Setup();
+//  FEB_Main_Setup();
 
-//  lv_init();
-//
-//  screen_driver_init();
-//  touch_sensor_driver_init();
-//
-//  //lv_demo_benchmark();
-//
-//  //lv_textarea_1();
-//  ui_init();
-//  int counter = 0;
+  lv_init();
+
+  screen_driver_init();
+  touch_sensor_driver_init();
+
+  //lv_demo_benchmark();
+
+  //lv_textarea_1();
+  ui_init();
+  int counter = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  HAL_Delay(100);
-//	  lv_timer_handler();
+//	  HAL_Delay(100);
+	  lv_timer_handler();
 //	  lv_task_handler();
     /* USER CODE END WHILE */
 
@@ -184,7 +184,7 @@ int main(void)
 //	  lv_label_set_text(ui_speedField, str);
 //	  HAL_Delay(100);
 //	  counter++;
-	  FEB_Main_Loop();
+//	  FEB_Main_Loop();
   }
   /* USER CODE END 3 */
 }
@@ -211,11 +211,18 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 160;
+  RCC_OscInitStruct.PLL.PLLN = 180;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 6;
   RCC_OscInitStruct.PLL.PLLR = 6;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Activate the Over-Drive mode
+  */
+  if (HAL_PWREx_EnableOverDrive() != HAL_OK)
   {
     Error_Handler();
   }

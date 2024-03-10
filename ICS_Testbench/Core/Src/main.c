@@ -21,6 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "FEB_Main.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <lvgl.h>
@@ -72,6 +74,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+CAN_HandleTypeDef hcan1;
+
 DMA2D_HandleTypeDef hdma2d;
 
 DSI_HandleTypeDef hdsi;
@@ -99,6 +103,7 @@ static void MX_FMC_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_LTDC_Init(void);
 static void MX_USART3_UART_Init(void);
+static void MX_CAN1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -142,7 +147,10 @@ int main(void)
   MX_I2C1_Init();
   MX_LTDC_Init();
   MX_USART3_UART_Init();
+  MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
+
+  FEB_Main_Setup();
 
   lv_init();
 
@@ -153,7 +161,7 @@ int main(void)
 
   //lv_textarea_1();
   ui_init();
-  int counter = 0;
+//  int counter = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -166,12 +174,13 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  char str[20];
-
-	  sprintf(str, "%d", counter);
-	  lv_label_set_text(ui_speedField, str);
-	  HAL_Delay(100);
-	  counter++;
+//	  char str[20];
+//
+//	  sprintf(str, "%d", counter);
+//	  lv_label_set_text(ui_speedField, str);
+//	  HAL_Delay(100);
+//	  counter++;
+	  FEB_Main_Loop();
   }
   /* USER CODE END 3 */
 }
@@ -227,6 +236,43 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief CAN1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_CAN1_Init(void)
+{
+
+  /* USER CODE BEGIN CAN1_Init 0 */
+
+  /* USER CODE END CAN1_Init 0 */
+
+  /* USER CODE BEGIN CAN1_Init 1 */
+
+  /* USER CODE END CAN1_Init 1 */
+  hcan1.Instance = CAN1;
+  hcan1.Init.Prescaler = 18;
+  hcan1.Init.Mode = CAN_MODE_LOOPBACK;
+  hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_3TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
+  hcan1.Init.TimeTriggeredMode = DISABLE;
+  hcan1.Init.AutoBusOff = DISABLE;
+  hcan1.Init.AutoWakeUp = DISABLE;
+  hcan1.Init.AutoRetransmission = DISABLE;
+  hcan1.Init.ReceiveFifoLocked = DISABLE;
+  hcan1.Init.TransmitFifoPriority = DISABLE;
+  if (HAL_CAN_Init(&hcan1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN CAN1_Init 2 */
+
+  /* USER CODE END CAN1_Init 2 */
+
 }
 
 /**
@@ -645,6 +691,8 @@ static void MX_FMC_Init(void)
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
+/* USER CODE BEGIN MX_GPIO_Init_1 */
+/* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOE_CLK_ENABLE();
@@ -715,6 +763,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
 
+/* USER CODE BEGIN MX_GPIO_Init_2 */
+/* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
