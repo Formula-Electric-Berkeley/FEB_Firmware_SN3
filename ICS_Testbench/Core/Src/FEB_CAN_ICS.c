@@ -9,9 +9,6 @@ extern uint32_t FEB_CAN_Tx_Mailbox;
 
 // ******************************** Variables ********************************
 
-typedef struct {
-	volatile uint8_t speed;
-} FEB_CAN_ICS_Message_t;
 FEB_CAN_ICS_Message_t FEB_CAN_ICS_Message;
 
 uint8_t speed = 0;
@@ -44,11 +41,11 @@ uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
 }
 
 void FEB_CAN_ICS_Rx_Handler(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_CAN_Rx_Data[]) {
-	speed = FEB_CAN_Rx_Data[0];
-	char receiveStr[20];
-
-	sprintf(receiveStr, "%d", FEB_CAN_Rx_Data[0]);
-	lv_label_set_text(ui_speedField, receiveStr);
+	FEB_CAN_ICS_Message.speed = FEB_CAN_Rx_Data[0];
+//	char receiveStr[20];
+//
+//	sprintf(receiveStr, "%d", FEB_CAN_Rx_Data[0]);
+//	lv_label_set_text(ui_speedField, receiveStr);
 }
 
 void FEB_CAN_ICS_Transmit(void) {
@@ -59,7 +56,8 @@ void FEB_CAN_ICS_Transmit(void) {
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
 
 	// Copy data to Tx buffer
-	FEB_CAN_Tx_Data[0] = (uint8_t) speed + 1;
+	speed += 1;
+	FEB_CAN_Tx_Data[0] = (uint8_t) speed;
 
 	// Delay until mailbox available
 	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}

@@ -11,6 +11,10 @@
 #include "lvgl.h"
 #include "ui.h"
 
+typedef struct {
+	volatile uint8_t speed;
+} FEB_CAN_ICS_Message_t;
+
 // **************************************** Functions ****************************************
 
 uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank);

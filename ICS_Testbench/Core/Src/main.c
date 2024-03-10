@@ -21,15 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "FEB_Main.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <lvgl.h>
-#include "./demos/lv_demos.h"
-#include <screen_driver.h>
-#include <touch_sensor_driver.h>
-#include <ui.h>
+#include "FEB_Main.h"
 
 /* USER CODE END Includes */
 
@@ -152,34 +145,15 @@ int main(void)
 
   FEB_Main_Setup();
 
-  lv_init();
-
-  screen_driver_init();
-  touch_sensor_driver_init();
-
-  //lv_demo_benchmark();
-
-  //lv_textarea_1();
-  ui_init();
-//  int counter = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  HAL_Delay(100);
-	  //lv_timer_handler();
-	  lv_task_handler();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//	  char str[20];
-//
-//	  sprintf(str, "%d", counter);
-//	  lv_label_set_text(ui_speedField, str);
-//	  HAL_Delay(100);
-//	  counter++;
 	  FEB_Main_Loop();
   }
   /* USER CODE END 3 */

@@ -3,6 +3,8 @@
 
 // **************************************** Includes ****************************************
 
+#include "FEB_UI.h"
+
 #include "FEB_UART_Transmit.h"
 
 #include "FEB_CAN_ICS.h"
