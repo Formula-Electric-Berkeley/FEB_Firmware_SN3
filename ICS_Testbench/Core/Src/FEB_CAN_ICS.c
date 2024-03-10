@@ -45,6 +45,10 @@ uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
 
 void FEB_CAN_ICS_Rx_Handler(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_CAN_Rx_Data[]) {
 	speed = FEB_CAN_Rx_Data[0];
+	char receiveStr[20];
+
+	sprintf(receiveStr, "%d", FEB_CAN_Rx_Data[0]);
+	lv_label_set_text(ui_speedField, receiveStr);
 }
 
 void FEB_CAN_ICS_Transmit(void) {

@@ -15,5 +15,5 @@ void FEB_Main_Loop(void) {
 
 	FEB_CAN_ICS_Transmit();
 
-	HAL_Delay(1000);
+	HAL_Delay(100);
 }

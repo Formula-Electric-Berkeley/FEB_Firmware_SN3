@@ -7,6 +7,10 @@
 
 #include "stm32f4xx_hal.h"
 
+#include <stdio.h>
+#include "lvgl.h"
+#include "ui.h"
+
 // **************************************** Functions ****************************************
 
 uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank);
