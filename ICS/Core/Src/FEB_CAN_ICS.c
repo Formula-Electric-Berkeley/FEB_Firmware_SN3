@@ -14,7 +14,7 @@ typedef struct {
 } FEB_CAN_ICS_Message_t;
 FEB_CAN_ICS_Message_t FEB_CAN_ICS_Message;
 
-uint8_t speed = 10;
+uint8_t speed = 0;
 
 // **************************************** Functions ****************************************
 
@@ -48,18 +48,17 @@ void FEB_CAN_ICS_Rx_Handler(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_
 }
 
 void FEB_CAN_ICS_Transmit(void) {
-	FEB_CAN_Tx_Header.DLC = 2;
+	FEB_CAN_Tx_Header.DLC = 1;
 	FEB_CAN_Tx_Header.StdId = FEB_CAN_ID_ICS_HIL;
 	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
 
 	// Copy data to Tx buffer
-	FEB_CAN_Tx_Data[0] = (uint8_t) 1;
-	FEB_CAN_Tx_Data[1] = (uint8_t) 2;
+	FEB_CAN_Tx_Data[0] = (uint8_t) speed + 1;
 
 	// Delay until mailbox available
-//	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
+	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
 
 	// Add Tx data to mailbox
 	if (HAL_CAN_AddTxMessage(&hcan1, &FEB_CAN_Tx_Header, FEB_CAN_Tx_Data, &FEB_CAN_Tx_Mailbox) != HAL_OK) {

@@ -18,7 +18,10 @@ uint32_t FEB_CAN_Tx_Mailbox;
 
 void FEB_CAN_Init(void) {
 	FEB_CAN_Filter_Config();
+	HAL_StatusTypeDef error1 = HAL_CAN_Start(&hcan1);
 	if (HAL_CAN_Start(&hcan1) != HAL_OK) {
+//		uint8_t a = 0;
+		HAL_StatusTypeDef error = HAL_CAN_Start(&hcan1);
         // Code Error - Shutdown
 	}
 	HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
