@@ -12,6 +12,7 @@
 #include "FEB_CAN_SW.h"
 #include "FEB_Normalized.h"
 #include "FEB_TPS2482.h"
+#include "FEB_HECS.h"
 
 
 // ******************************** Functions ********************************

@@ -26,6 +26,7 @@ void FEB_Main_While(void){
 		FEB_Normalized_setAcc0();
 		FEB_CAN_RMS_Disable();
 	}
+	FEB_HECS_update();
 	FEB_Normalized_updateAcc();
 	FEB_CAN_RMS_Torque();
 	//TODO: FEB_CAN_sendBrake(); //TODO: create transmit function on CAN file for sending brake

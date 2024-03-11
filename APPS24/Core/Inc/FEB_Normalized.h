@@ -8,6 +8,8 @@
 
 #include "stm32f4xx_hal.h"
 #include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 // **************************************** Functions ****************************************
 
@@ -16,6 +18,7 @@ float FEB_Normalized_getAcc();
 void FEB_Normalized_setAcc0();
 void FEB_Normalized_updateAcc();
 float FEB_Normalized_Acc_Pedals();
+float FEB_Normalized_getBrake();
 float FEB_Normalized_Brake_Pedals();
 
 #endif /* INC_FEB_NORMALIZED_H_ */

@@ -83,6 +83,10 @@ float FEB_Normalized_Acc_Pedals(){
 	}
 }
 
+float FEB_Normalized_getBrake(){
+	return normalized_brake;
+}
+
 float FEB_Normalized_Brake_Pedals(){
 	uint16_t brake_pedal_1 = HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
 	char buf[128];
