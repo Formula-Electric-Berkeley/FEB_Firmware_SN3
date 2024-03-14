@@ -20,5 +20,6 @@ void FEB_Normalized_updateAcc();
 float FEB_Normalized_Acc_Pedals();
 float FEB_Normalized_getBrake();
 float FEB_Normalized_Brake_Pedals();
+void FEB_Normalized_CAN_sendBrake();
 
 #endif /* INC_FEB_NORMALIZED_H_ */

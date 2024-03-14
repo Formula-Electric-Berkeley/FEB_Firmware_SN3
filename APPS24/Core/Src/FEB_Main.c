@@ -29,7 +29,7 @@ void FEB_Main_While(void){
 	FEB_HECS_update();
 	FEB_Normalized_updateAcc();
 	FEB_CAN_RMS_Torque();
-	//TODO: FEB_CAN_sendBrake(); //TODO: create transmit function on CAN file for sending brake
+	FEB_Normalized_CAN_sendBrake();
 	FEB_TPS2482_sendReadings(); //TODO: create transmit function for TPS2482
 	FEB_CAN_RMS_torqueTransmit();
 }

@@ -1,0 +1,11 @@
+../Core/Src/FEB_CAN_RMS.c:29:6:FEB_CAN_RMS_Setup	1
+../Core/Src/FEB_CAN_RMS.c:34:6:FEB_CAN_RMS_Process	2
+../Core/Src/FEB_CAN_RMS.c:41:6:FEB_CAN_RMS_Disable	1
+../Core/Src/FEB_CAN_RMS.c:45:9:min	2
+../Core/Src/FEB_CAN_RMS.c:51:10:FEB_CAN_RMS_getMaxTorque	2
+../Core/Src/FEB_CAN_RMS.c:63:6:FEB_CAN_RMS_Torque	1
+../Core/Src/FEB_CAN_RMS.c:69:6:FEB_CAN_RMS_updateTorque	1
+../Core/Src/FEB_CAN_RMS.c:74:6:FEB_CAN_RMS_torqueTransmit	1
+../Core/Src/FEB_CAN_RMS.c:83:6:FEB_CAN_RMS_Init	2
+../Core/Src/FEB_CAN_RMS.c:114:9:FEB_CAN_RMS_Filter_Config	2
+../Core/Src/FEB_CAN_RMS.c:142:6:FEB_CAN_RMS_Store_Msg	3

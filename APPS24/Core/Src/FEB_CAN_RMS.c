@@ -4,6 +4,8 @@
 
 extern CAN_HandleTypeDef hcan1;
 extern UART_HandleTypeDef huart2;
+extern uint8_t FEB_CAN_Tx_Data[8];
+extern uint32_t FEB_CAN_Tx_Mailbox;
 
 // *********************************** Struct ************************************
 
@@ -81,26 +83,17 @@ void FEB_CAN_RMS_torqueTransmit(void){
 // ***** CAN FUNCTIONS ****
 //TODO: CREATE FEB_CAN_SW_Trasnmit Function and update below function
 void FEB_CAN_RMS_Init(void){
-	// Clear fault in case inverter is powered up before disable command is sent
-	uint8_t fault_clear_addr = 20;
-	uint8_t fault_clear_data = 0;
-	// param msg format (little-endian):
-	// 0,1: param addr
-	// 2: r/w cmd
-	// 3: NA
-	// 4,5: data
-	// 6,7: NA
-	uint8_t param_msg[8] = {fault_clear_addr, 0, 1, 0, fault_clear_data, 0, 0, 0};
-	FEB_CAN_Transmit(&hcan1, 0x0C1, param_msg, 8);
+	FEB_CAN_RMS_Transmit_paramSafety();
 
 	// send disable command to remove lockout
-	uint8_t message_data[8] = {0,0,0,0,0,0,0};
 	for (int i = 0; i < 10; i++) {
-		FEB_CAN_Transmit(&hcan1, 0x0C0, message_data, 8);
+		FEB_CAN_RMS_Transmit_commDisable();
 		HAL_Delay(10);
 	}
 
 	// Select CAN msg to broadcast
+	FEB_CAN_RMS_Transmit_paramBroadcast();
+
 	uint8_t param_addr = 148;
 //	uint8_t CAN_active_msg_byte4 = 0b10100000; // motor position, input voltage
 //	uint8_t CAN_active_msg_byte5 = 0b00010101; // flux info (dq axes), torque/timer info, internal states
@@ -149,6 +142,122 @@ void FEB_CAN_RMS_Store_Msg(CAN_RxHeaderTypeDef* pHeader, uint8_t *RxData) {
 			break;
 	}
 }
+
+//TODO: WORK IN PROGRESS
+
+void FEB_CAN_RMS_Transmit_paramSafety(void){
+	//Clear fault in case inverter is powered before disable command sent
+	uint8_t fault_clear_addr = 20;
+	uint8_t fault_clear_data = 0;
+
+	//-----Transmit Stuff Below-----
+	// Initialize transmission header
+	FEB_CAN_Tx_Header.DLC = 8;
+	FEB_CAN_Tx_Header.ExtId = 0x0C1; //ID for sending paramater messages for RMS
+	FEB_CAN_Tx_Header.IDE = CAN_ID_EXT;
+	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
+	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
+
+	// Copy data to Tx buffer
+		// param msg format (little-endian):
+		// 0,1: param addr
+		// 2: r/w cmd
+		// 3: NA
+		// 4,5: data
+		// 6,7: NA
+	FEB_CAN_Tx_Data[0] = fault_clear_addr;
+	FEB_CAN_Tx_Data[1] = 0;
+	FEB_CAN_Tx_Data[2] = 1;
+	FEB_CAN_Tx_Data[3] = 0;
+	FEB_CAN_Tx_Data[4] = fault_clear_data;
+	FEB_CAN_Tx_Data[5] = 0;
+	FEB_CAN_Tx_Data[6] = 0;
+	FEB_CAN_Tx_Data[7] = 0;
+
+	// Delay until mailbox available
+	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
+
+	// Add Tx data to mailbox
+	if (HAL_CAN_AddTxMessage(&hcan1, &FEB_CAN_Tx_Header, FEB_CAN_Tx_Data, &FEB_CAN_Tx_Mailbox) != HAL_OK) {
+		//Shutdown error
+	}
+
+}
+
+void FEB_CAN_RMS_Transmit_commDisable(void){
+	//Selects CAN msg to broadcast
+
+	uint8_t param_addr = 148;
+	uint8_t CAN_active_msg_byte4 = 0b10100000; // motor position, input voltage
+	uint8_t CAN_active_msg_byte5 = 0b10010100; // flux info (dq axes), torque/timer info, internal states
+
+
+
+	// Initialize transmission header
+	FEB_CAN_Tx_Header.DLC = 8;
+	FEB_CAN_Tx_Header.ExtId = 0x0C0; //ID for sending command messages for RMS
+	FEB_CAN_Tx_Header.IDE = CAN_ID_EXT;
+	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
+	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
+
+	// Copy data to Tx buffer
+		// param msg format (little-endian):
+		// 0,1: param addr
+		// 2: r/w cmd
+		// 3: NA
+		// 4,5: data
+		// 6,7: NA
+	FEB_CAN_Tx_Data[0] = param_addr;
+	FEB_CAN_Tx_Data[1] = 0;
+	FEB_CAN_Tx_Data[2] = 1;
+	FEB_CAN_Tx_Data[3] = 0;
+	FEB_CAN_Tx_Data[4] = CAN_active_msg_byte4;
+	FEB_CAN_Tx_Data[5] = CAN_active_msg_byte5;
+	FEB_CAN_Tx_Data[6] = 0;
+	FEB_CAN_Tx_Data[7] = 0;
+
+	// Delay until mailbox available
+	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
+
+	// Add Tx data to mailbox
+	if (HAL_CAN_AddTxMessage(&hcan1, &FEB_CAN_Tx_Header, FEB_CAN_Tx_Data, &FEB_CAN_Tx_Mailbox) != HAL_OK) {
+		// Code Error - Shutdown
+	}
+
+}
+
+
+void FEB_CAN_RMS_Transmit_paramBroadcast(u){
+	// Initialize transmission header
+	FEB_CAN_Tx_Header.DLC = 8;
+	FEB_CAN_Tx_Header.ExtId = 0x0C1; //ID for sending paramater messages for RMS
+	FEB_CAN_Tx_Header.IDE = CAN_ID_EXT;
+	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
+	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
+
+	// Copy data to Tx buffer
+	FEB_CAN_Tx_Data[0] = BMS_message.max_voltage_100mV >> 8;
+	FEB_CAN_Tx_Data[1] = BMS_message.max_voltage_100mV & 0xFF;
+	FEB_CAN_Tx_Data[2] = BMS_message.max_current_100mA >> 8;
+	FEB_CAN_Tx_Data[3] = BMS_message.max_current_100mA & 0xFF;
+	FEB_CAN_Tx_Data[4] = BMS_message.control;
+	FEB_CAN_Tx_Data[5] = 0;
+	FEB_CAN_Tx_Data[6] = 0;
+	FEB_CAN_Tx_Data[7] = 0;
+
+	// Delay until mailbox available
+	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
+
+	// Add Tx data to mailbox
+	if (HAL_CAN_AddTxMessage(&hcan1, &FEB_CAN_Tx_Header, FEB_CAN_Tx_Data, &FEB_CAN_Tx_Mailbox) != HAL_OK) {
+		// Code Error - Shutdown
+	}
+}
+
+
+
+
+
 
 
 

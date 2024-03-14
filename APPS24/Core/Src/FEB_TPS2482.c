@@ -161,4 +161,30 @@ void FEB_TPS2482_sendReadings(){
 	shunt_voltage = FEB_TPS2482_GetShunt(&hi2c1, TPS_ADDR+1); //can abstract away if needed
 	//FEB_CAN_Transmit(&hcan1,APPS_TPS,&current_reading,sizeof(float)); //TODO: convert to custom Transmit Funciton
 	//TODO: create transmit function for FEB_TPS2482
+	FEB_TPS2482_CAN_Transmit(current_reading);
+	FEB_TPS2482_CAN_Transmit(voltage_reading);
+	FEB_TPS2482_CAN_Transmit(shunt_voltage);
+
 }
+
+void FEB_TPS2482_CAN_Transmit(float reading){
+	// Initialize transmission header
+	FEB_CAN_Tx_Header.DLC = 8;
+	FEB_CAN_Tx_Header.ExtId = FEB_CAN_ID_APPS_TPS;
+	FEB_CAN_Tx_Header.IDE = CAN_ID_EXT;
+	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
+	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
+
+	// Copy data to Tx buffer
+	memcpy(FEB_CAN_TxData, reading, sizeof(float));
+
+	// Delay until mailbox available
+	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
+
+	// Add Tx data to mailbox
+	if (HAL_CAN_AddTxMessage(&hcan1, &FEB_CAN_Tx_Header, FEB_CAN_Tx_Data, &FEB_CAN_Tx_Mailbox) != HAL_OK) {
+		//Shutdown error
+	}
+}
+
+
