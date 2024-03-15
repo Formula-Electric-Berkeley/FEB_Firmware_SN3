@@ -98,6 +98,11 @@ void FEB_LTC6811_Store_Voltage(void) {
     	for (uint8_t cell = 0; cell < FEB_LTC6811_NUM_CELLS_PER_BANK; cell++) {
     		uint8_t ic = FEB_LTC6811_Get_IC(bank_idx, cell);
     		uint8_t cell_idx = get_LTC6811_cell(cell);
+
+//    		char UART_str[1024];
+//    		sprintf(UART_str, "Cell: %d, IC: %d\n", cell, ic);
+//    		HAL_UART_Transmit(&huart2, (uint8_t*) UART_str, strlen(UART_str), 100);
+
     		accumulator.banks[bank_idx].cells[cell].voltage = FEB_LTC6811_Convert_Voltage(accumulator.IC_config[ic].cells.c_codes[cell_idx]);
     	}
     }
@@ -108,9 +113,9 @@ void FEB_LTC6811_Store_Voltage(void) {
  */
 float FEB_LTC6811_Convert_Voltage(uint16_t value) {
 	// Check for error: value = 2^16 - 1
-	if (value == 65535) {
-		return -42;
-	}
+//	if (value == 65535) {
+//		return -42;
+//	}
 	return value * 0.0001;
 }
 
@@ -284,7 +289,6 @@ void FEB_LTC6811_UART_Transmit_Voltage() {
 		// Add values to {@code UART_Str}
 		for (uint16_t cell_idx = 0; cell_idx < FEB_LTC6811_NUM_CELLS_PER_BANK; cell_idx++) {
 			float voltage = accumulator.banks[bank_idx].cells[cell_idx].voltage;
-
 			sprintf(temp_str, " %f", voltage);
 			strncat(UART_str, temp_str, strlen(temp_str));
 		}
@@ -379,10 +383,10 @@ Channel									0	1	2	3	4	0	1	2	3	4	0	1	2	3	4	0	1	2	3	4
 void FEB_LTC6811_Store_Temperature(uint8_t channel) {
     for (uint16_t bank_idx = 0; bank_idx < FEB_LTC6811_NUM_BANKS; bank_idx++) {
     	for (uint8_t cell = 0; cell < FEB_LTC6811_NUM_CELLS_PER_BANK; cell++) {
-    		if (get_channel(cell) == 0) {
-//    			char UART_str[1024];
-//    			sprintf(UART_str, "%d\n", cell);
-//    			HAL_UART_Transmit(&huart2, (uint8_t*) UART_str, strlen(UART_str), 100);
+    		if (get_channel(cell) == channel) {
+    			char UART_str[1024];
+    			sprintf(UART_str, "Cell: %d, reading: %d\n", cell, accumulator.IC_config[FEB_LTC6811_Get_IC(bank_idx, cell)].aux.a_codes[0]);
+    			HAL_UART_Transmit(&huart2, (uint8_t*) UART_str, strlen(UART_str), 100);
     			accumulator.banks[bank_idx].cells[cell].temperature = FEB_LTC6811_Convert_Temperature(accumulator.IC_config[FEB_LTC6811_Get_IC(bank_idx, cell)].aux.a_codes[0]);
     		}
     	}
