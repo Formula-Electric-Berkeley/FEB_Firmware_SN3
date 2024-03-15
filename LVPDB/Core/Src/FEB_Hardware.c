@@ -9,19 +9,18 @@ void FEB_Peripherals_Control(){
 	  // activate peripheral devices if ready to drive
 	  if (FEB_CAN_SW_Message.ready_to_drive == 1 && !isDriving) {
 		  isDriving = true;
-		  Enable_Coolant_Pump();
-		  Enable_Accumulator_Fans();
-		  Enable_Extra();
+		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_SET);// pull PC11 high to enable coolant pump
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_SET);// pull PC3 high to enable extra
 
 	  // de-activate if not ready to drive
 	  } else if (FEB_CAN_SW_Message.ready_to_drive == 0 && isDriving) {
 		  isDriving = false;
-		  Disable_Coolant_Pump();
-		  Disable_Accumulator_Fans();
-		  Disable_Extra();
+		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_RESET);
 	  }
 }
-
 
 void FEB_Brake_Light_Control(){
 	if (FEB_CAN_APPS_Message.brake_pedal > BRAKE_THRE) {
@@ -31,26 +30,26 @@ void FEB_Brake_Light_Control(){
 	}
 }
 
-void Enable_Coolant_Pump(){
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_SET);// pull PC11 high to enable coolant pump
-}
-
-void Disable_Coolant_Pump(){
-	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_RESET);
-}
-
-void Enable_Accumulator_Fans(){
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);// pull PB5 high to enable accumulator fans
-}
-
-void Disable_Accumulator_Fans(){
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-}
-
-void Enable_Extra(){
-	 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_SET);// pull PC3 high to enable extra
-}
-
-void Disable_Extra(){
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_RESET);
-}
+//void Enable_Coolant_Pump(){
+//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_SET);// pull PC11 high to enable coolant pump
+//}
+//
+//void Disable_Coolant_Pump(){
+//	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_RESET);
+//}
+//
+//void Enable_Accumulator_Fans(){
+//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);// pull PB5 high to enable accumulator fans
+//}
+//
+//void Disable_Accumulator_Fans(){
+//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+//}
+//
+//void Enable_Extra(){
+//	 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_SET);// pull PC3 high to enable extra
+//}
+//
+//void Disable_Extra(){
+//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_RESET);
+//}

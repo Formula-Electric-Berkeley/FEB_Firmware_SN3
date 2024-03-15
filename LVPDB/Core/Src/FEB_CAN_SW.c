@@ -2,11 +2,6 @@
 
 FEB_CAN_SW_Message_t FEB_CAN_SW_Message;
 
-extern CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
-extern uint8_t FEB_CAN_Tx_Data[8];
-extern uint32_t SW_CAN_ID;
-extern uint32_t FEB_CAN_Tx_Mailbox;
-
 uint8_t FEB_CAN_SW_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
     // For multiple filters, create array of filter IDs and loop over IDs.
 

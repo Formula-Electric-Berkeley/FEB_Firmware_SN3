@@ -1,8 +1,2 @@
 ../Core/Src/FEB_Hardware.c:8:6:FEB_Peripherals_Control	5
-../Core/Src/FEB_Hardware.c:26:6:FEB_Brake_Light_Control	2
-../Core/Src/FEB_Hardware.c:34:6:Enable_Coolant_Pump	1
-../Core/Src/FEB_Hardware.c:38:6:Disable_Coolant_Pump	1
-../Core/Src/FEB_Hardware.c:42:6:Enable_Accumulator_Fans	1
-../Core/Src/FEB_Hardware.c:46:6:Disable_Accumulator_Fans	1
-../Core/Src/FEB_Hardware.c:50:6:Enable_Extra	1
-../Core/Src/FEB_Hardware.c:54:6:Disable_Extra	1
+../Core/Src/FEB_Hardware.c:25:6:FEB_Brake_Light_Control	2

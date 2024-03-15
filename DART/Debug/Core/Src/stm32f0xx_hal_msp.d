@@ -18,6 +18,9 @@ Core/Src/stm32f0xx_hal_msp.o: ../Core/Src/stm32f0xx_hal_msp.c \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_dma.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_dma_ex.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_cortex.h \
+ ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_adc.h \
+ ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_adc_ex.h \
+ ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_flash.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_flash_ex.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_i2c.h \
@@ -27,7 +30,10 @@ Core/Src/stm32f0xx_hal_msp.o: ../Core/Src/stm32f0xx_hal_msp.c \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim_ex.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart.h \
- ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart_ex.h
+ ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart_ex.h \
+ ../Core/Inc/FEB_main.h ../Core/Inc/FEB_Fan.h ../Core/Inc/FEB_PID.h \
+ ../Core/Inc/FEB_ADC.h ../Core/Inc/main.h ../Core/Inc/FEB_CAN.h \
+ ../Core/Inc/FEB_CAN_BBB.h ../Core/Inc/FEB_CAN_ID.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h:
 ../Core/Inc/stm32f0xx_hal_conf.h:
@@ -48,6 +54,9 @@ Core/Src/stm32f0xx_hal_msp.o: ../Core/Src/stm32f0xx_hal_msp.c \
 ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_dma.h:
 ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_dma_ex.h:
 ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_cortex.h:
+../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_adc.h:
+../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_adc_ex.h:
+../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_can.h:
 ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_flash.h:
 ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_flash_ex.h:
 ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_i2c.h:
@@ -58,3 +67,11 @@ Core/Src/stm32f0xx_hal_msp.o: ../Core/Src/stm32f0xx_hal_msp.c \
 ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim_ex.h:
 ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart.h:
 ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart_ex.h:
+../Core/Inc/FEB_main.h:
+../Core/Inc/FEB_Fan.h:
+../Core/Inc/FEB_PID.h:
+../Core/Inc/FEB_ADC.h:
+../Core/Inc/main.h:
+../Core/Inc/FEB_CAN.h:
+../Core/Inc/FEB_CAN_BBB.h:
+../Core/Inc/FEB_CAN_ID.h:

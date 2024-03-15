@@ -1,5 +1,6 @@
-../Core/Src/FEB_TPS2482.c:23:6:FEB_SETUP_TPS2482	48	static
-../Core/Src/FEB_TPS2482.c:51:6:FEB_TPS2482_shutdownIfError	56	static
-../Core/Src/FEB_TPS2482.c:75:6:FEB_TPS2482_pullLowIfOutOfBounds	64	static
-../Core/Src/FEB_TPS2482.c:102:7:FEB_TPS2482_PollBusCurrent	48	static
-../Core/Src/FEB_TPS2482.c:123:6:FEB_TPS2482_Poll_Currents	8	static
+../Core/Src/FEB_TPS2482.c:23:6:FEB_SETUP	64	static
+../Core/Src/FEB_TPS2482.c:62:6:FEB_SETUP_TPS2482	48	static
+../Core/Src/FEB_TPS2482.c:90:6:FEB_TPS2482_shutdownIfError	56	static
+../Core/Src/FEB_TPS2482.c:114:6:FEB_TPS2482_pullLowIfOutOfBounds	64	static
+../Core/Src/FEB_TPS2482.c:141:7:FEB_TPS2482_PollBusCurrent	48	static
+../Core/Src/FEB_TPS2482.c:162:6:FEB_TPS2482_Poll_Currents	8	static

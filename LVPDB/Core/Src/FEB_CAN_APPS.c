@@ -2,10 +2,10 @@
 
 FEB_CAN_APPS_Message_t FEB_CAN_APPS_Message;
 
-extern CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
-extern uint8_t FEB_CAN_Tx_Data[8];
-extern uint32_t APPS_CAN_ID;
-extern uint32_t FEB_CAN_Tx_Mailbox;
+#define LV_ADDR (0b1000000 << 1)
+#define CP_ADDR (0b1000100 << 1)
+#define AF_ADDR (0b1000101 << 1)
+#define EX_ADDR (0b1000001 << 1)
 
 uint8_t FEB_CAN_APPS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
     // For multiple filters, create array of filter IDs and loop over IDs.
