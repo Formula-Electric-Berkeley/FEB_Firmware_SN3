@@ -20,11 +20,14 @@ void FEB_CAN_RMS_Process(void);
 void FEB_CAN_RMS_Disable(void);
 uint16_t FEB_CAN_RMS_getMaxTorque(void);
 void FEB_CAN_RMS_Torque(void);
-void FEB_CAN_RMS_updateTorque(void);
+void FEB_CAN_RMS_Transmit_updateTorque(void);
 void FEB_CAN_RMS_torqueTransmit(void);
 void FEB_CAN_RMS_Init(void);
 uint8_t FEB_CAN_RMS_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank);
 void FEB_CAN_RMS_Store_Msg(CAN_RxHeaderTypeDef* pHeader, uint8_t *RxData);
+void FEB_CAN_RMS_Transmit_paramSafety(void);
+void FEB_CAN_RMS_Transmit_commDisable(void);
+void FEB_CAN_RMS_Transmit_paramBroadcast(void);
 
 
 

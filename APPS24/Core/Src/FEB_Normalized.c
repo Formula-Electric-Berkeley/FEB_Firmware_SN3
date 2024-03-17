@@ -6,6 +6,12 @@ extern CAN_HandleTypeDef hcan1;
 extern ADC_HandleTypeDef hadc1;
 extern UART_HandleTypeDef huart2;
 
+extern CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
+extern uint8_t FEB_CAN_Tx_Data[8];
+extern CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
+extern uint32_t FEB_CAN_Tx_Mailbox;
+
+
 const uint16_t Sensor_Min = 4095.0/5.0*0.5;
 const uint16_t Sensor_Max = 4095.0/5.0*4.5;
 
@@ -114,7 +120,7 @@ void FEB_Normalized_CAN_sendBrake(){
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
 
 	// Copy data to Tx buffer
-	memcpy(FEB_CAN_TxData, normalized_brake, sizeof(float));
+	memcpy(FEB_CAN_Tx_Data, &normalized_brake, sizeof(float));
 
 
 	// Delay until mailbox available
@@ -122,7 +128,7 @@ void FEB_Normalized_CAN_sendBrake(){
 
 	// Add Tx data to mailbox
 	if (HAL_CAN_AddTxMessage(&hcan1, &FEB_CAN_Tx_Header, FEB_CAN_Tx_Data, &FEB_CAN_Tx_Mailbox) != HAL_OK) {
-		FEB_SM_Set_Current_State(FEB_SM_ST_SHUTDOWN);
+		//error - shutdown
 	}
 
 }

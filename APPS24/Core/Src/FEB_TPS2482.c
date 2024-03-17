@@ -3,9 +3,17 @@
 #include "FEB_TPS2482.h"
 
 extern I2C_HandleTypeDef hi2c1;
-// *********************************** Variables ************************************
-const uint8_t TPS_ADDR = 0b1000000 << 1;
 
+extern CAN_HandleTypeDef hcan1;
+extern uint8_t FEB_CAN_Tx_Data[8];
+extern CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
+extern uint32_t FEB_CAN_Tx_Mailbox;
+
+// *********************************** Variables ************************************
+
+//const uint8_t TPS_ADDR = 0b1000000 << 1; #declared in FEB_CAN_ID.h
+
+//configuration register value
 uint8_t CONFIG[2] = {0b01000001, 0b00100111};
 
 //calibration register values
@@ -26,26 +34,26 @@ float shunt_voltage;
 
 
 void FEB_TPS2482_Setup() {
-	HAL_StatusTypeDef ret;
-	ret = HAL_I2C_Mem_Write(&hi2c1, TPS_ADDR, 0x00, 1, CONFIG, 2, HAL_MAX_DELAY); // configure
+//HAL_StatusTypeDef ret;
+	HAL_I2C_Mem_Write(&hi2c1, FEB_CAN_ID_APPS_TPS, 0x00, 1, CONFIG, 2, HAL_MAX_DELAY); // configure
 //	if (ret != HAL_OK) {
 //			// error handler
 //		__disable_irq();
 //		while(1);
 //	}
-	ret = HAL_I2C_Mem_Write(&hi2c1, TPS_ADDR, 0x05, 1, MAIN_CAL, 2, HAL_MAX_DELAY); // calibrate
+	HAL_I2C_Mem_Write(&hi2c1, FEB_CAN_ID_APPS_TPS, 0x05, 1, MAIN_CAL, 2, HAL_MAX_DELAY); // calibrate
 //	if (ret != HAL_OK) {
 //			// error handler
 //		__disable_irq();
 //		while(1);
 //	}
-	ret = HAL_I2C_Mem_Write(&hi2c1, TPS_ADDR, 0x06, 1, UNDERV, 2, HAL_MAX_DELAY); // set alert
+	HAL_I2C_Mem_Write(&hi2c1, FEB_CAN_ID_APPS_TPS, 0x06, 1, UNDERV, 2, HAL_MAX_DELAY); // set alert
 //	if (ret != HAL_OK) {
 //			// error handler
 //		__disable_irq();
 //		while(1);
 //	}
-	ret = HAL_I2C_Mem_Write(&hi2c1, TPS_ADDR, 0x07, 1, TPS_LIMIT, 2, HAL_MAX_DELAY); // set limit
+	HAL_I2C_Mem_Write(&hi2c1, FEB_CAN_ID_APPS_TPS, 0x07, 1, TPS_LIMIT, 2, HAL_MAX_DELAY); // set limit
 //	if (ret != HAL_OK) {
 //		// error handler
 //		__disable_irq();
@@ -156,14 +164,14 @@ float FEB_TPS2482_PollBusVoltage(I2C_HandleTypeDef * hi2c, uint8_t DEV_ADDR){
 }
 
 void FEB_TPS2482_sendReadings(){
-	current_reading = FEB_TPS2482_PollBusCurrent(&hi2c1,TPS_ADDR+1); // can abstract away if needed
-	voltage_reading = FEB_TPS2482_PollBusVoltage(&hi2c1, TPS_ADDR+1); // can abstract away if needed
-	shunt_voltage = FEB_TPS2482_GetShunt(&hi2c1, TPS_ADDR+1); //can abstract away if needed
+	current_reading = FEB_TPS2482_PollBusCurrent(&hi2c1,FEB_CAN_ID_APPS_TPS+1); // can abstract away if needed
+	voltage_reading = FEB_TPS2482_PollBusVoltage(&hi2c1, FEB_CAN_ID_APPS_TPS+1); // can abstract away if needed
+	shunt_voltage = FEB_TPS2482_GetShunt(&hi2c1, FEB_CAN_ID_APPS_TPS+1); //can abstract away if needed
 	//FEB_CAN_Transmit(&hcan1,APPS_TPS,&current_reading,sizeof(float)); //TODO: convert to custom Transmit Funciton
 	//TODO: create transmit function for FEB_TPS2482
 	FEB_TPS2482_CAN_Transmit(current_reading);
-	FEB_TPS2482_CAN_Transmit(voltage_reading);
-	FEB_TPS2482_CAN_Transmit(shunt_voltage);
+	//FEB_TPS2482_CAN_Transmit(voltage_reading);
+	//FEB_TPS2482_CAN_Transmit(shunt_voltage);
 
 }
 
@@ -176,7 +184,7 @@ void FEB_TPS2482_CAN_Transmit(float reading){
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
 
 	// Copy data to Tx buffer
-	memcpy(FEB_CAN_TxData, reading, sizeof(float));
+	memcpy(FEB_CAN_Tx_Data, &reading, sizeof(float));
 
 	// Delay until mailbox available
 	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}

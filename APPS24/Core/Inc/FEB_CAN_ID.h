@@ -23,6 +23,11 @@
 // RMS
 #define FEB_CAN_ID_RMS_VOLTAGE 0xa7
 #define FEB_CAN_ID_RMS_MOTOR 0xa5
+#define FEB_CAN_ID_RMS_COMMAND 0xc0
+#define FEB_CAN_ID_RMS_PARAMETER 0xc1
+
+//APPS
+#define FEB_CAN_ID_APPS_TPS 0x80
 
 // **************************************** Dynamic CAN IDs ****************************************
 
@@ -39,5 +44,8 @@
 #define FEB_CAN_ID_SW_COOLANT_PUMP 0x7
 #define FEB_CAN_ID_SW_EXTRA 0x8
 #define FEB_CAN_ID_SW_ACUMULATOR_FANS 0x9
+
+//APPS
+#define FEB_CAN_ID_APPS_BRAKE_PEDAL 0xa
 
 #endif /* INC_FEB_CAN_ID_H_ */

@@ -1,0 +1,2 @@
+../Core/Src/FEB_CAN_BSPD.c:10:6:FEB_CAN_BSPD_checkReset	2
+../Core/Src/FEB_CAN_BSPD.c:17:6:FEB_CAN_BSPD_Transmit	1

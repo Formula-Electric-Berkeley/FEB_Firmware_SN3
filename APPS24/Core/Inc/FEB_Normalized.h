@@ -5,11 +5,13 @@
 
 
 #include "FEB_Const.h"
+#include "FEB_CAN_ID.h"
 
 #include "stm32f4xx_hal.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 // **************************************** Functions ****************************************
 

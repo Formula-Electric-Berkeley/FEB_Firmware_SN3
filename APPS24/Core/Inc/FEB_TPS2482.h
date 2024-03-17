@@ -3,10 +3,16 @@
 
 // **************************************** Includes ****************************************
 
+#include "FEB_CAN_ID.h"
+
 
 #include "stm32f4xx_hal.h"
 #include "stdio.h"
 #include "stdint.h"
+#include <string.h>
+
+//**************************************** SETUP ***************************
+
 
 // ********************************** Functions **********************************
 
@@ -21,5 +27,6 @@ float FEB_TPS2482_PollBusVoltage(I2C_HandleTypeDef * hi2c, uint8_t DEV_ADDR);
 void FEB_TPS2482_sendReadings();
 //Remove when done. This was made to calibrate the calibration value
 float FEB_TPS2482_GetShunt(I2C_HandleTypeDef * hi2c, uint8_t DEV_ADDR);
+void FEB_TPS2482_CAN_Transmit(float reading);
 
 #endif /* INC_FEB_TPS2482_H_ */
