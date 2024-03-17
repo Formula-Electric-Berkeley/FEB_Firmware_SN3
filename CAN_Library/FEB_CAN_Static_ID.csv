@@ -1,12 +1,12 @@
-# Comment
+# Comment,
 # Format: device + message name, binary/decimal/hexadecimal address
-# '//' creates C comment
+# '//' creates C comment,
 
-// Charger
+// Charger,
 Charger BMS, 0x1806E5F4
 Charger CCS, 0x18FF50E5
 
-// IVT
+// IVT,
 IVT Command, 0x411
 IVT Debug, 0x510
 IVT Response, 0x511
@@ -19,6 +19,11 @@ IVT Power, 0x526
 IVT Current Counter, 0x527
 IVT Energy Counter, 0x528
 
-// RMS
+// RMS,
 RMS Voltage, 0xA7
 RMS Motor, 0xA5
+RMS Command, 0x0C0
+RMS Parameter, 0x0C1
+
+//APPS,
+APPS TPS, 0x80

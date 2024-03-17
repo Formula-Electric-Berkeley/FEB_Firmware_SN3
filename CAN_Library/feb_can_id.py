@@ -20,6 +20,11 @@ IVT_ENERGY_COUNTER = 0x528
 # RMS
 RMS_VOLTAGE = 0xa7
 RMS_MOTOR = 0xa5
+RMS_COMMAND = 0xc0
+RMS_PARAMETER = 0xc1
+
+# PPS
+APPS_TPS = 0x80
 
 # **************************************** Dynamic CAN IDs ****************************************
 
@@ -36,3 +41,6 @@ SW_READY_TO_DRIVE = 0x6
 SW_COOLANT_PUMP = 0x7
 SW_EXTRA = 0x8
 SW_ACUMULATOR_FANS = 0x9
+
+# PPS
+APPS_BRAKE_PEDAL = 0xa
