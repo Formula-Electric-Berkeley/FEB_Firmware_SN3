@@ -12,6 +12,20 @@
 #include "stdio.h"
 #include "stdint.h"
 
+#define LV_ADDR (0b1000000 << 1) //add these to header file
+
+//Coolant pump Address
+#define CP_ADDR (0b1000100 << 1)
+
+// Accumulator Fan Address
+#define AF_ADDR (0b1000101 << 1)
+
+//Extra TPS address
+#define EX_ADDR (0b1000001 << 1)
+
+//Shutdown Address
+#define SH_ADDR (0b1001000 << 1)
+
 
 void FEB_SETUP_TPS2482(I2C_HandleTypeDef* hi2c, uint8_t DEV_ADDR, uint8_t CONFIG[], uint8_t CAL_REG[], uint8_t ALERT[], uint8_t LIMIT[]);
 

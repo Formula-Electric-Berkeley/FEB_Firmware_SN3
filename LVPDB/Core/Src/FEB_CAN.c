@@ -9,6 +9,8 @@ extern CAN_HandleTypeDef hcan1;
 CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
 
 static CAN_RxHeaderTypeDef FEB_CAN_Rx_Header;
+
+//Indiates that we're using extended ID
 uint32_t LVPDB_CAN_ID = 0;
 
 uint8_t FEB_CAN_Tx_Data[4];

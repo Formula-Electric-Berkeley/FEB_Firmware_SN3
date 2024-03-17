@@ -9,10 +9,7 @@
  * 		EX - extra radiator fans
  */
 
-#define LV_ADDR (0b1000000 << 1) //add these to header file
-#define CP_ADDR (0b1000100 << 1)
-#define AF_ADDR (0b1000101 << 1)
-#define EX_ADDR (0b1000001 << 1)
+
 
 float current_reading;
 float ex_current_reading;

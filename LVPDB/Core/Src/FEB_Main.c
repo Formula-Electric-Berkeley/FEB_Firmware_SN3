@@ -5,10 +5,6 @@ extern FEB_CAN_APPS_Message_t FEB_CAN_APPS_Message;
 extern I2C_HandleTypeDef hi2c1;
 extern CAN_HandleTypeDef hcan1;
 
-extern int LV_ADDR;
-extern int CP_ADDR;
-extern int AF_ADDR;
-extern int EX_ADDR;
 
 extern float current_reading;
 extern float ex_current_reading;
@@ -53,10 +49,13 @@ void FEB_Main_Setup(void) {
 	//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);// pull PB5 high to enable accumulator fans
 	//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_SET);// pull PC3 high to enable extra
 
+	//TODO: GET ACCURATE UNDERV AND OVERPWR AND DIFFERENT LIMITS. THESE ARE PRIMARILY PLACEHOLDERS.
+
 	FEB_SETUP_TPS2482(&hi2c1, LV_ADDR, CONFIG, MAIN_CAL, UNDERV, LV_LIMIT);
 	FEB_SETUP_TPS2482(&hi2c1, CP_ADDR, CONFIG, CP_CAL, OVERPWR, CP_LIMIT);
 	FEB_SETUP_TPS2482(&hi2c1, AF_ADDR, CONFIG, AF_CAL, OVERPWR, AF_LIMIT);
 	FEB_SETUP_TPS2482(&hi2c1, EX_ADDR, CONFIG, EX_CAL, OVERPWR, EX_LIMIT);
+	FEB_SETUP_TPS2482(&hi2c1, SH_ADDR, CONFIG, EX_CAL, OVERPWR, EX_LIMIT);
 }
 
 
