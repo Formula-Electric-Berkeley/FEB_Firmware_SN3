@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;APPS24/Core/Src/FEB_CAN_APPS.c&apos; to &apos;FEB_CAN_RMS.c&apos;" description="Rename resource &apos;FEB_CAN_APPS.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Core/Src/FEB_CAN_APPS.c" name="FEB_CAN_RMS.c" stamp="1707089119487" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;APPS24/Core/Inc/FEB_CAN_APPS.h&apos; to &apos;FEB_CAN_RMS.h&apos;" description="Rename resource &apos;FEB_CAN_APPS.h&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Core/Inc/FEB_CAN_APPS.h" name="FEB_CAN_RMS.h" stamp="1707089128547" updateReferences="true"/>
-</session>
