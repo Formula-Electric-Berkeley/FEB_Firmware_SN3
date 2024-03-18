@@ -1,7 +1,0 @@
-../Core/Src/FEB_RMS.c:23:6:FEB_RMS_updateTorque	1
-../Core/Src/FEB_RMS.c:28:6:FEB_RMS_setTorque	1
-../Core/Src/FEB_RMS.c:33:6:FEB_RMS_enable	1
-../Core/Src/FEB_RMS.c:38:6:FEB_RMS_disable	1
-../Core/Src/FEB_RMS.c:43:6:FEB_RMS_Init	2
-../Core/Src/FEB_RMS.c:73:9:FEB_min	2
-../Core/Src/FEB_RMS.c:80:10:FEB_getMaxTorque	2

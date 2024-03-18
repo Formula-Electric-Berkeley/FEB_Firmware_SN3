@@ -1,3 +1,0 @@
-../Core/Src/FEB_CAN_SW.c:16:6:FEB_CAN_SW_Ready	4	static
-../Core/Src/FEB_CAN_SW.c:22:9:FEB_CAN_SW_Filter_Config	64	static
-../Core/Src/FEB_CAN_SW.c:50:6:FEB_CAN_SW_Store_Msg	16	static
