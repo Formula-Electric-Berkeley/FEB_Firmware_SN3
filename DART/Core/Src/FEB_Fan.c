@@ -33,7 +33,10 @@ uint8_t counter = 0;
 void FEB_Fan_Init(){
 
 	FEB_Fan_PWM_Init();
-	FEB_Fan_All_Speed_Set(255 * 0.2);
+	FEB_Fan_All_Speed_Set(255 * 0);
+	FEB_Fan_2_Speed_Set(255 * 0.3);
+
+
 	//FEB_PID_Init_All();
 
 }
