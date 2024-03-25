@@ -262,6 +262,148 @@ Other files:
 </table>
 
 ## 3.2 APPS
+<h2>3.2.1 Normalized Brake</h2>
+
+<table border="1">
+  <tr>
+    <th>Byte</th>
+    <th>Value</th>
+    <th>Datatype</th>
+  </tr>
+  <tr>
+    <td>0-4</td>
+    <td>Normalized_Brake</td>
+    <td>float</td>
+  </tr>
+</table>
+
+<h2>3.2.2 RMS Param Msg</h2>
+
+<table border="1">
+  <tr>
+    <th>Byte</th>
+    <th>Value</th>
+    <th>Datatype</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>addr</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>r/w command</td>
+    <td>boolean</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>NA</td>
+    <td>-</td>
+  </tr>
+  <tr>
+    <td>4-5</td>
+    <td>data</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>6-7</td>
+    <td>NA</td>
+    <td>-</td>
+  </tr>
+</table>
+
+<h3>r/w command value State</h3>
+<table border="1">
+  <tr>
+    <th>Value</th>
+    <th>State</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>Read</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>Write</td>
+  </tr>
+</table>
+
+<table border="1">
+  <tr>
+    <th>addr</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>20</td>
+    <td>Fault Clear</td>
+  </tr>
+  <tr>
+    <td>148</td>
+    <td>CAN Active Messages Low</td>
+  </tr>
+</table>
+
+<h2>3.2.3 RMS Command Msg</h2>
+
+<table border="1">
+  <tr>
+    <th>Byte</th>
+    <th>Datatype</th>
+  </tr>
+  <tr>
+    <td>0-1</td>
+    <td>Torque Command</td>
+  </tr>
+  <tr>
+    <td>2-3</td>
+    <td>Speed Command</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>Direction</td>
+  </tr>
+  <tr>
+    <td>5.0</td>
+    <td>Inverter Enable</td>
+  </tr>
+  <tr>
+    <td>5.1</td>
+    <td>Inverter Discharge</td>
+  </tr>
+  <tr>
+    <td>5.2</td>
+    <td>Speedmode Enabled</td>
+  </tr>
+  <tr>
+    <td>6-7</td>
+    <td>Command Torque Limited</td>
+  </tr>
+</table>
+
+<h2>3.2.4 APPS BSPD</h2>
+
+<table border="1">
+  <tr>
+    <th>Byte</th>
+    <th>BSPD State</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>BSPD State Value</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>BSPD State</td>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>False / Not Triggered</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>True / Triggered</td>
+  </tr>
+</table>
 
 ## 3.3 LVPDB
 
