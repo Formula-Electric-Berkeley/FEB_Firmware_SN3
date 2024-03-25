@@ -33,6 +33,6 @@
 #define MAX_TORQUE 230
 #define RPM_TO_RAD_S .10472
 
-#define HECS_CURRENT 100.0 //check if current is too high for BSPD
+#define HECS_CURRENT 0.0 //check if current is too high for BSPD
 
 #endif /* INC_FEB_CONST_H_ */

@@ -39,13 +39,13 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  17 .debug_macro  0002619c  00000000  00000000  0003d6de  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line   0001b044  00000000  00000000  0006387a  2**0
+ 18 .debug_line   0001b043  00000000  00000000  0006387a  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    000e3108  00000000  00000000  0007e8be  2**0
+ 19 .debug_str    000e3106  00000000  00000000  0007e8bd  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_frame  00005954  00000000  00000000  001619c8  2**2
+ 20 .debug_frame  00005954  00000000  00000000  001619c4  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000070  00000000  00000000  0016731c  2**0
+ 21 .debug_line_str 00000070  00000000  00000000  00167318  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1331,10 +1331,10 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan) {
  8000fd8:	200000a0 	.word	0x200000a0
 
 08000fdc <FEB_CAN_RMS_Setup>:
+extern char buf[128];
+extern uint8_t buf_len;
+
 // ********************************** Functions **********************************
-
-
-
 
 void FEB_CAN_RMS_Setup(void){
  8000fdc:	b480      	push	{r7}
@@ -1531,7 +1531,8 @@ void FEB_CAN_RMS_Torque(void){
  8001150:	200000d0 	.word	0x200000d0
 
 08001154 <FEB_CAN_RMS_Transmit_updateTorque>:
-// ***** OTHER FUNCS ***
+
+// ***** CAN FUNCS ***
 
 void FEB_CAN_RMS_Transmit_updateTorque(void) { //TODO: Create Custom Transmit function and update below call
  8001154:	b580      	push	{r7, lr}
@@ -2332,8 +2333,8 @@ void FEB_HECS_update(){
 
 	if (current_value > HECS_CURRENT){ //checks if current is above value (to be determined)
  80015e0:	f8b7 3086 	ldrh.w	r3, [r7, #134]	; 0x86
- 80015e4:	2b64      	cmp	r3, #100	; 0x64
- 80015e6:	d902      	bls.n	80015ee <FEB_HECS_update+0x36>
+ 80015e4:	2b00      	cmp	r3, #0
+ 80015e6:	d002      	beq.n	80015ee <FEB_HECS_update+0x36>
 		currHigh = true;
  80015e8:	4b06      	ldr	r3, [pc, #24]	; (8001604 <FEB_HECS_update+0x4c>)
  80015ea:	2201      	movs	r2, #1

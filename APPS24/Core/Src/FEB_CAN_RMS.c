@@ -26,8 +26,7 @@ extern uint8_t buf_len;
 
 // ********************************** Functions **********************************
 
-
-
+// ***** SET UP ****
 
 void FEB_CAN_RMS_Setup(void){
 	 RMSControl.enabled = 0;
@@ -44,13 +43,61 @@ void FEB_CAN_RMS_Process(void){
 void FEB_CAN_RMS_Disable(void){
 	RMSControl.enabled = 0;
 }
-// **** TORQUE FUNCTIONS****
+
 int16_t min(int16_t x1, int16_t x2) {
 	if (x1 < x2) {
 		return x1;
 	}
 	return x2;
 }
+
+
+// ****** REGEN FUNCTIONS ****
+
+
+/*
+ * BELOW FUNC
+ * returns the regen torque we want to command
+ * Considers the battery temperature to make sure we're not going over the temp limit
+ * Commands 0 torque for certain unsafe conditions specified by MIT paper
+ *
+ * (The electrical limit for regen is enforced with the inverter EEPROM which caps it)
+*/
+void FEB_CAN_RMS_getRegenTorque(void){
+	soc = 0; //TODO: define
+	speedMPH = 0; //TODO; read from somewhere
+	batteryTemp = 0; //TODO: create BMS file to read battery temperature
+	if (soc > 0.8 || speedMPH < 3 || FEB_Normalized_getAcc() > 0.05 || batteryTemp > 42){
+		return 0;
+	}
+	else if (batteryTemp > 40 ){
+		return 0.4 * FEB_CAN_RMS_getDesiredRegenTorque();
+	}
+	else if (batteryTemp > 37){
+		return 0.6 * FEB_CAN_RMS_getDesiredRegenTorque();
+	}
+	else if (batteryTemp > 37){
+		return 0.8 * FEB_CAN_RMS_getDesiredRegenTorque();
+	}
+	else{
+		FEB_CAN_RMS_getDesiredRegenTorque();
+	}
+
+}
+
+/*
+ * maxRegenTorqueMech computes the max regen torque we can exert from the mechanical perspective (awaiting that function)
+ * A function that outputs our desired regen torque, only considering mechanical limitations
+ */
+
+void FEB_CAN_RMS_getDesiredRegenTorque(void){
+	return -(min(getTotalNegTorque() - getMechTorque(), getMaxRegenTorqueMech()));
+	//TODO: define all functions above
+}
+
+
+// **** TORQUE FUNCTIONS****
+
 uint16_t FEB_CAN_RMS_getMaxTorque(void){
 	int16_t accumulator_voltage = min(INIT_VOLTAGE, (RMS_MESSAGE.HV_Bus_Voltage-50) / 10);
 	int16_t motor_speed = -1 * RMS_MESSAGE.Motor_Speed * RPM_TO_RAD_S;
@@ -67,7 +114,8 @@ void FEB_CAN_RMS_Torque(void){
 	RMSControl.torque = 10*FEB_Normalized_getAcc()*FEB_CAN_RMS_getMaxTorque();
 	FEB_CAN_RMS_Transmit_updateTorque();
 }
-// ***** OTHER FUNCS ***
+
+// ***** CAN FUNCS ***
 
 void FEB_CAN_RMS_Transmit_updateTorque(void) { //TODO: Create Custom Transmit function and update below call
   //uint8_t message_data[8] = {RMSControl.torque & 0xFF, RMSControl.torque >> 8, 0, 0, 0, RMSControl.enabled, 0, 0};
@@ -202,10 +250,6 @@ void FEB_CAN_RMS_Transmit_paramSafety(void){
 void FEB_CAN_RMS_Transmit_commDisable(void){
 	//Selects CAN msg to broadcast
 
-	uint8_t param_addr = 148;
-	uint8_t CAN_active_msg_byte4 = 0b10100000; // motor position, input voltage
-	uint8_t CAN_active_msg_byte5 = 0b10010100; // flux info (dq axes), torque/timer info, internal states
-
 
 
 	// Initialize transmission header
@@ -222,12 +266,12 @@ void FEB_CAN_RMS_Transmit_commDisable(void){
 		// 3: NA
 		// 4,5: data
 		// 6,7: NA
-	FEB_CAN_Tx_Data[0] = param_addr;
+	FEB_CAN_Tx_Data[0] = 0;
 	FEB_CAN_Tx_Data[1] = 0;
-	FEB_CAN_Tx_Data[2] = 1;
+	FEB_CAN_Tx_Data[2] = 0;
 	FEB_CAN_Tx_Data[3] = 0;
-	FEB_CAN_Tx_Data[4] = CAN_active_msg_byte4;
-	FEB_CAN_Tx_Data[5] = CAN_active_msg_byte5;
+	FEB_CAN_Tx_Data[4] = 0;
+	FEB_CAN_Tx_Data[5] = 0;
 	FEB_CAN_Tx_Data[6] = 0;
 	FEB_CAN_Tx_Data[7] = 0;
 
@@ -245,10 +289,10 @@ void FEB_CAN_RMS_Transmit_commDisable(void){
 void FEB_CAN_RMS_Transmit_paramBroadcast(void){
 
 	uint8_t param_addr = 148;
-//	uint8_t CAN_active_msg_byte4 = 0b10100000; // motor position, input voltage
-//	uint8_t CAN_active_msg_byte5 = 0b00010101; // flux info (dq axes), torque/timer info, internal states
-	uint8_t CAN_active_msg_byte4 = 0xff; // literally log everything
-	uint8_t CAN_active_msg_byte5 = 0xff;
+	uint8_t CAN_active_msg_byte4 = 0b10100000; // motor position, input voltage
+	uint8_t CAN_active_msg_byte5 = 0b00010101; // flux info (dq axes), torque/timer info, internal states
+//	uint8_t CAN_active_msg_byte4 = 0xff; // literally log everything
+//	uint8_t CAN_active_msg_byte5 = 0xff;
 //	uint8_t broadcast_msg[8] = {param_addr, 0, 1, 0, CAN_active_msg_byte4, CAN_active_msg_byte5, 0, 0};
 
 	// Initialize transmission header
