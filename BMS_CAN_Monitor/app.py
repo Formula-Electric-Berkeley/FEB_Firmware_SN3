@@ -3,6 +3,7 @@ import customtkinter as ctk
 from gui_bms_state import BmsState
 from gui_charge import Charge
 from gui_ivt import IVT
+from gui_bms_heatmap import BMSHeatMap
 from gui_volt_temp_table import VoltTempTable
 import threading
 import time
@@ -45,7 +46,7 @@ class App(ctk.CTk):
     
     def _update_data(self) -> None:
         while self._update_thread_running:
-            self._tab_view.update_data(self._mcd, self._monitor_state)
+            self._tab_view._update_data(self._mcd, self._monitor_state)
             self._bms_state.update_data(self._mcd, self._monitor_state)
             time.sleep(0.5)
 
@@ -81,8 +82,14 @@ class TabView(ctk.CTkTabview):
         self.add("IVT")
         self._ivt = IVT(self.tab("IVT"))
         self._ivt.pack(pady=15)
+
+        # Heatmap data tab
+        self.add("HeatMap")
+        self._bms_heatmap = BMSHeatMap(self.tab("HeatMap"))
+        self._bms_heatmap.pack(pady=15)
     
-    def update_data(self, mcd: MonitorCanData, monitor_state: str) -> None:
+    def _update_data(self, mcd: MonitorCanData, monitor_state: str) -> None:
         self._volt_temp_table.update_data(mcd, monitor_state)
         self._charge_data.update_data(mcd)
         self._ivt.update_data(mcd)
+        self._bms_heatmap.update_data(mcd)
