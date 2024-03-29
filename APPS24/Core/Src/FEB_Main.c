@@ -31,5 +31,6 @@ void FEB_Main_While(void){
 	FEB_CAN_RMS_Torque();
 	FEB_Normalized_CAN_sendBrake();
 	FEB_TPS2482_sendReadings(); //TODO: create transmit function for TPS2482
-	FEB_CAN_RMS_torqueTransmit();
+	FEB_CAN_RMS_torqueTransmit(); //UART for debugging
+	FEB_CAN_BSPD_Transmit();
 }

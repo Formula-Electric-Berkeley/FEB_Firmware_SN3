@@ -51,6 +51,14 @@ int16_t min(int16_t x1, int16_t x2) {
 	return x2;
 }
 
+void FEB_CAN_RMS_torqueTransmit(void){
+	//	  buf_len = sprintf(buf, "rtd:%d, enable:%d lockout:%d impl:%d acc: %.3f brake: %.3f Bus Voltage: %d Motor Speed: %d\n", SW_MESSAGE.ready_to_drive, Inverter_enable, Inverter_enable_lockout, isImpl, normalized_acc, normalized_brake, RMS_MESSAGE.HV_Bus_Voltage, RMS_MESSAGE.Motor_Speed);
+
+		  buf_len = sprintf(buf, "Evan's Max Torque: %d\n", FEB_CAN_RMS_getMaxTorque());
+		  HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, 1000);
+		  HAL_Delay(SLEEP_TIME);
+}
+
 
 // ****** REGEN FUNCTIONS ****
 
@@ -64,9 +72,10 @@ int16_t min(int16_t x1, int16_t x2) {
  * (The electrical limit for regen is enforced with the inverter EEPROM which caps it)
 */
 void FEB_CAN_RMS_getRegenTorque(void){
-	soc = 0; //TODO: define
 	speedMPH = 0; //TODO; read from somewhere
-	batteryTemp = 0; //TODO: create BMS file to read battery temperature
+
+	uint8_t soc = FEB_CAN_BMS_getState(); //TODO: define
+	uint16_t batteryTemp = FEB_CAN_BMS_getTemp(); //TODO: create BMS file to read battery temperature
 	if (soc > 0.8 || speedMPH < 3 || FEB_Normalized_getAcc() > 0.05 || batteryTemp > 42){
 		return 0;
 	}
@@ -144,15 +153,8 @@ void FEB_CAN_RMS_Transmit_updateTorque(void) { //TODO: Create Custom Transmit fu
 	}
 }
 
-void FEB_CAN_RMS_torqueTransmit(void){
-	//	  buf_len = sprintf(buf, "rtd:%d, enable:%d lockout:%d impl:%d acc: %.3f brake: %.3f Bus Voltage: %d Motor Speed: %d\n", SW_MESSAGE.ready_to_drive, Inverter_enable, Inverter_enable_lockout, isImpl, normalized_acc, normalized_brake, RMS_MESSAGE.HV_Bus_Voltage, RMS_MESSAGE.Motor_Speed);
 
-		  buf_len = sprintf(buf, "Evan's Max Torque: %d\n", FEB_CAN_RMS_getMaxTorque());
-		  HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, 1000);
-		  HAL_Delay(SLEEP_TIME);
-}
 // ***** CAN FUNCTIONS ****
-//TODO: CREATE FEB_CAN_SW_Trasnmit Function and update below function
 void FEB_CAN_RMS_Init(void){
 	FEB_CAN_RMS_Transmit_paramSafety();
 
@@ -192,18 +194,6 @@ uint8_t FEB_CAN_RMS_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignme
 	}
 
 	return filter_bank;
-}
-// @lovehate TODO: update below function to fit with call
-
-void FEB_CAN_RMS_Store_Msg(CAN_RxHeaderTypeDef* pHeader, uint8_t *RxData) {
-	switch (pHeader -> StdId){
-		case FEB_CAN_ID_RMS_VOLTAGE:
-			memcpy(&(RMS_MESSAGE.HV_Bus_Voltage), RxData, 2);
-			break;
-		case FEB_CAN_ID_RMS_MOTOR:
-			memcpy(&(RMS_MESSAGE.Motor_Speed), RxData+2, 2);
-			break;
-	}
 }
 
 //TODO: WORK IN PROGRESS
@@ -322,7 +312,16 @@ void FEB_CAN_RMS_Transmit_paramBroadcast(void){
 }
 
 
-
+void FEB_CAN_RMS_Store_Msg(CAN_RxHeaderTypeDef* pHeader, uint8_t *RxData) {
+	switch (pHeader -> StdId){
+		case FEB_CAN_ID_RMS_VOLTAGE:
+			memcpy(&(RMS_MESSAGE.HV_Bus_Voltage), RxData, 2);
+			break;
+		case FEB_CAN_ID_RMS_MOTOR:
+			memcpy(&(RMS_MESSAGE.Motor_Speed), RxData+2, 2);
+			break;
+	}
+}
 
 
 

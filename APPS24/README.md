@@ -30,3 +30,7 @@ Commands 0 torque for certain unsafe conditions specified by MIT paper (implemen
 
 FEB_CAN_RMS_getDesiredRegenTorque: maxRegenTorqueMech computes the max regen torque we can exert from the mechanical perspective (awaiting that function)
 A function that outputs our desired regen torque, only considering mechanical limitations (implementation incomplete)
+
+## 3/28/24
+
+Addeding FEB_CAN_BMS.c and .h to read BMS voltage and SOC values for Regen equations

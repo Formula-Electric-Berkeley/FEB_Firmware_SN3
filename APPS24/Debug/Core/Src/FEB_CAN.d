@@ -33,9 +33,9 @@ Core/Src/FEB_CAN.o: ../Core/Src/FEB_CAN.c ../Core/Inc/FEB_CAN.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/FEB_CAN_RMS.h ../Core/Inc/FEB_CAN_ID.h \
- ../Core/Inc/FEB_Const.h ../Core/Inc/FEB_Normalized.h \
- ../Core/Inc/FEB_CAN_SW.h
+ ../Core/Inc/FEB_CAN_RMS.h ../Core/Inc/FEB_CAN_BMS.h \
+ ../Core/Inc/FEB_CAN_ID.h ../Core/Inc/FEB_Normalized.h \
+ ../Core/Inc/FEB_Const.h ../Core/Inc/FEB_CAN_SW.h
 ../Core/Inc/FEB_CAN.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -72,7 +72,8 @@ Core/Src/FEB_CAN.o: ../Core/Src/FEB_CAN.c ../Core/Inc/FEB_CAN.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Core/Inc/FEB_CAN_RMS.h:
+../Core/Inc/FEB_CAN_BMS.h:
 ../Core/Inc/FEB_CAN_ID.h:
-../Core/Inc/FEB_Const.h:
 ../Core/Inc/FEB_Normalized.h:
+../Core/Inc/FEB_Const.h:
 ../Core/Inc/FEB_CAN_SW.h:

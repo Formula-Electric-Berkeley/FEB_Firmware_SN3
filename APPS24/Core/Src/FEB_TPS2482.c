@@ -177,7 +177,7 @@ void FEB_TPS2482_sendReadings(){
 
 void FEB_TPS2482_CAN_Transmit(float reading){
 	// Initialize transmission header
-	FEB_CAN_Tx_Header.DLC = 8;
+	FEB_CAN_Tx_Header.DLC = 4;
 	FEB_CAN_Tx_Header.ExtId = FEB_CAN_ID_APPS_TPS;
 	FEB_CAN_Tx_Header.IDE = CAN_ID_EXT;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;

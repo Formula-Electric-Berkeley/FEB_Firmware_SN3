@@ -10,6 +10,8 @@
 #include "FEB_CAN.h"
 #include "FEB_CAN_RMS.h"
 #include "FEB_CAN_SW.h"
+#include "FEB_CAN_BSPD.h"
+#include "FEB_CAN_BMS.h"
 #include "FEB_Normalized.h"
 #include "FEB_TPS2482.h"
 #include "FEB_HECS.h"
