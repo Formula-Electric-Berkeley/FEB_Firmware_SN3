@@ -262,148 +262,172 @@ Other files:
 </table>
 
 ## 3.2 APPS
-<h2>3.2.1 Normalized Brake</h2>
-
-<table border="1">
-  <tr>
-    <th>Byte</th>
-    <th>Value</th>
-    <th>Datatype</th>
-  </tr>
-  <tr>
-    <td>0-4</td>
-    <td>Normalized_Brake</td>
-    <td>float</td>
-  </tr>
+### 3.2.1 Normalized Brake
+<table>
+    <tr>
+        <th>Byte</th>
+        <th>Value</th>
+        <th>Datatype</th>
+    </tr>
+    <tr>
+        <td>0-4</td>
+        <td>Normalized Brake</td>
+        <td>float</td>
+    </tr>
 </table>
 
-<h2>3.2.2 RMS Param Msg</h2>
-
-<table border="1">
-  <tr>
-    <th>Byte</th>
-    <th>Value</th>
-    <th>Datatype</th>
-  </tr>
-  <tr>
-    <td>0</td>
-    <td>addr</td>
-    <td>uint8_t</td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>r/w command</td>
-    <td>boolean</td>
-  </tr>
-  <tr>
-    <td>3</td>
-    <td>NA</td>
-    <td>-</td>
-  </tr>
-  <tr>
-    <td>4-5</td>
-    <td>data</td>
-    <td>uint8_t</td>
-  </tr>
-  <tr>
-    <td>6-7</td>
-    <td>NA</td>
-    <td>-</td>
-  </tr>
+### 3.2.2 RMS Param Msg
+<table>
+    <tr>
+        <th>Byte</th>
+        <th>Value</th>
+        <th>Datatype</th>
+    </tr>
+    <tr>
+        <td>0</td>
+        <td>addr</td>
+        <td>uint8_t</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>r/w command</td>
+        <td>boolean</td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>NA</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>4-5</td>
+        <td>data</td>
+        <td>uint8_t</td>
+    </tr>
+    <tr>
+        <td>6-7</td>
+        <td>NA</td>
+        <td>-</td>
+    </tr>
 </table>
 
-<h3>r/w command value State</h3>
-<table border="1">
-  <tr>
-    <th>Value</th>
-    <th>State</th>
-  </tr>
-  <tr>
-    <td>0</td>
-    <td>Read</td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>Write</td>
-  </tr>
+<table>
+    <tr>
+        <th>R/W Command Value</th>
+        <th>State</th>
+    </tr>
+    <tr>
+        <td>0</td>
+        <td>Read</td>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>Write</td>
+    </tr>
 </table>
 
-<table border="1">
-  <tr>
-    <th>addr</th>
-    <th>Description</th>
-  </tr>
-  <tr>
-    <td>20</td>
-    <td>Fault Clear</td>
-  </tr>
-  <tr>
-    <td>148</td>
-    <td>CAN Active Messages Low</td>
-  </tr>
+<table>
+    <tr>
+        <th>Addr Value </th>
+        <th>State</th>
+    </tr>
+    <tr>
+        <td>20</td>
+        <td>Fault Clear</td>
+    </tr>
+    <tr>
+        <td>148</td>
+        <td>CAN Active Messages Lo Wor</td>
+    </tr>
 </table>
 
-<h2>3.2.3 RMS Command Msg</h2>
-
-<table border="1">
-  <tr>
-    <th>Byte</th>
-    <th>Datatype</th>
-  </tr>
-  <tr>
-    <td>0-1</td>
-    <td>Torque Command</td>
-  </tr>
-  <tr>
-    <td>2-3</td>
-    <td>Speed Command</td>
-  </tr>
-  <tr>
-    <td>4</td>
-    <td>Direction</td>
-  </tr>
-  <tr>
-    <td>5.0</td>
-    <td>Inverter Enable</td>
-  </tr>
-  <tr>
-    <td>5.1</td>
-    <td>Inverter Discharge</td>
-  </tr>
-  <tr>
-    <td>5.2</td>
-    <td>Speedmode Enabled</td>
-  </tr>
-  <tr>
-    <td>6-7</td>
-    <td>Command Torque Limited</td>
-  </tr>
+### 3.2.3 RMS Command Msg
+<table>
+    <tr>
+        <th>Byte</th>
+        <th>Value</th>
+        <th>Datatype</th>
+    </tr>
+    <tr>
+        <td>0-1</td>
+        <td>Torque Command</td>
+        <td>Torque</td>
+    </tr>
+    <tr>
+        <td>2-3</td>
+        <td>Speed Command</td>
+        <td>Angular Velocity</td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>Direction</td>
+        <td>boolean</td>
+    </tr>
+    <tr>
+        <td>5.0</td>
+        <td>Inverter Enable</td>
+        <td>boolean</td>
+    </tr>
+    <tr>
+        <td>5.1</td>
+        <td>Inverter Discharge</td>
+        <td>boolean</td>
+    </tr>
+    <tr>
+        <td>5.2</td>
+        <td>Speedmode Enabled</td>
+        <td>boolean</td>
+    </tr>
+    <tr>
+        <td>6-7</td>
+        <td>Command Torque Limited</td>
+        <td>Torque</td>
+    </tr>
 </table>
 
-<h2>3.2.4 APPS BSPD</h2>
-
-<table border="1">
-  <tr>
-    <th>Byte</th>
-    <th>BSPD State</th>
-  </tr>
-  <tr>
-    <td>0</td>
-    <td>BSPD State Value</td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>BSPD State</td>
-  </tr>
-  <tr>
-    <td>0</td>
-    <td>False / Not Triggered</td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>True / Triggered</td>
-  </tr>
+### 3.2.4 BSPD
+<table>
+    <tr>
+        <th>Byte</th>
+        <th>Value</th>
+        <th>Datatype</th>
+    </tr>
+    <tr>
+        <td>0</td>
+        <td>BSPD State</td>
+        <td>uint8_t</td>
+    </tr>
 </table>
+
+<table>
+    <tr>
+        <th>BSPD State Value</th>
+        <th>BSPD State</th>
+    </tr>
+    <tr>
+        <td>0</td>
+        <td>False / Not Triggered</td>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>True / Triggered</td>
+    </tr>
+</table>
+
+### 3.2.5 Current
+<table>
+    <tr>
+        <th>Byte</th>
+        <th>Value</th>
+        <th>Datatype</th>
+    </tr>
+    <tr>
+        <td>0-4</td>
+        <td>TPS Current</td>
+        <td>float</td>
+    </tr>
+</table>
+
+</body>
 
 ## 3.3 LVPDB
 
