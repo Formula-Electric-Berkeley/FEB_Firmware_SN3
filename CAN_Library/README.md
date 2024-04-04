@@ -13,6 +13,8 @@
   - [3.2 APPS](#32-apps)
   - [3.3 LVPDB](#33-lvpdb)
   - [3.4 DCU](#34-dcu)
+  - [3.5 ICS](#35-ics)
+    - [3.5.1 Buttons & Swtiches](#351-buttons--swtiches)
 
 # 1 Overview
 STM32 Files:
@@ -432,3 +434,54 @@ Other files:
 ## 3.3 LVPDB
 
 ## 3.4 DCU
+
+## 3.5 ICS
+### 3.5.1 Buttons & Swtiches
+<table>
+  <tr>
+    <th>Byte</th>
+    <th>Value</th>
+    <th>Datatype</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>Buzzer State</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>Ready-To-Drive</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>Button 2</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>Button 3</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>Button 4</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>Switch 1</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td>Switch 2</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td>Switch 3</td>
+    <td>uint8_t</td>
+  </tr>
+</table>
+
