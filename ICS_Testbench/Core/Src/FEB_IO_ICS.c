@@ -17,14 +17,12 @@ void FEB_IO_ICS_Init(void) {
 }
 
 void FEB_IO_ICS_Loop(void) {
+	// receive IO expander data from I2C
 	uint8_t received_data;
-
 	HAL_I2C_Master_Receive(&hi2c1, IOEXP_ADDR, &received_data, 1, HAL_MAX_DELAY);
 
+	// inverse button states
 	uint8_t button_state = ~received_data;
-
-	button_state = set_n_bit(button_state, 0, 0);
-	button_state = set_n_bit(button_state, 1, 0);
 
 	uint8_t set_rtd_buzzer = 0;
 
@@ -82,16 +80,29 @@ void FEB_IO_ICS_Loop(void) {
 		button_state = (uint8_t) set_n_bit(button_state, 7, 0);
 	}
 
+	// Handle buzzer
+	if (set_rtd_buzzer == 1) {
+		button_state = set_n_bit(button_state, 0, 1);
+	} else {
+		button_state = set_n_bit(button_state, 0, 0);
+	}
+
+	// transmit RTD
+	uint8_t transmit_rtd = (0b1111111 << 1) + set_rtd_buzzer;
+	HAL_I2C_Master_Transmit(&hi2c1, IOEXP_ADDR, &transmit_rtd, sizeof(transmit_rtd), HAL_MAX_DELAY);
+
 	// display button state on UI
 	char button_state_str[9];
 	uint8_to_binary_string(button_state, button_state_str);
 	lv_label_set_text(ui_buttonField, button_state_str);
 }
 
+// set nth bit
 uint8_t set_n_bit(uint8_t x, uint8_t n, uint8_t bit_value) {
 	return (x & (~(1 << n))) | (bit_value << n);
 }
 
+// convert uint8_t to binary string
 void uint8_to_binary_string(uint8_t value, char *binary_string) {
     for (int i = 7; i >= 0; i--) {
     	binary_string[7 - i] = ((value >> i) & 1) ? '1' : '0';
