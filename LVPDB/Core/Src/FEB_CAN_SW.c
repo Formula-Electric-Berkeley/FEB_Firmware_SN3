@@ -10,7 +10,7 @@ extern uint32_t FEB_CAN_Tx_Mailbox;
 uint8_t FEB_CAN_SW_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
     // For multiple filters, create array of filter IDs and loop over IDs.
 
-	uint16_t ids[] = {FEB_CAN_ID_SWS_MESSAGE_READY_TO_DRIVE};
+	uint16_t ids[] = {FEB_CAN_ID_SW_READY_TO_DRIVE};
 
 	for(uint8_t i = 0; i < 1; i ++){
 
@@ -42,7 +42,7 @@ uint8_t FEB_CAN_SW_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint
 void FEB_CAN_SW_Str_Msg(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_CAN_Rx_Data[]) {
 
 	switch(FEB_CAN_Rx_Header->StdId) {
-	    case FEB_CAN_ID_SWS_MESSAGE_READY_TO_DRIVE:
+	    case FEB_CAN_ID_SW_READY_TO_DRIVE:
 			memcpy(&(FEB_CAN_SW_Message.ready_to_drive), &(FEB_CAN_Rx_Data[0]), 4);
 	    	break;
 	}

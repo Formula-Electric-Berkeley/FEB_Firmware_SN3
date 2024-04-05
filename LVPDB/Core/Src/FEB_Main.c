@@ -12,6 +12,10 @@ extern float cp_current_reading;
 
 float apps_current_reading; //
 
+char buf[128];
+int buf_len;
+extern UART_HandleTypeDef huart2;
+
 void FEB_Main_Setup(void) {
 
 
@@ -40,22 +44,29 @@ void FEB_Main_Setup(void) {
 	uint8_t AF_LIMIT[2] = {0b00000000, 0b11000000}; // = 192, 8 * 24
 	uint8_t EX_LIMIT[2] = {0b00000000, 0b10010000}; // = 144, 6 * 24
 
+	buf_len = sprintf((char*) buf, "pre can init\n");
+	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 	FEB_CAN_Init();
 
 	//hi2c1p = &hi2c1;
 
 	// uncomment if we need to pull ENs high to start
-	//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_SET);// pull PC11 high to enable coolant pump
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_SET);// pull PC11 high to enable coolant pump
 	//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);// pull PB5 high to enable accumulator fans
 	//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_SET);// pull PC3 high to enable extra
 
 	//TODO: GET ACCURATE UNDERV AND OVERPWR AND DIFFERENT LIMITS. THESE ARE PRIMARILY PLACEHOLDERS.
 
+	buf_len = sprintf((char*) buf, "pre tps setup\n");
+	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 	FEB_SETUP_TPS2482(&hi2c1, LV_ADDR, CONFIG, MAIN_CAL, UNDERV, LV_LIMIT);
 	FEB_SETUP_TPS2482(&hi2c1, CP_ADDR, CONFIG, CP_CAL, OVERPWR, CP_LIMIT);
 	FEB_SETUP_TPS2482(&hi2c1, AF_ADDR, CONFIG, AF_CAL, OVERPWR, AF_LIMIT);
 	FEB_SETUP_TPS2482(&hi2c1, EX_ADDR, CONFIG, EX_CAL, OVERPWR, EX_LIMIT);
 	FEB_SETUP_TPS2482(&hi2c1, SH_ADDR, CONFIG, EX_CAL, OVERPWR, EX_LIMIT);
+	buf_len = sprintf((char*) buf, "post tps setup\n");
+	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+
 }
 
 
@@ -67,8 +78,12 @@ void FEB_Main_Loop(void) {
 
   FEB_TPS2482_Poll_Currents();
 
-  FEB_CAN_Transmit(&hcan1, LVPDB_LV_CURRENT, &current_reading);
-  FEB_CAN_Transmit(&hcan1, LVPDB_EX_CURRENT, &ex_current_reading);
-  FEB_CAN_Transmit(&hcan1, LVPDB_CP_CURRENT, &cp_current_reading);
+  //FEB_CAN_Transmit(&hcan1, LVPDB_LV_CURRENT, &current_reading);
+  //FEB_CAN_Transmit(&hcan1, LVPDB_EX_CURRENT, &ex_current_reading);
+  //FEB_CAN_Transmit(&hcan1, LVPDB_CP_CURRENT, &cp_current_reading);
   apps_current_reading = FEB_CAN_APPS_Message.current;
+
+  buf_len = sprintf((char*) buf, "Current Draw (LV, EX, CP, APPS): %.3f, %.3f, %.3f, %.3f\r\n", current_reading, ex_current_reading, cp_current_reading, apps_current_reading);
+  HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+
 }

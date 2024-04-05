@@ -10,7 +10,7 @@ extern uint32_t FEB_CAN_Tx_Mailbox;
 uint8_t FEB_CAN_APPS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
     // For multiple filters, create array of filter IDs and loop over IDs.
 
-	uint16_t ids[] = {FEB_CAN_ID_APPS_BRAKE_PEDAL, FEB_CAN_ID_APPS_CURRENT};
+	uint16_t ids[] = {FEB_CAN_ID_APPS_BRAKE_PEDAL, FEB_CAN_ID_APPS_TPS};
 
 	for(uint8_t i = 0; i < 2; i ++){
 
@@ -50,7 +50,7 @@ void FEB_CAN_APPS_Str_Msg(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_CA
 		    data_brakepedal = (data_brakepedal << 8) | FEB_CAN_Rx_Data[3]; // LSB
 	    	memcpy(&(FEB_CAN_APPS_Message.brake_pedal), &(data_brakepedal), 4);
 	    	break;
-	    case FEB_CAN_ID_APPS_CURRENT:
+	    case FEB_CAN_ID_APPS_TPS:
 	    	//concatonate float from the array into temp
 			uint32_t data_current = FEB_CAN_Rx_Data[0];        // MSB
 			data_current = (data_current << 8) | FEB_CAN_Rx_Data[1];

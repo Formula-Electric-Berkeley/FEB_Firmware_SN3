@@ -105,13 +105,18 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  char buf[128];
+  int buf_len;
   while (1)
   {
 
+	buf_len = sprintf((char*) buf, "Test");
+	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 	FEB_Main_Loop();
     /* USER CODE END WHILE */
 
 		  HAL_Delay(SLEEP_TIME);
+
 
     /* USER CODE BEGIN 3 */
   }
