@@ -21,7 +21,7 @@ void FEB_Main_Loop(void) {
 
 	FEB_UART_Transmit_Speed();
 
-	FEB_CAN_ICS_Transmit();
+	FEB_CAN_ICS_Transmit_Speed();
 
 	HAL_Delay(100);
 }
