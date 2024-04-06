@@ -439,49 +439,51 @@ Other files:
 ### 3.5.1 Buttons & Swtiches
 <table>
   <tr>
-    <th>Byte</th>
-    <th>Value</th>
+    <th>Operation</th>
+    <th>CAN ID</th>
+    <th>DLC</th>
     <th>Datatype</th>
-  </tr>
-  <tr>
-    <td>0</td>
-    <td>Buzzer State</td>
-    <td>uint8_t</td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>Ready-To-Drive</td>
-    <td>uint8_t</td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>Button 2</td>
-    <td>uint8_t</td>
-  </tr>
-  <tr>
-    <td>3</td>
-    <td>Button 3</td>
-    <td>uint8_t</td>
-  </tr>
-  <tr>
-    <td>4</td>
-    <td>Button 4</td>
-    <td>uint8_t</td>
-  </tr>
-  <tr>
-    <td>5</td>
-    <td>Switch 1</td>
-    <td>uint8_t</td>
-  </tr>
-  <tr>
-    <td>6</td>
-    <td>Switch 2</td>
-    <td>uint8_t</td>
-  </tr>
-  <tr>
-    <td>7</td>
-    <td>Switch 3</td>
-    <td>uint8_t</td>
+    <tr>
+      <td>Button 1 (Ready-To-Drive)</td>
+      <td>FEB_CAN_ID_ICS_READY_TO_DRIVE</td>
+      <td>1</td>
+      <td>boolean</td>
+    </tr>
+    <tr>
+      <td>Button 2</td>
+      <td>FEB_CAN_ID_ICS_BUTTON_2</td>
+      <td>1</td>
+      <td>boolean</td>
+    </tr>
+    <tr>
+      <td>Button 3</td>
+      <td>FEB_CAN_ID_ICS_BUTTON_3</td>
+      <td>1</td>
+      <td>boolean</td>
+    </tr>
+    <tr>
+      <td>Button 4</td>
+      <td>FEB_CAN_ID_ICS_BUTTON_4</td>
+      <td>1</td>
+      <td>boolean</td>
+    </tr>
+    <tr>
+      <td>Switch 1 (Coolant Pump)</td>
+      <td>FEB_CAN_ID_ICS_COOLANT_PUMP</td>
+      <td>1</td>
+      <td>boolean</td>
+    </tr>
+    <tr>
+      <td>Switch 2 (Accumulator Fans)</td>
+      <td>FEB_CAN_ID_ICS_ACUMULATOR_FANS</td>
+      <td>1</td>
+      <td>boolean</td>
+    </tr>
+    <tr>
+      <td>Switch 3</td>
+      <td>FEB_CAN_ID_ICS_SWITCH_3</td>
+      <td>1</td>
+      <td>boolean</td>
+    </tr>
   </tr>
 </table>
-
