@@ -12,5 +12,5 @@ Up-to-date code found on respective branches.
 - ```CAN Library```
 - ```DCU```: Data Control Unit
 - ```LVPDB```: Low Voltage Power Delivery Board
-- ```SWDB```: Steering Wheel Driver Board
+- ```ICS```: Infotainment Cluster Screen (Dashboard)
 - ```DART```: Distributed Air Routing Technology
