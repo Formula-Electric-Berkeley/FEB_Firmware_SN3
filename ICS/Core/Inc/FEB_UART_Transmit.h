@@ -14,6 +14,10 @@
 #include "FEB_CAN_ICS.h"
 
 // **************************************** Functions ****************************************
+void FEB_UART_Transmit_Int(uint8_t data);
+
+void FEB_UART_Transmit_String(char* str);
+
 void FEB_UART_Transmit_Process(void);
 
 void FEB_UART_Transmit_Speed(void);

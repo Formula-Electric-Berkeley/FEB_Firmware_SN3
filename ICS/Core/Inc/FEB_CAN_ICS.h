@@ -4,8 +4,17 @@
 // **************************************** Includes ****************************************
 
 #include "FEB_CAN_ID.h"
+#include "FEB_UART_TRANSMIT.h"
 
 #include "stm32f4xx_hal.h"
+
+#include <stdio.h>
+#include "lvgl.h"
+#include "ui.h"
+
+typedef struct {
+	volatile uint8_t speed;
+} FEB_CAN_ICS_Message_t;
 
 // **************************************** Functions ****************************************
 
@@ -13,7 +22,9 @@ uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
 
 void FEB_CAN_ICS_Rx_Handler(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_CAN_Rx_Data[]);
 
-void FEB_CAN_ICS_Transmit(void);
+void FEB_CAN_ICS_Transmit_Button_State(uint32_t Msg_ID, uint8_t transmit_button_state);
+
+void FEB_CAN_ICS_Transmit_Speed(void);
 
 uint8_t FEB_CAN_ICS_Get_Speed(void);
 

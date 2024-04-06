@@ -5,15 +5,23 @@
 // **************************************** Functions ****************************************
 
 void FEB_Main_Setup(void) {
+	FEB_UI_Init();
+
+	FEB_IO_ICS_Init();
+
 	FEB_CAN_Init();
 }
 
 void FEB_Main_Loop(void) {
+	FEB_UI_Update();
+
+	FEB_IO_ICS_Loop();
+
 	FEB_UART_Transmit_Process();
 
 	FEB_UART_Transmit_Speed();
 
-	FEB_CAN_ICS_Transmit();
+	FEB_CAN_ICS_Transmit_Speed();
 
-	HAL_Delay(1000);
+	HAL_Delay(100);
 }

@@ -21,16 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
-//#include "FEB_Main.h"
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <lvgl.h>
-#include "./demos/lv_demos.h"
-#include <screen_driver.h>
-#include <touch_sensor_driver.h>
-#include <ui.h>
+#include "lvgl.h"
+#include "FEB_Main.h"
 
 /* USER CODE END Includes */
 
@@ -154,37 +146,18 @@ int main(void)
   MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
 
-//  FEB_Main_Setup();
+  FEB_Main_Setup();
 
-  lv_init();
-
-  screen_driver_init();
-  touch_sensor_driver_init();
-
-  //lv_demo_benchmark();
-
-  //lv_textarea_1();
-  ui_init();
-  int counter = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-//	  HAL_Delay(100);
-	  lv_timer_handler();
-//	  lv_task_handler();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//	  char str[1];
-//
-//	  sprintf(str, "%d", counter);
-//	  lv_label_set_text(ui_speedField, str);
-//	  HAL_Delay(100);
-//	  counter++;
-//	  FEB_Main_Loop();
+	  FEB_Main_Loop();
   }
   /* USER CODE END 3 */
 }
@@ -210,8 +183,8 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 180;
+  RCC_OscInitStruct.PLL.PLLM = 8;
+  RCC_OscInitStruct.PLL.PLLN = 360;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 6;
   RCC_OscInitStruct.PLL.PLLR = 6;
@@ -258,7 +231,7 @@ static void MX_CAN1_Init(void)
 
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 16;
+  hcan1.Init.Prescaler = 18;
   hcan1.Init.Mode = CAN_MODE_LOOPBACK;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
   hcan1.Init.TimeSeg1 = CAN_BS1_3TQ;
@@ -296,9 +269,9 @@ static void MX_CAN2_Init(void)
   /* USER CODE END CAN2_Init 1 */
   hcan2.Instance = CAN2;
   hcan2.Init.Prescaler = 16;
-  hcan2.Init.Mode = CAN_MODE_LOOPBACK;
+  hcan2.Init.Mode = CAN_MODE_NORMAL;
   hcan2.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan2.Init.TimeSeg1 = CAN_BS1_3TQ;
+  hcan2.Init.TimeSeg1 = CAN_BS1_1TQ;
   hcan2.Init.TimeSeg2 = CAN_BS2_1TQ;
   hcan2.Init.TimeTriggeredMode = DISABLE;
   hcan2.Init.AutoBusOff = DISABLE;
@@ -426,8 +399,8 @@ static void MX_DSIHOST_DSI_Init(void)
   VidCfg.VSPolarity = DSI_VSYNC_ACTIVE_HIGH;
   VidCfg.DEPolarity = DSI_DATA_ENABLE_ACTIVE_HIGH;
   VidCfg.HorizontalSyncActive = 5;
-  VidCfg.HorizontalBackPorch = 85;
-  VidCfg.HorizontalLine = 2175;
+  VidCfg.HorizontalBackPorch = 77;
+  VidCfg.HorizontalLine = 1982;
   VidCfg.VerticalSyncActive = 120;
   VidCfg.VerticalBackPorch = 150;
   VidCfg.VerticalFrontPorch = 150;
