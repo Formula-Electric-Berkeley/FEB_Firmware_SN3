@@ -9,12 +9,15 @@ BMS Voltage
 BMS State
 BMS Balance
 
-//SW
-SW ID
-SW Ready To Drive
-SW Coolant Pump
-SW Extra
-SW Acumulator Fans
+//ICS
+ICS Ready To Drive
+ICS Button 2
+ICS Button 3
+ICS Button 4
+ICS Coolant Pump
+ICS Radiator Fans
+ICS Acumulator Fans
+ICS TEST
 
 //APPS
 APPS Brake Pedal
