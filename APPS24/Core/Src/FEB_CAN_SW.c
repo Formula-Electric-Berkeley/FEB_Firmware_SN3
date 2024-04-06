@@ -50,7 +50,7 @@ uint8_t FEB_CAN_SW_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignmen
 void FEB_CAN_SW_Store_Msg(CAN_RxHeaderTypeDef* pHeader, uint8_t *RxData) {
     switch (pHeader -> StdId){
         case FEB_CAN_ID_SW_READY_TO_DRIVE :
-            memcpy(&(SW_MESSAGE.ready_to_drive), RxData, 4);
+            memcpy(&(SW_MESSAGE.ready_to_drive), RxData, 1);
             break;
     }
 }

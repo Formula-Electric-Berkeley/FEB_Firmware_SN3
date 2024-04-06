@@ -6,7 +6,6 @@
 
 typedef struct BMS_MESSAGE_TYPE {
     uint16_t temp;
-    uint8_t state;
 } BMS_MESSAGE_TYPE;
 BMS_MESSAGE_TYPE BMS_MESSAGE;
 
@@ -16,18 +15,14 @@ uint16_t FEB_CAN_BMS_getTemp(){
 	return BMS_MESSAGE.temp;
 }
 
-uint8_t FEB_CAN_BMS_getState(){
-	return BMS_MESSAGE.state;
-}
-
 
 
 // ***** CAN FUNCTIONS ****
 
 uint8_t FEB_CAN_BMS_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
-	uint16_t ids[] = {FEB_CAN_ID_BMS_TEMPERATURE, FEB_CAN_ID_BMS_STATE};
+	uint16_t ids[] = {FEB_CAN_ID_BMS_TEMPERATURE};
 
-	for (uint8_t i = 0; i < 2; i++) {
+	for (uint8_t i = 0; i < 1; i++) {
 		CAN_FilterTypeDef filter_config;
 
 	    // Standard CAN - 2.0A - 11 bit
@@ -54,11 +49,8 @@ uint8_t FEB_CAN_BMS_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignme
 void FEB_CAN_BMS_Store_Msg(CAN_RxHeaderTypeDef* pHeader, uint8_t *RxData) {
     switch (pHeader -> StdId){
         case FEB_CAN_ID_BMS_TEMPERATURE :
-            memcpy(&(BMS_MESSAGE.temp), RxData, 4);
+        	BMS_MESSAGE.temp = RxData[2] << 8 | RxData[3];
             break;
-        case FEB_CAN_ID_BMS_STATE :
-            memcpy(&(BMS_MESSAGE.state), RxData+4, 2);
-        	break;
     }
 }
 

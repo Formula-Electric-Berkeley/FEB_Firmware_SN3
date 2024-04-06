@@ -5,6 +5,8 @@
 
 #include "stm32f4xx_hal.h"
 #include "FEB_CAN_ID.h"
+#include <stdio.h>
+
 
 // ********************************** Functions **********************************
 

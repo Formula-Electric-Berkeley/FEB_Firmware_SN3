@@ -17,9 +17,9 @@ struct {
 
 void FEB_CAN_BSPD_checkReset(){
 	if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2)){
-		BSPD_State = 1;
+		BSPD.state = 1;
 	} else {
-		BSPD_State = 0;
+		BSPD.state = 0;
 	}
 	FEB_CAN_BSPD_Transmit();
 
@@ -30,8 +30,8 @@ void FEB_CAN_BSPD_Transmit(void) {
     // Write Code Here
 	// Initialize transmission header
 	FEB_CAN_Tx_Header.DLC = 1;
-	FEB_CAN_Tx_Header.ExtId = FEB_CAN_ID_APPS_BSPD_STATE; //ID for sending paramater messages for RMS
-	FEB_CAN_Tx_Header.IDE = CAN_ID_EXT;
+	FEB_CAN_Tx_Header.StdId = FEB_CAN_ID_APPS_BSPD_STATE; //ID for sending paramater messages for RMS
+	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
 

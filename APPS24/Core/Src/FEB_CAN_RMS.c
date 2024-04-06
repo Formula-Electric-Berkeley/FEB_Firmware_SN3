@@ -72,7 +72,7 @@ void FEB_CAN_RMS_torqueTransmit(void){
  * (The electrical limit for regen is enforced with the inverter EEPROM which caps it)
 */
 void FEB_CAN_RMS_getRegenTorque(void){
-	speedMPH = 0; //TODO; read from somewhere
+	speedMPH = RMS_MESSAGE.Motor_Speed; //rad/s
 
 	uint8_t soc = FEB_CAN_BMS_getState(); //TODO: define
 	uint16_t batteryTemp = FEB_CAN_BMS_getTemp(); //TODO: create BMS file to read battery temperature
@@ -125,12 +125,24 @@ void FEB_CAN_RMS_Torque(void){
 }
 
 // ***** CAN FUNCS ***
+void FEB_CAN_RMS_Init(void){
+	FEB_CAN_RMS_Transmit_paramSafety();
+
+	// send disable command to remove lockout
+	for (int i = 0; i < 10; i++) {
+		FEB_CAN_RMS_Transmit_commDisable();
+		HAL_Delay(10);
+	}
+
+	// Select CAN msg to broadcast
+	FEB_CAN_RMS_Transmit_paramBroadcast();
+}
 
 void FEB_CAN_RMS_Transmit_updateTorque(void) { //TODO: Create Custom Transmit function and update below call
   //uint8_t message_data[8] = {RMSControl.torque & 0xFF, RMSControl.torque >> 8, 0, 0, 0, RMSControl.enabled, 0, 0};
 	FEB_CAN_Tx_Header.DLC = 8;
-	FEB_CAN_Tx_Header.ExtId = 0x0C0; //ID for sending paramater messages for RMS
-	FEB_CAN_Tx_Header.IDE = CAN_ID_EXT;
+	FEB_CAN_Tx_Header.StdId = 0x0C0; //ID for sending paramater messages for RMS
+	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
 
@@ -154,19 +166,6 @@ void FEB_CAN_RMS_Transmit_updateTorque(void) { //TODO: Create Custom Transmit fu
 }
 
 
-// ***** CAN FUNCTIONS ****
-void FEB_CAN_RMS_Init(void){
-	FEB_CAN_RMS_Transmit_paramSafety();
-
-	// send disable command to remove lockout
-	for (int i = 0; i < 10; i++) {
-		FEB_CAN_RMS_Transmit_commDisable();
-		HAL_Delay(10);
-	}
-
-	// Select CAN msg to broadcast
-	FEB_CAN_RMS_Transmit_paramBroadcast();
-}
 
 
 uint8_t FEB_CAN_RMS_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
@@ -206,8 +205,8 @@ void FEB_CAN_RMS_Transmit_paramSafety(void){
 	//-----Transmit Stuff Below-----
 	// Initialize transmission header
 	FEB_CAN_Tx_Header.DLC = 8;
-	FEB_CAN_Tx_Header.ExtId = FEB_CAN_ID_RMS_PARAMETER; //ID for sending paramater messages for RMS
-	FEB_CAN_Tx_Header.IDE = CAN_ID_EXT;
+	FEB_CAN_Tx_Header.StdId = FEB_CAN_ID_RMS_PARAMETER; //ID for sending paramater messages for RMS
+	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
 
@@ -244,8 +243,8 @@ void FEB_CAN_RMS_Transmit_commDisable(void){
 
 	// Initialize transmission header
 	FEB_CAN_Tx_Header.DLC = 8;
-	FEB_CAN_Tx_Header.ExtId = FEB_CAN_ID_RMS_COMMAND; //ID for sending command messages for RMS
-	FEB_CAN_Tx_Header.IDE = CAN_ID_EXT;
+	FEB_CAN_Tx_Header.StdId = FEB_CAN_ID_RMS_COMMAND; //ID for sending command messages for RMS
+	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
 
@@ -287,8 +286,8 @@ void FEB_CAN_RMS_Transmit_paramBroadcast(void){
 
 	// Initialize transmission header
 	FEB_CAN_Tx_Header.DLC = 8;
-	FEB_CAN_Tx_Header.ExtId = FEB_CAN_ID_RMS_PARAMETER; //ID for sending paramater messages for RMS
-	FEB_CAN_Tx_Header.IDE = CAN_ID_EXT;
+	FEB_CAN_Tx_Header.StdId = FEB_CAN_ID_RMS_PARAMETER; //ID for sending paramater messages for RMS
+	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
 
