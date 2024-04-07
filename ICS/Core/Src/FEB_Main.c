@@ -5,9 +5,9 @@
 // **************************************** Functions ****************************************
 
 void FEB_Main_Setup(void) {
-	FEB_UI_Init();
-
 	FEB_IO_ICS_Init();
+
+	FEB_UI_Init();
 
 	FEB_CAN_Init();
 }
