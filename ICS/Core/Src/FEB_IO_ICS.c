@@ -12,7 +12,7 @@ uint32_t rtd_press_start_time;
 uint8_t button_state = 0b11111110;
 
 void FEB_IO_ICS_Init(void) {
-	uint8_t initial_io_exp_state = 0b11111110; // initialize RTD (P0) to low
+	uint8_t initial_io_exp_state = button_state; // initialize RTD (P0) to low
 
 	HAL_I2C_Master_Transmit(&hi2c1, IOEXP_ADDR, &initial_io_exp_state, sizeof(initial_io_exp_state), HAL_MAX_DELAY);
 }
@@ -22,8 +22,7 @@ void FEB_IO_ICS_Loop(void) {
 	uint8_t received_data;
 	HAL_I2C_Master_Receive(&hi2c1, IOEXP_ADDR, &received_data, 1, HAL_MAX_DELAY);
 
-	// inverse button states
-	button_state = ~received_data;
+	button_state = 00000000;
 
 	uint8_t set_rtd_buzzer = 0;
 
