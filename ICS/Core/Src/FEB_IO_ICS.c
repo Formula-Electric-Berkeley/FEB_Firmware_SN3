@@ -32,7 +32,7 @@ void FEB_IO_ICS_Loop(void) {
 		if ((HAL_GetTick() - rtd_press_start_time) >= BTN_HOLD_TIME) {
 			button_state = (uint8_t) set_n_bit(button_state, 1, 1);
 			set_rtd_buzzer = 1;
-			FEB_CAN_ICS_Transmit_Button_State(FEB_CAN_ID_ICS_READY_TO_DRIVE, 1);
+			FEB_CAN_ICS_Transmit_Button_State(button_state);
 		} else {
 			button_state = (uint8_t) set_n_bit(button_state, 1, 0);
 		}
@@ -45,7 +45,7 @@ void FEB_IO_ICS_Loop(void) {
 	// Button 2
 	if (!(received_data & (1<<2))) {
 		button_state = (uint8_t) set_n_bit(button_state, 2, 1);
-		FEB_CAN_ICS_Transmit_Button_State(FEB_CAN_ID_ICS_BUTTON_2, 1);
+		FEB_CAN_ICS_Transmit_Button_State(button_state);
 	} else {
 		button_state = (uint8_t) set_n_bit(button_state, 2, 0);
 	}
@@ -53,7 +53,7 @@ void FEB_IO_ICS_Loop(void) {
 	// Button 3
 	if (!(received_data & (1<<3))) {
 		button_state = (uint8_t) set_n_bit(button_state, 3, 1);
-		FEB_CAN_ICS_Transmit_Button_State(FEB_CAN_ID_ICS_BUTTON_3, 1);
+		FEB_CAN_ICS_Transmit_Button_State(button_state);
 	} else {
 		button_state = (uint8_t) set_n_bit(button_state, 3, 0);
 	}
@@ -61,7 +61,7 @@ void FEB_IO_ICS_Loop(void) {
 	// Button 4
 	if (!(received_data & (1<<4))) {
 		button_state = (uint8_t) set_n_bit(button_state, 4, 1);
-		FEB_CAN_ICS_Transmit_Button_State(FEB_CAN_ID_ICS_BUTTON_4, 1);
+		FEB_CAN_ICS_Transmit_Button_State(button_state);
 	} else {
 		button_state = (uint8_t) set_n_bit(button_state, 4, 0);
 	}
@@ -69,7 +69,7 @@ void FEB_IO_ICS_Loop(void) {
 	// Switch 1 - Coolant Pump
 	if (!(received_data & (1<<7))) {
 		button_state = (uint8_t) set_n_bit(button_state, 5, 1);
-		FEB_CAN_ICS_Transmit_Button_State(FEB_CAN_ID_ICS_COOLANT_PUMP, 1);
+		FEB_CAN_ICS_Transmit_Button_State(button_state);
 	} else {
 		button_state = (uint8_t) set_n_bit(button_state, 5, 0);
 	}
@@ -77,7 +77,7 @@ void FEB_IO_ICS_Loop(void) {
 	// Switch 2 - Radiator Fans
 	if (!(received_data & (1<<5))) {
 		button_state = (uint8_t) set_n_bit(button_state, 6, 1);
-		FEB_CAN_ICS_Transmit_Button_State(FEB_CAN_ID_ICS_RADIATOR_FANS, 1);
+		FEB_CAN_ICS_Transmit_Button_State(button_state);
 	} else {
 		button_state = (uint8_t) set_n_bit(button_state, 6, 0);
 	}
@@ -85,7 +85,7 @@ void FEB_IO_ICS_Loop(void) {
 	// Switch 3 - Accumulator Fans
 	if (!(received_data & (1<<6))) {
 		button_state = (uint8_t) set_n_bit(button_state, 7, 1);
-		FEB_CAN_ICS_Transmit_Button_State(FEB_CAN_ID_ICS_ACUMULATOR_FANS, 1);
+		FEB_CAN_ICS_Transmit_Button_State(button_state);
 	} else {
 		button_state = (uint8_t) set_n_bit(button_state, 7, 0);
 	}

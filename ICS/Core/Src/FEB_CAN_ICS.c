@@ -17,9 +17,9 @@ uint8_t speed = 0;
 
 uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
     // For multiple filters, create array of filter IDs and loop over IDs.
-	uint16_t ids[] = {FEB_CAN_ID_ICS_TEST, FEB_CAN_ID_ICS_READY_TO_DRIVE, FEB_CAN_ID_ICS_BUTTON_2, FEB_CAN_ID_ICS_BUTTON_3, FEB_CAN_ID_ICS_BUTTON_4, FEB_CAN_ID_ICS_COOLANT_PUMP, FEB_CAN_ID_ICS_RADIATOR_FANS, FEB_CAN_ID_ICS_ACUMULATOR_FANS};
+	uint16_t ids[] = {FEB_CAN_ID_ICS_BUTTON_STATE, FEB_CAN_ID_ICS_TEST};
 
-	for (uint8_t i = 0; i < 8; i++) {
+	for (uint8_t i = 0; i < 2; i++) {
 		CAN_FilterTypeDef filter_config;
 
 		// Standard CAN - 2.0A - 11 bit
@@ -45,26 +45,10 @@ uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
 
 void FEB_CAN_ICS_Rx_Handler(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_CAN_Rx_Data[]) {
 	switch(FEB_CAN_Rx_Header->StdId) {
-		case FEB_CAN_ID_ICS_READY_TO_DRIVE:
-			FEB_UART_Transmit_String("[PRESSED] Button 1 (Ready To Drive)");
-			break;
-		case FEB_CAN_ID_ICS_BUTTON_2:
-			FEB_UART_Transmit_String("[PRESSED] Button 2");
-			break;
-		case FEB_CAN_ID_ICS_BUTTON_3:
-			FEB_UART_Transmit_String("[PRESSED] Button 3");
-			break;
-		case FEB_CAN_ID_ICS_BUTTON_4:
-			FEB_UART_Transmit_String("[PRESSED] Button 4");
-			break;
-		case FEB_CAN_ID_ICS_COOLANT_PUMP:
-			FEB_UART_Transmit_String("[PRESSED] Switch 1 (Coolant Pump)");
-			break;
-		case FEB_CAN_ID_ICS_RADIATOR_FANS:
-			FEB_UART_Transmit_String("[PRESSED] Switch 2 (Radiator Fans)");
-			break;
-		case FEB_CAN_ID_ICS_ACUMULATOR_FANS:
-			FEB_UART_Transmit_String("[PRESSED] Switch 3 (Accumulator Fans)");
+		case FEB_CAN_ID_ICS_BUTTON_STATE:
+			char button_state_str[9];
+			uint8_to_binary_string(FEB_CAN_Rx_Data[0], button_state_str);
+			FEB_UART_Transmit_String(button_state_str);
 			break;
 		case FEB_CAN_ID_ICS_TEST:
 			FEB_CAN_ICS_Message.speed = FEB_CAN_Rx_Data[0];
@@ -72,9 +56,9 @@ void FEB_CAN_ICS_Rx_Handler(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_
 	}
 }
 
-void FEB_CAN_ICS_Transmit_Button_State(uint32_t Msg_ID, uint8_t transmit_button_state) {
+void FEB_CAN_ICS_Transmit_Button_State(uint8_t transmit_button_state) {
 	FEB_CAN_Tx_Header.DLC = 1;
-	FEB_CAN_Tx_Header.StdId = Msg_ID;
+	FEB_CAN_Tx_Header.StdId = FEB_CAN_ID_ICS_BUTTON_STATE;
 	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
