@@ -55,4 +55,10 @@ void Disable_Extra(){
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_RESET);
 }
 
-//TODO: SHOULD THERE BE ANY ENABLES AND DISABLES FOR THE SHUTDOWN STUFF
+void Enable_Shutdown_Source(){
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);// pull PA0 high to enable shutdown source
+}
+
+void Disable_Shutdown_Source(){
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
+}

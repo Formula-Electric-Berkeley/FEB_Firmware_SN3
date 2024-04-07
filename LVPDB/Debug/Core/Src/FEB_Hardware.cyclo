@@ -6,3 +6,5 @@
 ../Core/Src/FEB_Hardware.c:46:6:Disable_Accumulator_Fans	1
 ../Core/Src/FEB_Hardware.c:50:6:Enable_Extra	1
 ../Core/Src/FEB_Hardware.c:54:6:Disable_Extra	1
+../Core/Src/FEB_Hardware.c:58:6:Enable_Shutdown_Source	1
+../Core/Src/FEB_Hardware.c:62:6:Disable_Shutdown_Source	1

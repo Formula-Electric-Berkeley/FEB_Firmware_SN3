@@ -13,6 +13,8 @@ void Enable_Accumulator_Fans();
 void Disable_Accumulator_Fans();
 void Enable_Extra();
 void Disable_Extra();
+void Enable_Shutdown_Source();
+void Disable_Shutdown_Source();
 void FEB_Brake_Light_Control();
 void FEB_Peripherals_Control();
 

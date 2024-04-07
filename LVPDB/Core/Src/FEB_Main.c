@@ -39,7 +39,7 @@ void FEB_Main_Setup(void) {
 	uint8_t OVERPWR[2] = {0b00001000, 0b00000000};
 
 	// limits
-	uint8_t LV_LIMIT[2] = {0b00000000, 0b00010110}; // = 22
+	uint8_t LV_LIMIT[2] = {0b01000100, 0b11000000}; // = 22 / 1.25mV/bit = 17600; New limit
 	uint8_t CP_LIMIT[2] = {0b00000001, 0b01010000}; // = 336, 14 * 24
 	uint8_t AF_LIMIT[2] = {0b00000000, 0b11000000}; // = 192, 8 * 24
 	uint8_t EX_LIMIT[2] = {0b00000000, 0b10010000}; // = 144, 6 * 24
@@ -51,21 +51,39 @@ void FEB_Main_Setup(void) {
 	//hi2c1p = &hi2c1;
 
 	// uncomment if we need to pull ENs high to start
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_SET);// pull PC11 high to enable coolant pump
+	//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_SET);// pull PC11 high to enable coolant pump
 	//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);// pull PB5 high to enable accumulator fans
 	//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_SET);// pull PC3 high to enable extra
+	//	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);// pull PA0 high to enable shutdown source
 
 	//TODO: GET ACCURATE UNDERV AND OVERPWR AND DIFFERENT LIMITS. THESE ARE PRIMARILY PLACEHOLDERS.
 
+	// Testing i2c set up successful, serial monitor baud rate 115200
 	buf_len = sprintf((char*) buf, "pre tps setup\n");
 	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+
 	FEB_SETUP_TPS2482(&hi2c1, LV_ADDR, CONFIG, MAIN_CAL, UNDERV, LV_LIMIT);
-	FEB_SETUP_TPS2482(&hi2c1, CP_ADDR, CONFIG, CP_CAL, OVERPWR, CP_LIMIT);
-	FEB_SETUP_TPS2482(&hi2c1, AF_ADDR, CONFIG, AF_CAL, OVERPWR, AF_LIMIT);
-	FEB_SETUP_TPS2482(&hi2c1, EX_ADDR, CONFIG, EX_CAL, OVERPWR, EX_LIMIT);
-	FEB_SETUP_TPS2482(&hi2c1, SH_ADDR, CONFIG, EX_CAL, OVERPWR, EX_LIMIT);
-	buf_len = sprintf((char*) buf, "post tps setup\n");
+	buf_len = sprintf((char*) buf, "post lv setup\n");
 	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+
+	FEB_SETUP_TPS2482(&hi2c1, CP_ADDR, CONFIG, CP_CAL, OVERPWR, CP_LIMIT);
+	buf_len = sprintf((char*) buf, "post cp setup\n");
+	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+
+	FEB_SETUP_TPS2482(&hi2c1, AF_ADDR, CONFIG, AF_CAL, OVERPWR, AF_LIMIT);
+	buf_len = sprintf((char*) buf, "post af setup\n");
+	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+
+	FEB_SETUP_TPS2482(&hi2c1, EX_ADDR, CONFIG, EX_CAL, OVERPWR, EX_LIMIT);
+	buf_len = sprintf((char*) buf, "post ex setup\n");
+	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+
+	FEB_SETUP_TPS2482(&hi2c1, SH_ADDR, CONFIG, EX_CAL, OVERPWR, EX_LIMIT);
+	buf_len = sprintf((char*) buf, "post sh and tps setup\n");
+	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+
+	//Not sure if enable seperately from ready to drive
+	//	Enable_Shutdown_Source();
 
 }
 
