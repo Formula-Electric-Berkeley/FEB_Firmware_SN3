@@ -44,5 +44,6 @@
 
 //APPS
 #define FEB_CAN_ID_APPS_BRAKE_PEDAL 0x7
+#define FEB_CAN_ID_APPS_BSPD 0x8
 
 #endif /* INC_FEB_CAN_ID_H_ */
