@@ -10,13 +10,7 @@ BMS State
 BMS Balance
 
 //ICS
-ICS Ready To Drive
-ICS Button 2
-ICS Button 3
-ICS Button 4
-ICS Coolant Pump
-ICS Radiator Fans
-ICS Acumulator Fans
+ICS Button State
 ICS TEST
 
 //APPS
