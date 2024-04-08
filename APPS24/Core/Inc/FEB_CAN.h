@@ -2,14 +2,10 @@
 #define INC_FEB_CAN_H_
 
 // **************************************** Includes ****************************************
-/* PUT RELEVANT INCLUDES BELOW
-#include "FEB_CAN_Charger.h"
-#include "FEB_CAN_IVT.h"
-#include "FEB_SM.h"
-*/
+
 #include "stm32f4xx_hal.h"
 #include "FEB_CAN_RMS.h"
-#include "FEB_CAN_SW.h"
+#include "FEB_CAN_ICS.h"
 
 #include "stm32f4xx_hal.h"
 

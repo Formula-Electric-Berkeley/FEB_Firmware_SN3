@@ -15,9 +15,9 @@ bool currHigh = false;
 
 void FEB_HECS_update(){
 	uint16_t current_value = HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_4);
-	char buf[128];
-	uint8_t buf_len;
-	buf_len = sprintf(buf, "HECS Current:%d\n", current_value);
+//	char buf[128];
+//	uint8_t buf_len;
+//	buf_len = sprintf(buf, "HECS Current:%d\n", current_value);
 
 	if (current_value > HECS_CURRENT){ //checks if current is above value (to be determined)
 		currHigh = true;

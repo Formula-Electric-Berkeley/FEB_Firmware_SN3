@@ -19,7 +19,7 @@ void FEB_Main_Setup(void){
 }
 
 void FEB_Main_While(void){
-	if (FEB_CAN_SW_Ready()){
+	if (FEB_CAN_ICS_Ready()){
 		FEB_Normalized_updateAcc();
 		FEB_CAN_RMS_Process();
 	} else {

@@ -1,26 +1,23 @@
 // **************************************** Includes & External ****************************************
 
-#include "FEB_CAN_SW.h"
+#include "FEB_CAN_ICS.h"
 
 // *********************************** Struct ************************************
 
-typedef struct SW_MESSAGE_TYPE {
-    SW_READY_TO_DRIVE_TYPE ready_to_drive;
-    SW_COOLANT_PUMP_TYPE coolant_pump;
-    SW_ACUMULATOR_FANS_TYPE acumulator_fans;
-    SW_EXTRA_TYPE extra;
-} SW_MESSAGE_TYPE;
-SW_MESSAGE_TYPE SW_MESSAGE;
+typedef struct ICS_MESSAGE_TYPE {
+    ICS_READY_TO_DRIVE_TYPE ready_to_drive;
+} ICS_MESSAGE_TYPE;
+ICS_MESSAGE_TYPE ICS_MESSAGE;
 
 // **************************************** Functions ****************************************
-bool FEB_CAN_SW_Ready(){
-	return SW_MESSAGE.ready_to_drive == 1;
+bool FEB_CAN_ICS_Ready(){
+	return ICS_MESSAGE.ready_to_drive == 1;
 }
 
 // ***** CAN FUNCTIONS ****
 
-uint8_t FEB_CAN_SW_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
-	uint16_t ids[] = {FEB_CAN_ID_SW_READY_TO_DRIVE};
+uint8_t FEB_CAN_ICS_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
+	uint16_t ids[] = {FEB_CAN_ID_ICS_BUTTON_STATE};
 
 	for (uint8_t i = 0; i < 1; i++) {
 		CAN_FilterTypeDef filter_config;
@@ -46,11 +43,10 @@ uint8_t FEB_CAN_SW_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignmen
 	return filter_bank;
 }
 
-//TODO: check if "datalength" is 4
-void FEB_CAN_SW_Store_Msg(CAN_RxHeaderTypeDef* pHeader, uint8_t *RxData) {
+void FEB_CAN_ICS_Store_Msg(CAN_RxHeaderTypeDef* pHeader, uint8_t *RxData) {
     switch (pHeader -> StdId){
-        case FEB_CAN_ID_SW_READY_TO_DRIVE :
-            memcpy(&(SW_MESSAGE.ready_to_drive), RxData, 1);
+        case FEB_CAN_ID_ICS_BUTTON_STATE :
+        	ICS_MESSAGE.ready_to_drive = RxData[1];
             break;
     }
 }

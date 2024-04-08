@@ -29,14 +29,14 @@ void FEB_CAN_Filter_Config(void) {
 	// Assign Filter
     // filter_bank = Function(&hcan1, CAN_RX_FIFO0, filter_bank);
 	filter_bank = FEB_CAN_RMS_Filter_Config(&hcan1, CAN_RX_FIFO0, filter_bank);
-	filter_bank = FEB_CAN_SW_Filter_Config(&hcan1, CAN_RX_FIFO0, filter_bank);
+	filter_bank = FEB_CAN_ICS_Filter_Config(&hcan1, CAN_RX_FIFO0, filter_bank);
 	filter_bank = FEB_CAN_BMS_Filter_Config(&hcan1, CAN_RX_FIFO0, filter_bank);
 }
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan) {
 	if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &FEB_CAN_Rx_Header, FEB_CAN_Rx_Data) == HAL_OK) {
 		FEB_CAN_RMS_Store_Msg(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);
-		FEB_CAN_SW_Store_Msg(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);
+		FEB_CAN_ICS_Store_Msg(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);
 		FEB_CAN_BMS_Store_Msg(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);
 		//add CAN Store for SW?
 

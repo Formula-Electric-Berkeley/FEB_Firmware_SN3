@@ -30,7 +30,7 @@ void FEB_CAN_BSPD_Transmit(void) {
     // Write Code Here
 	// Initialize transmission header
 	FEB_CAN_Tx_Header.DLC = 1;
-	FEB_CAN_Tx_Header.StdId = FEB_CAN_ID_APPS_BSPD_STATE; //ID for sending paramater messages for RMS
+	FEB_CAN_Tx_Header.StdId = FEB_CAN_ID_APPS_BSPD; //ID for sending paramater messages for RMS
 	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
