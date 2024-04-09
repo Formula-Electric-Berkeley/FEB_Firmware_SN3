@@ -50,6 +50,8 @@
 
 // ******************************** Functions ********************************
 
+void FEB_LTC6811_Init(void);
+
 // Voltage functions
 void FEB_LTC6811_Poll_Voltage(void);
 void FEB_LTC6811_Validate_Voltage(void);

@@ -8,11 +8,11 @@ def main() -> None:
     # CAN
     mcd = MonitorCanData()
     cc = CanConnection(mcd)
-    # cc.connect()
-    # cc.read_data()
+    cc.connect()
+    cc.read_data()
     
     # TODO: Remove
-    test(mcd)
+    # test(mcd)
 
     # GUI
     app = App(mcd)

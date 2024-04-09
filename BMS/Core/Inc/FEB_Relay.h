@@ -4,6 +4,7 @@
 // ******************************** Includes ********************************
 
 #include <stdint.h>
+#include "stm32f4xx_hal.h"
 
 // ******************************** Relay State  ********************************
 
@@ -18,6 +19,7 @@ typedef enum {
 void FEB_Relay_Shutdown(FEB_Relay_ST_t relay_state);
 void FEB_Relay_AIR_Plus(FEB_Relay_ST_t relay_state);
 void FEB_Relay_Precharge(FEB_Relay_ST_t relay_state);
+void FEB_Relay_Buzzer(FEB_Relay_ST_t relay_state);
 
 // Relay state
 FEB_Relay_ST_t FEB_Relay_ST_Shutdown(void);

@@ -7,6 +7,10 @@ extern CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
 extern uint8_t FEB_CAN_Tx_Data[8];
 extern uint32_t FEB_CAN_Tx_Mailbox;
 
+// TODO: REMOVE
+#include <string.h>
+#include <stdio.h>
+extern UART_HandleTypeDef huart2;
 
 // ******************************** Struct ********************************
 
@@ -176,8 +180,27 @@ static void store_voltage_values(void) {
 		for (uint8_t cell = 0; cell < FEB_CONST_NUM_CELLS_PER_BANK; cell++) {
 			uint16_t volt_100uV = IC_config[get_IC(bank, cell)].cells.c_codes[get_LTC6811_cell(cell)];
 			accumulator.banks[bank].cells[cell].volt_100uV = volt_100uV;
+
+			char UART_Str[64];
+			sprintf(UART_Str, "Bank %d, Cell %d: %d\n", bank, cell, volt_100uV);
+			HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
+
 			accumulator.total_volt_V += (float) volt_100uV * 0.0001;
 		}
+	}
+
+	for (uint8_t i = 0 ; i < 12; i++) {
+		uint16_t volt_100uV = IC_config[0].cells.c_codes[i];
+		char UART_Str[64];
+		sprintf(UART_Str, "IC 0, Pin: %d: %d\n", i, volt_100uV);
+		HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
+	}
+
+	for (uint8_t i = 0 ; i < 12; i++) {
+		uint16_t volt_100uV = IC_config[1].cells.c_codes[i];
+		char UART_Str[64];
+		sprintf(UART_Str, "IC 1, Pin: %d: %d\n", i, volt_100uV);
+		HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
 	}
 }
 
@@ -352,6 +375,10 @@ static void store_temperature_values(uint8_t channel) {
 				uint8_t mux = get_mux(cell);
 				uint16_t voltage_100uV = IC_config[IC].aux.a_codes[mux];
 				accumulator.banks[bank].cells[cell].temp_100mC = FEB_Temp_LUT_Get_Temp_100mC(voltage_100uV * 1e-1);
+
+				char UART_Str[128];
+				sprintf(UART_Str, "Bank: %d, Cell: %d, value: %f, channel: %d, mux: %d, ic: %d\n", bank, cell, accumulator.banks[bank].cells[cell].temp_100mC * 1e-1, channel, mux, IC);
+				HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
 			}
 		}
 	}

@@ -47,18 +47,22 @@ class CanConnection:
         res = self._pcan.GetValue(CanConnection.CHANNEL, PCANBasic.PCAN_RECEIVE_EVENT)
         if res[0] == PCANBasic.PCAN_ERROR_OK:
             fd = res[1]
+            print("NO ERROR")
         else:
             fd = -1
+            print("ERROR")
         
         while self._read_thread_running:
             status, message, _ = self._pcan.Read(CanConnection.CHANNEL)
             if status == PCANBasic.PCAN_ERROR_OK:
                 self._mcd.store_message(message)
+                print("NOS ERROR")
             elif status == PCANBasic.PCAN_ERROR_QRCVEMPTY:
                 if fd != -1:
                     select.select([fd], [], [])
                 else:
                     time.sleep(0.001)
+                print("S ERROR")
     
     # ****************************** Transmit ********************************
 
