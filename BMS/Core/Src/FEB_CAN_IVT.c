@@ -51,8 +51,8 @@ uint8_t FEB_CAN_IVT_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignme
 }
 
 void FEB_CAN_IVT_Store_Msg(CAN_RxHeaderTypeDef* rx_header, uint8_t rx_data[]) {
-	char UART_Str[128];
-	sprintf(UART_Str, "CAN MESSAGE!");
+	char UART_Str[64];
+	sprintf(UART_Str, "IVT U1: %f, IVT Current: %f\n", FEB_CAN_IVT_Message.voltage_1_mV * 1e-3, FEB_CAN_IVT_Message.current_mA * 1e-3);
 	HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
 
 	switch(rx_header->ExtId) {
@@ -76,10 +76,6 @@ void FEB_CAN_IVT_Store_Msg(CAN_RxHeaderTypeDef* rx_header, uint8_t rx_data[]) {
 }
 
 void FEB_CAN_IVT_Process(void) {
-	char UART_Str[64];
-	sprintf(UART_Str, "IVT U1: %f\n", FEB_CAN_IVT_Message.voltage_1_mV * 0.001);
-	HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
-
 	if (IVT_CAN_flag.current) {
 		IVT_CAN_flag.current = false;
 		// TODO: Check current flowing through battery
@@ -87,10 +83,6 @@ void FEB_CAN_IVT_Process(void) {
 	}
 	if (IVT_CAN_flag.voltage_1) {
 		IVT_CAN_flag.voltage_1 = false;
-
-		char UART_Str[64];
-		sprintf(UART_Str, "IVT reading\n");
-		HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
 
 		if (FEB_SM_Get_Current_State() == FEB_SM_ST_PRECHARGE) {
 			// TODO: Check precharge complete
