@@ -35,13 +35,6 @@ void FEB_CAN_Filter_Config(void) {
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan) {
 	if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &FEB_CAN_Rx_Header, FEB_CAN_Rx_Data) == HAL_OK) {
-
-		char str[1024];
-
-		sprintf(str, "[RECEIVE] CAN ID: %d\n", FEB_CAN_Rx_Header->StdId);
-
-		HAL_UART_Transmit(&huart3, (uint8_t *) str, strlen(str), 100);
-
 		FEB_CAN_ICS_Rx_Handler(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);
 		// Store Message
         // Function(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);

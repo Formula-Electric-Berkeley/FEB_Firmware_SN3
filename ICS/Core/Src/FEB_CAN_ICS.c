@@ -3,6 +3,7 @@
 #include "FEB_CAN_ICS.h"
 
 extern CAN_HandleTypeDef hcan1;
+extern UART_HandleTypeDef huart3;
 extern CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
 extern uint8_t FEB_CAN_Tx_Data[8];
 extern uint32_t FEB_CAN_Tx_Mailbox;
@@ -17,33 +18,60 @@ uint8_t speed = 0;
 
 uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
     // For multiple filters, create array of filter IDs and loop over IDs.
-	uint16_t ids[] = {FEB_CAN_ID_ICS_BUTTON_STATE, FEB_CAN_ID_ICS_TEST};
 
-	for (uint8_t i = 0; i < 2; i++) {
-		CAN_FilterTypeDef filter_config;
+	CAN_FilterTypeDef filter_config;
 
-		// Standard CAN - 2.0A - 11 bit
-		filter_config.FilterActivation = CAN_FILTER_ENABLE;
-		filter_config.FilterBank = filter_bank;
-		filter_config.FilterFIFOAssignment = FIFO_assignment;
-		filter_config.FilterIdHigh = ids[i] << 5;
-		filter_config.FilterIdLow = 0;
-		filter_config.FilterMaskIdHigh = 0xFFE0;
-		filter_config.FilterMaskIdLow = 0;
-		filter_config.FilterMode = CAN_FILTERMODE_IDMASK;
-		filter_config.FilterScale = CAN_FILTERSCALE_32BIT;
-		filter_config.SlaveStartFilterBank = 27;
-		filter_bank++;
+	// Standard CAN - 2.0A - 11 bit
+	filter_config.FilterActivation = CAN_FILTER_ENABLE;
+	filter_config.FilterBank = filter_bank;
+	filter_config.FilterFIFOAssignment = FIFO_assignment;
+	filter_config.FilterIdHigh = 0;
+	filter_config.FilterIdLow = 0;
+	filter_config.FilterMaskIdHigh = 0;
+	filter_config.FilterMaskIdLow = 0;
+	filter_config.FilterMode = CAN_FILTERMODE_IDMASK;
+	filter_config.FilterScale = CAN_FILTERSCALE_32BIT;
+	filter_config.SlaveStartFilterBank = 27;
+	filter_bank++;
 
-		if (HAL_CAN_ConfigFilter(hcan, &filter_config) != HAL_OK) {
-			// Code Error - Shutdown
-		}
+	if (HAL_CAN_ConfigFilter(hcan, &filter_config) != HAL_OK) {
+		// Code Error - Shutdown
 	}
 
-	return filter_bank;
+//	uint16_t ids[] = {FEB_CAN_ID_ICS_BUTTON_STATE, FEB_CAN_ID_ICS_TEST, 10};
+//
+//	for (uint8_t i = 0; i < 3; i++) {
+//		CAN_FilterTypeDef filter_config;
+//
+//		// Standard CAN - 2.0A - 11 bit
+//		filter_config.FilterActivation = CAN_FILTER_ENABLE;
+//		filter_config.FilterBank = filter_bank;
+//		filter_config.FilterFIFOAssignment = FIFO_assignment;
+//		filter_config.FilterIdHigh = ids[i] << 5;
+//		filter_config.FilterIdLow = 0;
+//		filter_config.FilterMaskIdHigh = 0xFFE0;
+//		filter_config.FilterMaskIdLow = 0;
+//		filter_config.FilterMode = CAN_FILTERMODE_IDMASK;
+//		filter_config.FilterScale = CAN_FILTERSCALE_32BIT;
+//		filter_config.SlaveStartFilterBank = 27;
+//		filter_bank++;
+//
+//		if (HAL_CAN_ConfigFilter(hcan, &filter_config) != HAL_OK) {
+//			// Code Error - Shutdown
+//		}
+//	}
+
+	return filter_bank++;
 }
 
 void FEB_CAN_ICS_Rx_Handler(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_CAN_Rx_Data[]) {
+	char str[1024];
+
+	sprintf(str, "[RECEIVE] CAN ID: %d\n", FEB_CAN_Rx_Header->StdId);
+//	sprintf(str, "[RECEIVE] CAN ID\n");
+
+	HAL_UART_Transmit(&huart3, (uint8_t *) str, strlen(str), 100);
+
 	switch(FEB_CAN_Rx_Header->StdId) {
 		case FEB_CAN_ID_ICS_BUTTON_STATE:
 			char button_state_str[9];
