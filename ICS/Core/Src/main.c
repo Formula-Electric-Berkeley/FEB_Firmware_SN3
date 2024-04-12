@@ -94,11 +94,11 @@ static void MX_DMA_Init(void);
 static void MX_DMA2D_Init(void);
 static void MX_DSIHOST_DSI_Init(void);
 static void MX_FMC_Init(void);
-static void MX_I2C1_Init(void);
 static void MX_LTDC_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_CAN1_Init(void);
 static void MX_CAN2_Init(void);
+static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -114,6 +114,7 @@ static void MX_CAN2_Init(void);
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
   /* USER CODE END 1 */
 
@@ -139,11 +140,11 @@ int main(void)
   MX_DMA2D_Init();
   MX_DSIHOST_DSI_Init();
   MX_FMC_Init();
-  MX_I2C1_Init();
   MX_LTDC_Init();
   MX_USART3_UART_Init();
   MX_CAN1_Init();
   MX_CAN2_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
   FEB_Main_Setup();
@@ -158,6 +159,10 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  FEB_Main_Loop();
+//	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_SET);
+//	  HAL_Delay(100);
+//	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_RESET);
+//	  HAL_Delay(100);
   }
   /* USER CODE END 3 */
 }
