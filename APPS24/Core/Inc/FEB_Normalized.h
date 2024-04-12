@@ -6,6 +6,7 @@
 
 #include "FEB_Const.h"
 #include "FEB_CAN_ID.h"
+#include "FEB_Const.h"
 
 #include "stm32f4xx_hal.h"
 #include <stdbool.h>
@@ -23,5 +24,6 @@ float FEB_Normalized_Acc_Pedals();
 float FEB_Normalized_getBrake();
 float FEB_Normalized_Brake_Pedals();
 void FEB_Normalized_CAN_sendBrake();
+void FEB_Normalized_Test_Acc();
 
 #endif /* INC_FEB_NORMALIZED_H_ */

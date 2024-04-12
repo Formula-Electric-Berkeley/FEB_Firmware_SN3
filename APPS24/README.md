@@ -33,4 +33,12 @@ A function that outputs our desired regen torque, only considering mechanical li
 
 ## 3/28/24
 
-Addeding FEB_CAN_BMS.c and .h to read BMS voltage and SOC values for Regen equations
+Addeding FEB_CAN_BMS.c and .h to read BMS voltage values for Regen equations
+
+## 4/9/24
+
+Renamed all SWDB things to ICS + ICS CAN messages are now packaged differenlty refer to CAN documentation
+
+## 4/11/24
+
+For some Reason reading ADC values as done in SN2 does not work, instead implementing the FEB_Read_ADC to read values for pedals and HECS. 

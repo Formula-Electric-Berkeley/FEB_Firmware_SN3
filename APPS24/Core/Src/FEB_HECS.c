@@ -13,8 +13,25 @@ bool currHigh = false;
 
 // **************************************** Functions ****************************************
 
+uint16_t FEB_Read_ADC(uint32_t channel){
+	ADC_ChannelConfTypeDef sConfig={0};
+	sConfig.Channel = channel;
+	sConfig.Rank = 1;
+	sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
+
+	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+	{
+	   Error_Handler();
+	}
+
+	HAL_ADC_Start(&hadc1);
+	HAL_ADC_PollForConversion(&hadc1, 100);
+	return (uint16_t)HAL_ADC_GetValue(&hadc1);
+
+}
+
 void FEB_HECS_update(){
-	uint16_t current_value = HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_4);
+	uint16_t current_value = FEB_Read_ADC(HECS_SIGNAL);
 //	char buf[128];
 //	uint8_t buf_len;
 //	buf_len = sprintf(buf, "HECS Current:%d\n", current_value);

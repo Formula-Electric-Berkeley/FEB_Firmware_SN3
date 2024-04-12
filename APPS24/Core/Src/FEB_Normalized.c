@@ -11,6 +11,9 @@ extern uint8_t FEB_CAN_Tx_Data[8];
 extern CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
 extern uint32_t FEB_CAN_Tx_Mailbox;
 
+extern UART_HandleTypeDef huart2;
+
+
 
 const uint16_t Sensor_Min = 4095.0/5.0*0.5;
 const uint16_t Sensor_Max = 4095.0/5.0*4.5;
@@ -24,6 +27,23 @@ bool isImpl = false;
 
 // **************************************** Functions ****************************************
 
+uint16_t FEB_Read_ADC(uint32_t channel){
+	ADC_ChannelConfTypeDef sConfig={0};
+	sConfig.Channel = channel;
+	sConfig.Rank = 1;
+	sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
+
+	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+	{
+	   Error_Handler();
+	}
+
+	HAL_ADC_Start(&hadc1);
+	HAL_ADC_PollForConversion(&hadc1, 100);
+	return (uint16_t)HAL_ADC_GetValue(&hadc1);
+
+}
+
 float FEB_Normalized_getAcc(){
 	return normalized_acc;
 }
@@ -36,12 +56,10 @@ void FEB_Normalized_updateAcc(){
 	normalized_acc = FEB_Normalized_Acc_Pedals();
 }
 
-
-
 float FEB_Normalized_Acc_Pedals(){
 	// raw ADC readings of the two acc pedal sensors
-	uint16_t acc_pedal_1 = HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_2);
-	uint16_t acc_pedal_2 = HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_3);
+	uint16_t acc_pedal_1 = FEB_Read_ADC(ACC_PEDAL_1);
+	uint16_t acc_pedal_2 = FEB_Read_ADC(ACC_PEDAL_2);
 	char buf[128];
 	uint8_t buf_len;
 	buf_len = sprintf(buf, "acc1:%d acc2:%d\n", acc_pedal_1, acc_pedal_2);
@@ -94,7 +112,7 @@ float FEB_Normalized_getBrake(){
 }
 
 float FEB_Normalized_Brake_Pedals(){
-	uint16_t brake_pedal_1 = HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
+	uint16_t brake_pedal_1 =  FEB_Read_ADC(BRAKE_PRESS_1);   //HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
 	char buf[128];
 	uint8_t buf_len;
 	buf_len = sprintf(buf, "brake%d\n", brake_pedal_1);

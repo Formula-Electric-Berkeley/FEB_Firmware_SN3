@@ -71,39 +71,39 @@ void FEB_CAN_RMS_torqueTransmit(void){
  *
  * (The electrical limit for regen is enforced with the inverter EEPROM which caps it)
 */
-void FEB_CAN_RMS_getRegenTorque(void){
-	speedMPH = RMS_MESSAGE.Motor_Speed; //rad/s
-
-	uint8_t soc = FEB_CAN_BMS_getState(); //TODO: define
-	uint16_t batteryTemp = FEB_CAN_BMS_getTemp(); //TODO: create BMS file to read battery temperature
-	if (soc > 0.8 || speedMPH < 3 || FEB_Normalized_getAcc() > 0.05 || batteryTemp > 42){
-		return 0;
-	}
-	else if (batteryTemp > 40 ){
-		return 0.4 * FEB_CAN_RMS_getDesiredRegenTorque();
-	}
-	else if (batteryTemp > 37){
-		return 0.6 * FEB_CAN_RMS_getDesiredRegenTorque();
-	}
-	else if (batteryTemp > 37){
-		return 0.8 * FEB_CAN_RMS_getDesiredRegenTorque();
-	}
-	else{
-		FEB_CAN_RMS_getDesiredRegenTorque();
-	}
-
-}
-
-/*
- * maxRegenTorqueMech computes the max regen torque we can exert from the mechanical perspective (awaiting that function)
- * A function that outputs our desired regen torque, only considering mechanical limitations
- */
-
-void FEB_CAN_RMS_getDesiredRegenTorque(void){
-	return -(min(getTotalNegTorque() - getMechTorque(), getMaxRegenTorqueMech()));
-	//TODO: define all functions above
-}
-
+//void FEB_CAN_RMS_getRegenTorque(void){
+//	speedMPH = RMS_MESSAGE.Motor_Speed; //rad/s
+//
+//	uint8_t soc = FEB_CAN_BMS_getState(); //TODO: define
+//	uint16_t batteryTemp = FEB_CAN_BMS_getTemp(); //TODO: create BMS file to read battery temperature
+//	if (soc > 0.8 || speedMPH < 3 || FEB_Normalized_getAcc() > 0.05 || batteryTemp > 42){
+//		return 0;
+//	}
+//	else if (batteryTemp > 40 ){
+//		return 0.4 * FEB_CAN_RMS_getDesiredRegenTorque();
+//	}
+//	else if (batteryTemp > 37){
+//		return 0.6 * FEB_CAN_RMS_getDesiredRegenTorque();
+//	}
+//	else if (batteryTemp > 37){
+//		return 0.8 * FEB_CAN_RMS_getDesiredRegenTorque();
+//	}
+//	else{
+//		FEB_CAN_RMS_getDesiredRegenTorque();
+//	}
+//
+//}
+//
+///*
+// * maxRegenTorqueMech computes the max regen torque we can exert from the mechanical perspective (awaiting that function)
+// * A function that outputs our desired regen torque, only considering mechanical limitations
+// */
+//
+//void FEB_CAN_RMS_getDesiredRegenTorque(void){
+//	return -(min(getTotalNegTorque() - getMechTorque(), getMaxRegenTorqueMech()));
+//	//TODO: define all functions above
+//}
+//
 
 // **** TORQUE FUNCTIONS****
 

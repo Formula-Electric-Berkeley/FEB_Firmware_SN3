@@ -16,6 +16,7 @@ void FEB_Main_Setup(void){
 	FEB_TPS2482_Setup();
 	FEB_CAN_Init(); //FEB_CAN_Init() // The transceiver must be connected otherwise you get sent into an infinite loop
 	FEB_CAN_RMS_Setup();
+
 }
 
 void FEB_Main_While(void){
