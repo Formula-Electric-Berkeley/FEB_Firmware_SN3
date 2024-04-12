@@ -3,6 +3,7 @@
 #include "FEB_CAN.h"
 
 extern CAN_HandleTypeDef hcan1;
+extern UART_HandleTypeDef huart3;
 
 // **************************************** CAN Configuration ****************************************
 
