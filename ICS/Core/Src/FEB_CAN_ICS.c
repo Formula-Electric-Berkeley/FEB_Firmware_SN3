@@ -72,6 +72,18 @@ void FEB_CAN_ICS_Rx_Handler(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_
 
 	HAL_UART_Transmit(&huart3, (uint8_t *) str, strlen(str), 100);
 
+	char canIdStr[20];
+	char dlcStr[20];
+	char dataStr[20];
+
+	sprintf(canIdStr, "%d", FEB_CAN_Rx_Header->StdId);
+	sprintf(dlcStr, "%d", FEB_CAN_Rx_Header->DLC);
+	sprintf(dataStr, "%d", FEB_CAN_Rx_Data[0]);
+
+	lv_label_set_text(ui_canIdLabel, canIdStr);
+	lv_label_set_text(ui_dlcLabel, dlcStr);
+	lv_label_set_text(ui_dataLabel, dataStr);
+
 	switch(FEB_CAN_Rx_Header->StdId) {
 		case FEB_CAN_ID_ICS_BUTTON_STATE:
 			char button_state_str[9];

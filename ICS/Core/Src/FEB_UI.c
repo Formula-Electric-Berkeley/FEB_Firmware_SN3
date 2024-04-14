@@ -18,12 +18,12 @@ void FEB_UI_Init(void) {
 void FEB_UI_Update(void) {
 	lv_task_handler();
 
-	FEB_UI_Set_Values();
+//	FEB_UI_Set_Values();
 }
 
 void FEB_UI_Set_Values(void) {
 	char speedStr[20];
 
 	sprintf(speedStr, "%d", FEB_CAN_ICS_Message.speed);
-	lv_label_set_text(ui_speedField, speedStr);
+//	lv_label_set_text(ui_speedField, speedStr);
 }
