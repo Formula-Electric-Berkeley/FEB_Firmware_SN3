@@ -67,21 +67,23 @@ uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
 void FEB_CAN_ICS_Rx_Handler(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_CAN_Rx_Data[]) {
 	char str[1024];
 
-	sprintf(str, "[RECEIVE] CAN ID: %d\n", FEB_CAN_Rx_Header->StdId);
+	sprintf(str, "[RECEIVE] CAN ID: %ld\n", FEB_CAN_Rx_Header->StdId);
 //	sprintf(str, "[RECEIVE] CAN ID\n");
 
 	HAL_UART_Transmit(&huart3, (uint8_t *) str, strlen(str), 100);
 
-	char canIdStr[20];
-	char dlcStr[20];
-	char dataStr[20];
+	char canIdStr[4];
+	char dlcStr[4];
+	char dataStr[32];
 
-	sprintf(canIdStr, "%d", FEB_CAN_Rx_Header->StdId);
-	sprintf(dlcStr, "%d", FEB_CAN_Rx_Header->DLC);
-	sprintf(dataStr, "%d", FEB_CAN_Rx_Data[0]);
+	sprintf(dataStr, "%x %x %x %x %x %x %x %x", FEB_CAN_Rx_Data[0], FEB_CAN_Rx_Data[1], FEB_CAN_Rx_Data[2], FEB_CAN_Rx_Data[3], FEB_CAN_Rx_Data[4], FEB_CAN_Rx_Data[5], FEB_CAN_Rx_Data[6], FEB_CAN_Rx_Data[7]);
+
+	sprintf(canIdStr, "0x%x", FEB_CAN_Rx_Header->StdId);
+	sprintf(dlcStr, "%ld", FEB_CAN_Rx_Header->DLC);
 
 	lv_label_set_text(ui_canIdLabel, canIdStr);
 	lv_label_set_text(ui_dlcLabel, dlcStr);
+
 	lv_label_set_text(ui_dataLabel, dataStr);
 
 	switch(FEB_CAN_Rx_Header->StdId) {
