@@ -1,0 +1,8 @@
+../Core/Src/FEB_Normalized.c:30:10:FEB_Read_ADC	2
+../Core/Src/FEB_Normalized.c:47:7:FEB_Normalized_getAcc	1
+../Core/Src/FEB_Normalized.c:51:6:FEB_Normalized_setAcc0	1
+../Core/Src/FEB_Normalized.c:55:6:FEB_Normalized_updateAcc	1
+../Core/Src/FEB_Normalized.c:59:7:FEB_Normalized_Acc_Pedals	15
+../Core/Src/FEB_Normalized.c:110:7:FEB_Normalized_getBrake	1
+../Core/Src/FEB_Normalized.c:114:7:FEB_Normalized_Brake_Pedals	5
+../Core/Src/FEB_Normalized.c:132:6:FEB_Normalized_CAN_sendBrake	2
