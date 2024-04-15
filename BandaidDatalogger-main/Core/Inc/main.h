@@ -32,6 +32,7 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "FEB_CircularBuffer.h"
+#include "FEB_CAN.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

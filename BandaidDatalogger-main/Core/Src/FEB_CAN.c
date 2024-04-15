@@ -1,7 +1,7 @@
 // **************************************** Includes & External ****************************************
 
 #include "FEB_CAN.h"
-
+#include "FEB_CIrcularBuffer.h"
 extern CAN_HandleTypeDef hcan1;
 extern UART_HandleTypeDef huart2;
 
@@ -10,7 +10,7 @@ extern UART_HandleTypeDef huart2;
 CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
 static CAN_RxHeaderTypeDef FEB_CAN_Rx_Header;
 
-extern circBuffer* FEBBuffer;
+extern circBuffer FEBBuffer;
 extern char* buffer;
 
 uint8_t FEB_CAN_Tx_Data[8];
@@ -40,8 +40,17 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan) {
 	if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &FEB_CAN_Rx_Header, FEB_CAN_Rx_Data) != HAL_OK) {
 		// Store Message
         // Function(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);
+	}
 
-		printf("Could not receive CAN message from FIFO ");
+	//Case 1: Std Id
+	if(FEB_CAN_Rx_Header.IDE == CAN_ID_STD){ 
+		FEB_circBuf_write(&FEBBuffer, FEB_CAN_Rx_Header.StdId, FEB_CAN_Rx_Data);
+
+	//Case 2: Ext Id
+	}else if(FEB_CAN_Rx_Header.IDE == CAN_ID_EXT){
+		FEB_circBuf_write(&FEBBuffer, FEB_CAN_Rx_Header.ExtId, FEB_CAN_Rx_Data);
+
+
 	}
 
 
@@ -87,6 +96,30 @@ void FEB_CAN_Transmit_Test_Data(CAN_HandleTypeDef* hcan) {
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
 	FEB_CAN_Tx_Data[0] = 0x1;
+
+
+	// Configure FEB_CAN_Tx_Data
+    // Write Code Here
+
+	// Delay until mailbox available
+	while (HAL_CAN_GetTxMailboxesFreeLevel(hcan) == 0) {}
+
+	// Add Tx data to mailbox
+	if (HAL_CAN_AddTxMessage(hcan, &FEB_CAN_Tx_Header, FEB_CAN_Tx_Data, &FEB_CAN_Tx_Mailbox) != HAL_OK) {
+		// Code Error - Shutdown
+		printf("Unable to send CAN message");
+	}
+} 
+
+void FEB_CAN_Transmit_Test_Data_ExtId(CAN_HandleTypeDef* hcan) {
+	// Initialize Transmission Header
+    // Write Code Here
+	FEB_CAN_Tx_Header.DLC =1;
+	FEB_CAN_Tx_Header.ExtId = 0x2;
+	FEB_CAN_Tx_Header.IDE = CAN_ID_EXT;
+	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
+	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
+	FEB_CAN_Tx_Data[0] = 0x2;
 
 
 	// Configure FEB_CAN_Tx_Data

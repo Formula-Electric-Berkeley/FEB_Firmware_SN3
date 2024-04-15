@@ -28,6 +28,7 @@
 #include "main.h"
 #include "fatfs.h"
 
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "fatfs_sd.h"
@@ -173,10 +174,10 @@ int main(void)
   //FEB_circBuf_write(FEBBuffer,"world\n");
 
   FEB_CAN_Init();
-  uint32_t testID = 0x32; 
-  uint8_t random_buffer[] = {0x02, 0x15, 0x23, 0x44, 0x11, 0x22, 0x33, 0x44};
-  FEB_circBuf_write(&FEBBuffer, testID, random_buffer);
-  FEB_circBuf_read(&FEBBuffer);
+  // uint32_t testID = 0x32; 
+  // uint8_t random_buffer[] = {0x02, 0x15, 0x23, 0x44, 0x11, 0x22, 0x33, 0x44};
+  // FEB_circBuf_write(&FEBBuffer, testID, random_buffer);
+  // FEB_circBuf_read(&FEBBuffer);
 
   
   /* USER CODE END 2 */
@@ -185,6 +186,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
 
 
 
@@ -234,7 +236,12 @@ int main(void)
 
 //	  transmit_data = transmit_data + 0.5;
 	  FEB_CAN_Transmit_Test_Data(&hcan1);
+    FEB_CAN_Transmit_Test_Data_ExtId(&hcan1);
+    FEB_circBuf_read(&FEBBuffer);
+    FEB_circBuf_read(&FEBBuffer);
 	  HAL_Delay(200);
+
+
 
     /* USER CODE END WHILE */
 
