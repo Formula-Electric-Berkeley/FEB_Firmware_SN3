@@ -81,36 +81,13 @@ FRESULT fres;//store result
 UINT br,bw; //file read/write count
 
 char buffer[1024]; // store data
-CircularBuffer* FEBBuffer;
+circBuffer FEBBuffer;
 
 
 //Capacity related stuff
 FATFS *pfs;
 DWORD fre_clust;
 uint32_t totalSpace, freeSpace;
-
-
-void send_uart(char *string){
-	uint8_t len = strlen(string);
-	HAL_UART_Transmit(&huart2, (uint8_t *)string, len, 2000);
-}
-// gets the size of the buffer
-int bufsize(char *buf){
-	int i = 0;
-	while (*buf++ != '\0') i++;
-	return i;
-}
-void bufclear(void){
-	for(int i = 0; i<1024; i++ ){
-		buffer[i] = '\0';
-	}
-}
-
-
-
-
-
-
 /* USER CODE END 0 */
 
 /**
@@ -119,9 +96,9 @@ void bufclear(void){
   */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
-	FEBBuffer = (CircularBuffer*)malloc(sizeof(CircularBuffer));
 
+  /* USER CODE BEGIN 1 */
+  FEB_circBuf_init(&FEBBuffer);
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -147,22 +124,22 @@ int main(void)
   MX_USART2_UART_Init();
   MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
-  fres = f_mount(&fs, "", 0);
-  if (fres != FR_OK) send_uart ("error in mounting SD Card...\n");
-  else send_uart("SD Card mounted successfully...");
-
-  f_getfree("", &fre_clust, &pfs);
-
-  totalSpace = (uint32_t)((pfs->n_fatent - 2) * pfs->csize * 0.5);
-  sprintf (buffer, "SD CARD Total Size: \t%lu\n", totalSpace);
-  send_uart(buffer);
-  bufclear();
-  freeSpace = (uint32_t)(fre_clust * pfs->csize * 0.5);
-  sprintf (buffer, "SD CARD Free Space: \t%lu\n",freeSpace);
-  send_uart(buffer);
-
-  //Open file to write/create a file it doesn't exist
-  fres = f_open(&fil, "test.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
+//  fres = f_mount(&fs, "", 0);
+//  if (fres != FR_OK) send_uart ("error in mounting SD Card...\n");
+//  else send_uart("SD Card mounted successfully...");
+//
+//  f_getfree("", &fre_clust, &pfs);
+//
+//  totalSpace = (uint32_t)((pfs->n_fatent - 2) * pfs->csize * 0.5);
+//  sprintf (buffer, "SD CARD Total Size: \t%lu\n", totalSpace);
+//  send_uart(buffer);
+//  bufclear();
+//  freeSpace = (uint32_t)(fre_clust * pfs->csize * 0.5);
+//  sprintf (buffer, "SD CARD Free Space: \t%lu\n",freeSpace);
+//  send_uart(buffer);
+//
+//  //Open file to write/create a file it doesn't exist
+//  fres = f_open(&fil, "test.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
 
   // Writing text
   //fres = f_puts("This data is from the First FILE\n\n", &fil);
@@ -183,12 +160,12 @@ int main(void)
   //Close file
   //f_close(&fil);
 
-  bufclear();
+//  bufclear();
 
   /* UART testing */
-  uint8_t data[20] ="transmitted";
+//  uint8_t data[20] ="transmitted";
 
-  FEB_circBuf_init(FEBBuffer);
+//  FEB_circBuf_init(FEBBuffer);
   //uint8_t bytesToWrite = strlen(FEBBuffer);
   //uint8_t bytesToWriten;
 
@@ -196,14 +173,24 @@ int main(void)
   //FEB_circBuf_write(FEBBuffer,"world\n");
 
   FEB_CAN_Init();
+  uint32_t testID = 0x32; 
+  uint8_t random_buffer[] = {0x02, 0x15, 0x23, 0x44, 0x11, 0x22, 0x33, 0x44};
+  FEB_circBuf_write(&FEBBuffer, testID, random_buffer);
+  FEB_circBuf_read(&FEBBuffer);
 
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  /*FEB_circBuf_write(FEBBuffer, "hello\n");
+
+
+
+	  /*FEB_circBuf_write(FEBBuffer, "hello\n"); 
+    
+
 	  FEB_circBuf_write(FEBBuffer,"world\n");
 
 
@@ -229,23 +216,26 @@ int main(void)
 	  f_sync(&fil);
 	  send_uart ("File1.txt created and the data is written \n");
 	  */
-	  float transmit_data = 0;
-	  FEB_CAN_Transmit_Test_Float(&hcan1,transmit_data);
-
-	  char* lastRead = FEB_circBuf_read(FEBBuffer);
-	  strcat(lastRead, '\0');
-	  f_puts(lastRead, &fil);
-
-	  //Hopefully frees up the section in the circularBuffer
-	  free(lastRead);
-	  FEBBuffer->read = (FEBBuffer->read + 1) % FEBBuffer->capacity;
-	  FEBBuffer->count--;
-	  //f_write(&fil, FEBBuffer, bytesToWrite, bytesToWriten);
-	  f_sync(&fil);
-	  HAL_UART_Transmit(&huart2, data, strlen((char*)data), HAL_MAX_DELAY);
+//	  float transmit_data = 0;
+//	  FEB_CAN_Transmit_Test_Float(&hcan1,transmit_data);
+//
+//	  char* lastRead = FEB_circBuf_read(FEBBuffer);
+//	  strcat(lastRead, '\0');
+//	  f_puts(lastRead, &fil);
+//
+//	  //Hopefully frees up the section in the circularBuffer
+//	  free(lastRead);
+//	  FEBBuffer->read = (FEBBuffer->read + 1) % FEBBuffer->capacity;
+//	  FEBBuffer->count--;
+//	  //f_write(&fil, FEBBuffer, bytesToWrite, bytesToWriten);
+//	  f_sync(&fil);
+//	  HAL_UART_Transmit(&huart2, data, strlen((char*)data), HAL_MAX_DELAY);
 //	  HAL_Delay(10);
 
-	  transmit_data = transmit_data + 0.5;
+//	  transmit_data = transmit_data + 0.5;
+	  FEB_CAN_Transmit_Test_Data(&hcan1);
+	  HAL_Delay(200);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -318,7 +308,7 @@ static void MX_CAN1_Init(void)
   hcan1.Init.Prescaler = 16;
   hcan1.Init.Mode = CAN_MODE_LOOPBACK;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_1TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_3TQ;
   hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = DISABLE;

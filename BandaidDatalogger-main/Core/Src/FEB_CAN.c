@@ -3,13 +3,14 @@
 #include "FEB_CAN.h"
 
 extern CAN_HandleTypeDef hcan1;
+extern UART_HandleTypeDef huart2;
 
 // **************************************** CAN Configuration ****************************************
 
 CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
 static CAN_RxHeaderTypeDef FEB_CAN_Rx_Header;
 
-extern CircularBuffer* FEBBuffer;
+extern circBuffer* FEBBuffer;
 extern char* buffer;
 
 uint8_t FEB_CAN_Tx_Data[8];
@@ -39,13 +40,13 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan) {
 	if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &FEB_CAN_Rx_Header, FEB_CAN_Rx_Data) != HAL_OK) {
 		// Store Message
         // Function(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);
+
 		printf("Could not receive CAN message from FIFO ");
 	}
 
-	if(FEB_CAN_Rx_Header.IDE == CAN_ID_STD){
-		FEB_circBuf_write(FEBBuffer,(char*)FEB_CAN_Rx_Data);
 
-	}
+
+
 
 }
 
@@ -77,15 +78,15 @@ uint8_t FEB_CAN_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t
 	return filter_bank;
 }
 
-void FEB_CAN_Transmit_Test_Float(CAN_HandleTypeDef* hcan,float data) {
+void FEB_CAN_Transmit_Test_Data(CAN_HandleTypeDef* hcan) {
 	// Initialize Transmission Header
     // Write Code Here
+	FEB_CAN_Tx_Header.DLC =1;
 	FEB_CAN_Tx_Header.StdId = 0x1;
 	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
-
-	memcpy(FEB_CAN_Tx_Data, &data, sizeof(data));
+	FEB_CAN_Tx_Data[0] = 0x1;
 
 
 	// Configure FEB_CAN_Tx_Data
