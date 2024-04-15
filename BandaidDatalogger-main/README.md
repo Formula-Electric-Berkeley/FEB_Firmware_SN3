@@ -17,4 +17,9 @@ of strings in the interest of performance.
 
  ## 3/3/24 
 Moving over to saving data as byte arrays instead of strings. Split code into two sections which includes the CAN transmission and the data logging code. Get the CAN stuff working, then get the data logging stuff working. 
-	TODO: Dorukhan should figure out the CAN stuff, Alex can probably figure out the data logging stuff. 
+	TODO: Dorukhan should figure out the CAN stuff, Alex can probably figure out the data logging stuff.
+
+## 4/15/24 
+Alex finished converting the circular buffer to just bytes. At this point all we need to work on is the file system stuff with FAT FS. Some test functions were added to test 
+Extended and Standard Ids 
+	TODO: Finish filesystem related stuff. Must be able to write to a file. 
