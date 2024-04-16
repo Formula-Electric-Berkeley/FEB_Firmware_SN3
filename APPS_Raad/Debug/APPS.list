@@ -1326,7 +1326,7 @@ void FEB_Main_While(void){
  8000f1e:	af00      	add	r7, sp, #0
 //	FEB_CAN_ICS_Transmit();
 
-	if (FEB_Ready_To_Drive()){
+	if (FEB_Ready_To_Drive()) {
  8000f20:	f7ff ffea 	bl	8000ef8 <FEB_Ready_To_Drive>
  8000f24:	4603      	mov	r3, r0
  8000f26:	2b00      	cmp	r3, #0
@@ -1335,11 +1335,11 @@ void FEB_Main_While(void){
 //		FEB_CAN_RMS_Process();
 		FEB_Read_Accel_Pedal();
  8000f2a:	f000 f831 	bl	8000f90 <FEB_Read_Accel_Pedal>
-//	FEB_CAN_RMS_torqueTransmit(); //UART for debugging
 //	FEB_CAN_RMS_Transmit_updateTorque();
 //	FEB_Normalized_updateAcc();
 //	FEB_CAN_RMS_Torque();
 //	FEB_CAN_BSPD_Transmit();
+//	FEB_Normalized_Brake_Pedals();
 	HAL_Delay(10);
  8000f2e:	200a      	movs	r0, #10
  8000f30:	f000 fd12 	bl	8001958 <HAL_Delay>

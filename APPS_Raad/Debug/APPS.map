@@ -598,7 +598,7 @@ Discarded input sections
                 0x00000000       0x18 ./Core/Src/FEB_CAN_RMS.o
  .text.min      0x00000000       0x32 ./Core/Src/FEB_CAN_RMS.o
  .text.FEB_CAN_RMS_Torque
-                0x00000000       0x30 ./Core/Src/FEB_CAN_RMS.o
+                0x00000000       0x4c ./Core/Src/FEB_CAN_RMS.o
  .text.FEB_CAN_RMS_Init
                 0x00000000       0x32 ./Core/Src/FEB_CAN_RMS.o
  .text.FEB_CAN_RMS_Transmit_updateTorque
@@ -614,8 +614,8 @@ Discarded input sections
                 0x00000000       0x94 ./Core/Src/FEB_CAN_RMS.o
  .text.FEB_CAN_RMS_Store_Msg
                 0x00000000       0x40 ./Core/Src/FEB_CAN_RMS.o
- .debug_info    0x00000000      0x993 ./Core/Src/FEB_CAN_RMS.o
- .debug_abbrev  0x00000000      0x2e2 ./Core/Src/FEB_CAN_RMS.o
+ .debug_info    0x00000000      0x99f ./Core/Src/FEB_CAN_RMS.o
+ .debug_abbrev  0x00000000      0x2f7 ./Core/Src/FEB_CAN_RMS.o
  .debug_aranges
                 0x00000000       0x78 ./Core/Src/FEB_CAN_RMS.o
  .debug_rnglists
@@ -693,10 +693,10 @@ Discarded input sections
  .debug_macro   0x00000000       0x16 ./Core/Src/FEB_CAN_RMS.o
  .debug_macro   0x00000000       0x16 ./Core/Src/FEB_CAN_RMS.o
  .debug_macro   0x00000000       0x29 ./Core/Src/FEB_CAN_RMS.o
- .debug_line    0x00000000      0xb8b ./Core/Src/FEB_CAN_RMS.o
- .debug_str     0x00000000    0xd6a0f ./Core/Src/FEB_CAN_RMS.o
+ .debug_line    0x00000000      0xb91 ./Core/Src/FEB_CAN_RMS.o
+ .debug_str     0x00000000    0xd6a28 ./Core/Src/FEB_CAN_RMS.o
  .comment       0x00000000       0x44 ./Core/Src/FEB_CAN_RMS.o
- .debug_frame   0x00000000      0x1a0 ./Core/Src/FEB_CAN_RMS.o
+ .debug_frame   0x00000000      0x1b4 ./Core/Src/FEB_CAN_RMS.o
  .ARM.attributes
                 0x00000000       0x34 ./Core/Src/FEB_CAN_RMS.o
  .group         0x00000000        0xc ./Core/Src/FEB_HECS.o

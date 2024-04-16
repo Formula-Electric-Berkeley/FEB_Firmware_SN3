@@ -22,7 +22,7 @@ void FEB_Main_Setup(void){
 void FEB_Main_While(void){
 //	FEB_CAN_ICS_Transmit();
 
-	if (FEB_Ready_To_Drive()){
+	if (FEB_Ready_To_Drive()) {
 //		FEB_Normalized_updateAcc();
 //		FEB_CAN_RMS_Process();
 		FEB_Read_Accel_Pedal();
@@ -40,5 +40,6 @@ void FEB_Main_While(void){
 //	FEB_Normalized_updateAcc();
 //	FEB_CAN_RMS_Torque();
 //	FEB_CAN_BSPD_Transmit();
+//	FEB_Normalized_Brake_Pedals();
 	HAL_Delay(10);
 }
