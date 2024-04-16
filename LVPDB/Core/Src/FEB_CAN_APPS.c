@@ -26,7 +26,7 @@ uint8_t FEB_CAN_APPS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, ui
 		filter_config.FilterMaskIdLow = 0;
 		filter_config.FilterMode = CAN_FILTERMODE_IDMASK;
 		filter_config.FilterScale = CAN_FILTERSCALE_32BIT;
-		filter_config.SlaveStartFilterBank = 27;
+		filter_config.SlaveStartFilterBank = 14;
 		filter_bank++;
 
 

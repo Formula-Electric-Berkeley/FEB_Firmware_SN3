@@ -34,7 +34,7 @@ void FEB_CAN_Init(void) {
 
 void FEB_CAN_Filter_Config(void) {
 	uint8_t filter_bank = 14;
-//	filter_bank = FEB_CAN_APPS_Filter(&hcan2, CAN_RX_FIFO0, filter_bank);
+	filter_bank = FEB_CAN_APPS_Filter(&hcan2, CAN_RX_FIFO0, filter_bank);
 	filter_bank = FEB_CAN_ICS_Filter(&hcan2, CAN_RX_FIFO0, filter_bank);
 	// Assign Filter
     // filter_bank = Function(&hcan2, CAN_RX_FIFO0, filter_bank);
