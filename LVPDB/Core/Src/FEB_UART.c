@@ -1,7 +1,7 @@
 #include "FEB_UART.h"
 
 extern FEB_CAN_APPS_Message_t FEB_CAN_APPS_Message;
-extern FEB_CAN_SW_Message_t FEB_CAN_SW_Message;
+//extern FEB_CAN_SW_Message_t FEB_CAN_SW_Message;
 extern float current_reading;
 extern float ex_current_reading;
 extern float cp_current_reading;

@@ -3,7 +3,6 @@
 #include "FEB_CAN.h"
 extern CAN_HandleTypeDef hcan2;
 
-
 // **************************************** CAN Configuration ****************************************
 
 CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
@@ -28,12 +27,15 @@ void FEB_CAN_Init(void) {
 	if (HAL_CAN_Start(&hcan2) != HAL_OK) {
         // Code Error - Shutdown
 	}
-	HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO0_MSG_PENDING);
+
+	if (HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
+	}
 }
 
 void FEB_CAN_Filter_Config(void) {
-	uint8_t filter_bank = 0;
-	filter_bank = FEB_CAN_APPS_Filter(&hcan2, CAN_RX_FIFO0, filter_bank);
+	uint8_t filter_bank = 14;
+//	filter_bank = FEB_CAN_APPS_Filter(&hcan2, CAN_RX_FIFO0, filter_bank);
+	filter_bank = FEB_CAN_ICS_Filter(&hcan2, CAN_RX_FIFO0, filter_bank);
 	// Assign Filter
     // filter_bank = Function(&hcan2, CAN_RX_FIFO0, filter_bank);
 }
@@ -41,6 +43,7 @@ void FEB_CAN_Filter_Config(void) {
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan) {
 	if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &FEB_CAN_Rx_Header, FEB_CAN_Rx_Data) == HAL_OK) {
 		FEB_CAN_APPS_Str_Msg(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);
+		FEB_CAN_ICS_Store_Msg(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);
 		//FEB_SW_APPS_Str_Message(&FEB_CAN_Tx_Header, FEB_CAN_Rx_Data);
 
 	}

@@ -43,6 +43,10 @@ void FEB_SETUP_TPS2482(I2C_HandleTypeDef *hi2cp, uint8_t DEV_ADDR, uint8_t CONFI
 //		__disable_irq();
 //		while(1);
 //	}
+
+	if (ret != HAL_OK) {
+
+	}
 }
 
 void FEB_TPS2482_shutdownIfError(I2C_HandleTypeDef * hi2c, uint8_t DEV_ADDR, GPIO_TypeDef * EN, uint16_t EN_NUM, GPIO_TypeDef * AL, uint16_t AL_NUM,

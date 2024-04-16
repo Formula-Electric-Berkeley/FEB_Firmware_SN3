@@ -1,20 +1,18 @@
 #include "FEB_Hardware.h"
 
 extern FEB_CAN_APPS_Message_t FEB_CAN_APPS_Message;
-extern FEB_CAN_SW_Message_t FEB_CAN_SW_Message;
 
 static bool isDriving = false;
 
 void FEB_Peripherals_Control(){
 	  // activate peripheral devices if ready to drive
-	  if (FEB_CAN_SW_Message.ready_to_drive == 1 && !isDriving) {
+	  if (FEB_Ready_To_Drive()) {
 		  isDriving = true;
 		  Enable_Coolant_Pump();
 		  Enable_Accumulator_Fans();
 		  Enable_Extra();
-
 	  // de-activate if not ready to drive
-	  } else if (FEB_CAN_SW_Message.ready_to_drive == 0 && isDriving) {
+	  } else if (FEB_Ready_To_Drive()) {
 		  isDriving = false;
 		  Disable_Coolant_Pump();
 		  Disable_Accumulator_Fans();

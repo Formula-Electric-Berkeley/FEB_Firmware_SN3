@@ -7,7 +7,7 @@ void FEB_Main_Loop(void);
 
 #include "FEB_CAN.h"
 #include "FEB_CAN_APPS.h"
-#include "FEB_CAN_SW.h"
+#include "FEB_CAN_ICS.h"
 #include "FEB_Hardware.h"
 #include "FEB_TPS2482.h"
 
