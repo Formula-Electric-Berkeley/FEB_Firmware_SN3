@@ -25,7 +25,7 @@ void FEB_Main_While(void){
 	if (FEB_Ready_To_Drive()) {
 //		FEB_Normalized_updateAcc();
 //		FEB_CAN_RMS_Process();
-		FEB_Read_Accel_Pedal();
+		FEB_Read_Accel_Pedal1();
 	} else {
 //		FEB_Normalized_setAcc0();
 //		FEB_CAN_RMS_Disable();
@@ -41,5 +41,10 @@ void FEB_Main_While(void){
 //	FEB_CAN_RMS_Torque();
 //	FEB_CAN_BSPD_Transmit();
 //	FEB_Normalized_Brake_Pedals();
+
+	FEB_Read_Accel_Pedal1();
+	FEB_Read_Accel_Pedal2();
+	FEB_Normalized_Acc_Pedals();
+
 	HAL_Delay(10);
 }

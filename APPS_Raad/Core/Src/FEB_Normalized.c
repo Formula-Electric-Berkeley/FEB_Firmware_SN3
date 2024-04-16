@@ -52,7 +52,7 @@ void FEB_Normalized_setAcc0(){
 	normalized_acc = 0.0;
 }
 
-void FEB_Read_Accel_Pedal() {
+void FEB_Read_Accel_Pedal1() {
 	uint16_t accel_pedal_1_raw = FEB_Read_ADC(ACC_PEDAL_1);
 
 	float accel_pedal_1_position = 0.03256 * accel_pedal_1_raw - 13.4;
@@ -70,18 +70,45 @@ void FEB_Read_Accel_Pedal() {
 	int accel_pedal_1_position_int2 = accel_pedal_1_position_frac * 1000;
 
 	char buf[128];
-	sprintf(buf, "[SENSOR] Accelerator Position: %d.%d%%\n", accel_pedal_1_position_int1, accel_pedal_1_position_int2);
+	sprintf(buf, "[SENSOR] Accelerator 1 Position RAW: %d\n", accel_pedal_1_raw);
 	HAL_UART_Transmit(&huart2,(uint8_t *)buf, strlen(buf), HAL_MAX_DELAY);
 
+	char buf1[128];
+	sprintf(buf1, "[SENSOR] Accelerator 1 Position: %d.%d%%\n", accel_pedal_1_position_int1, accel_pedal_1_position_int2);
+	HAL_UART_Transmit(&huart2,(uint8_t *)buf1, strlen(buf1), HAL_MAX_DELAY);
+}
 
+void FEB_Read_Accel_Pedal2() {
+	uint16_t accel_pedal_2_raw = FEB_Read_ADC(ACC_PEDAL_2);
 
+	float accel_pedal_2_position = 0.36437 * accel_pedal_2_raw - 114.8547;
+
+	if (accel_pedal_2_position > 100.0) {
+		accel_pedal_2_position = 100.0;
+	}
+
+	if (accel_pedal_2_position < 0.0) {
+		accel_pedal_2_position = 0.0;
+	}
+
+	int accel_pedal_2_position_int1 = accel_pedal_2_position;
+	float accel_pedal_2_position_frac = accel_pedal_2_position - accel_pedal_2_position_int1;
+	int accel_pedal_2_position_int2 = accel_pedal_2_position_frac * 1000;
+
+	char buf[128];
+	sprintf(buf, "[SENSOR] Accelerator 2 Position RAW: %d\n", accel_pedal_2_raw);
+	HAL_UART_Transmit(&huart2,(uint8_t *)buf, strlen(buf), HAL_MAX_DELAY);
+
+	char buf1[128];
+	sprintf(buf1, "[SENSOR] Accelerator 2 Position: %d.%d%%\n", accel_pedal_2_position_int1, accel_pedal_2_position_int2);
+	HAL_UART_Transmit(&huart2,(uint8_t *)buf1, strlen(buf1), HAL_MAX_DELAY);
 }
 
 void FEB_Normalized_updateAcc(){
 	normalized_acc = FEB_Normalized_Acc_Pedals();
 }
 
-float FEB_Normalized_Acc_Pedals(){
+float FEB_Normalized_Acc_Pedals() {
 	// raw ADC readings of the two acc pedal sensors
 	uint16_t acc_pedal_1 = FEB_Read_ADC(ACC_PEDAL_1);
 	uint16_t acc_pedal_2 = FEB_Read_ADC(ACC_PEDAL_2);
@@ -92,12 +119,12 @@ float FEB_Normalized_Acc_Pedals(){
 
 
 	// check implausibility for shorting
-	if (acc_pedal_1 < Sensor_Min || acc_pedal_1 > Sensor_Max
-			|| acc_pedal_2 < Sensor_Min || acc_pedal_2 > Sensor_Max
-			|| abs(acc_pedal_1 - acc_pedal_2) < 100) {
-		isImpl = true;
-		return 0.0;
-	}
+//	if (acc_pedal_1 < Sensor_Min || acc_pedal_1 > Sensor_Max
+//			|| acc_pedal_2 < Sensor_Min || acc_pedal_2 > Sensor_Max
+//			|| abs(acc_pedal_1 - acc_pedal_2) < 100) {
+//		isImpl = true;
+//		return 0.0;
+//	}
 
 	//convert to % travel
 	// sensor 1 has positive slope
