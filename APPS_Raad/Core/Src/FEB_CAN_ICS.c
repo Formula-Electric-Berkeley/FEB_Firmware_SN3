@@ -8,13 +8,7 @@ extern uint8_t FEB_CAN_Tx_Data[8];
 extern uint32_t FEB_CAN_Tx_Mailbox;
 
 // ******************************** Variables ********************************
-
-typedef struct {
-	volatile uint8_t speed;
-} FEB_CAN_ICS_Message_t;
-FEB_CAN_ICS_Message_t FEB_CAN_ICS_Message;
-
-uint8_t speed = 10;
+bool READY_TO_DRIVE = 0;
 
 // **************************************** Functions ****************************************
 
@@ -43,30 +37,14 @@ uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
 	return filter_bank;
 }
 
-void FEB_CAN_ICS_Rx_Handler(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_CAN_Rx_Data[]) {
-	speed = FEB_CAN_Rx_Data[0];
-}
-
-void FEB_CAN_ICS_Transmit(void) {
-	FEB_CAN_Tx_Header.DLC = 2;
-	FEB_CAN_Tx_Header.StdId = 0x10;
-	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
-	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
-	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
-
-	// Copy data to Tx buffer
-	FEB_CAN_Tx_Data[0] = (uint8_t) 1;
-	FEB_CAN_Tx_Data[1] = (uint8_t) 2;
-
-	// Delay until mailbox available
-	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
-
-	// Add Tx data to mailbox
-	if (HAL_CAN_AddTxMessage(&hcan1, &FEB_CAN_Tx_Header, FEB_CAN_Tx_Data, &FEB_CAN_Tx_Mailbox) != HAL_OK) {
-		//
+void FEB_CAN_ICS_Store_Msg(CAN_RxHeaderTypeDef *rx_header, uint8_t rx_data[]) {
+	switch(rx_header->StdId) {
+		case FEB_CAN_ID_ICS_BUTTON_STATE:
+				READY_TO_DRIVE = rx_data[0] & (1 << 1);
+				break;
 	}
 }
 
-uint8_t FEB_CAN_ICS_Get_Speed(void) {
-	return speed;
+bool FEB_Ready_To_Drive() {
+	return READY_TO_DRIVE;
 }
