@@ -16,6 +16,7 @@
 
 // **************************************** Functions ****************************************
 
+void FEB_Read_Accel_Pedal();
 
 float FEB_Normalized_getAcc();
 void FEB_Normalized_setAcc0();

@@ -35,7 +35,7 @@ uint16_t FEB_Read_ADC(uint32_t channel){
 
 	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
 	{
-	   Error_Handler();
+//	   Error_Handler();
 	}
 
 	HAL_ADC_Start(&hadc1);
@@ -52,6 +52,31 @@ void FEB_Normalized_setAcc0(){
 	normalized_acc = 0.0;
 }
 
+void FEB_Read_Accel_Pedal() {
+	uint16_t accel_pedal_1_raw = FEB_Read_ADC(ACC_PEDAL_1);
+
+	float accel_pedal_1_position = 0.03256 * accel_pedal_1_raw - 13.4;
+
+	if (accel_pedal_1_position > 100.0) {
+		accel_pedal_1_position = 100.0;
+	}
+
+	if (accel_pedal_1_position < 0.0) {
+		accel_pedal_1_position = 0.0;
+	}
+
+	int accel_pedal_1_position_int1 = accel_pedal_1_position;
+	float accel_pedal_1_position_frac = accel_pedal_1_position - accel_pedal_1_position_int1;
+	int accel_pedal_1_position_int2 = accel_pedal_1_position_frac * 1000;
+
+	char buf[128];
+	sprintf(buf, "[SENSOR] Accelerator Position: %d.%d%%\n", accel_pedal_1_position_int1, accel_pedal_1_position_int2);
+	HAL_UART_Transmit(&huart2,(uint8_t *)buf, strlen(buf), HAL_MAX_DELAY);
+
+
+
+}
+
 void FEB_Normalized_updateAcc(){
 	normalized_acc = FEB_Normalized_Acc_Pedals();
 }
@@ -63,7 +88,7 @@ float FEB_Normalized_Acc_Pedals(){
 	char buf[128];
 	uint8_t buf_len;
 	buf_len = sprintf(buf, "acc1:%d acc2:%d\n", acc_pedal_1, acc_pedal_2);
-	//HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+	HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 
 
 	// check implausibility for shorting
