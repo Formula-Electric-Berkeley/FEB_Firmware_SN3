@@ -90,18 +90,18 @@ void FEB_Main_Setup(void) {
 
 void FEB_Main_Loop(void) {
 
-//  FEB_Brake_Light_Control();
+  FEB_Brake_Light_Control();
 //
   FEB_Peripherals_Control();
 //
-//  FEB_TPS2482_Poll_Currents();
+  FEB_TPS2482_Poll_Currents();
 //
-//  //FEB_CAN_Transmit(&hcan1, LVPDB_LV_CURRENT, &current_reading);
-//  //FEB_CAN_Transmit(&hcan1, LVPDB_EX_CURRENT, &ex_current_reading);
-//  //FEB_CAN_Transmit(&hcan1, LVPDB_CP_CURRENT, &cp_current_reading);
-//  apps_current_reading = FEB_CAN_APPS_Message.current;
-//
-//  buf_len = sprintf((char*) buf, "Current Draw (LV, EX, CP, APPS): %.3f, %.3f, %.3f, %.3f\r\n", current_reading, ex_current_reading, cp_current_reading, apps_current_reading);
-//  HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+//  FEB_CAN_Transmit(&hcan1, LVPDB_LV_CURRENT, &current_reading);
+//  FEB_CAN_Transmit(&hcan1, LVPDB_EX_CURRENT, &ex_current_reading);
+//  FEB_CAN_Transmit(&hcan1, LVPDB_CP_CURRENT, &cp_current_reading);
+  apps_current_reading = FEB_CAN_APPS_Message.current;
+
+  buf_len = sprintf((char*) buf, "Current Draw (LV, EX, CP, APPS): %.3f, %.3f, %.3f, %.3f\r\n", current_reading, ex_current_reading, cp_current_reading, apps_current_reading);
+  HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 	HAL_Delay(1000);
 }
