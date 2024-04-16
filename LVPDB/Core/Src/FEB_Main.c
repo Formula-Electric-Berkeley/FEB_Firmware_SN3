@@ -92,7 +92,7 @@ void FEB_Main_Loop(void) {
 
 //  FEB_Brake_Light_Control();
 //
-//  FEB_Peripherals_Control();
+  FEB_Peripherals_Control();
 //
 //  FEB_TPS2482_Poll_Currents();
 //
