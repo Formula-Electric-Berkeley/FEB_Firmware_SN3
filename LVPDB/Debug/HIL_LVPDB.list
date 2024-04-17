@@ -2081,8 +2081,8 @@ void FEB_Main_Setup(void) {
  80014ae:	f003 fe55 	bl	800515c <HAL_UART_Transmit>
 
 	// initialize brake light to be off
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
- 80014b2:	2201      	movs	r2, #1
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
+ 80014b2:	2200      	movs	r2, #0
  80014b4:	2102      	movs	r1, #2
  80014b6:	480e      	ldr	r0, [pc, #56]	@ (80014f0 <FEB_Main_Setup+0x1f8>)
  80014b8:	f001 fe74 	bl	80031a4 <HAL_GPIO_WritePin>
