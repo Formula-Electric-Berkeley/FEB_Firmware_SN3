@@ -1,8 +1,16 @@
+
+
+#ifndef FEB_CIRCULARBUFFER_H
+#define FEB_CIRCULARBUFFER_H
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "stm32f4xx_hal.h"
+
+//File system includes
+
 
 //typedef struct circBuffer CircularBuffer;
 
@@ -26,3 +34,4 @@ void FEB_circBuf_init(circBuffer *cb);
 void FEB_circBuf_write(circBuffer *cb, uint32_t rec_id, uint8_t *rec_data);
 void FEB_circBuf_read(circBuffer *cb);
 
+#endif /* FEB_CIRCULARBUFFER_H */

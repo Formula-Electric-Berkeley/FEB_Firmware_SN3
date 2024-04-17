@@ -1,7 +1,24 @@
 #include "FEB_CircularBuffer.h"
+#include "fatfs.h"
+#include "fatfs_sd.h"
+
 extern UART_HandleTypeDef huart2;
 
+FATFS fs; //file system
+FIL fil; //file
+FRESULT fres; //store result
 
+UINT br,bw; //file read/write count
+
+char buffer[1024]; // store data
+
+//Capacity related stuff
+FATFS *pfs;
+DWORD fre_clust;
+uint32_t totalSpace, freeSpace;
+
+//number of writes since last sync. Sync every 5 reads
+uint8_t iteration;
 
 void FEB_circBuf_init(circBuffer *cb)
 {
@@ -18,7 +35,32 @@ void FEB_circBuf_init(circBuffer *cb)
   cb->capacity = 16;
   cb->count = 0;
   cb->write = 0;
-  cb->read = 0;
+  cb->read = 0; 
+
+  fres = f_mount(&fs,"",0);
+  if (fres!= FR_OK){
+	  HAL_UART_Transmit(&huart2, "error mounting SD Card ...\n",27, HAL_MAX_DELAY);
+  }else{
+	  HAL_UART_Transmit(&huart2, "SD Card mounted successfully...\n", 32,HAL_MAX_DELAY);
+  }
+
+  f_getfree("", &fre_clust, &pfs);
+  totalSpace = (uint32_t)((pfs->n_fatent - 2) * pfs->csize * 0.5);
+  sprintf (buffer, "SD CARD Total Size: \t%lu\n", totalSpace);
+  HAL_UART_Transmit(&huart2 , (uint8_t*)buffer,30, HAL_MAX_DELAY);
+
+  freeSpace = (uint32_t)(fre_clust * pfs->csize * 0.5);
+  sprintf (buffer, "SD CARD Free Space: \t%lu\n",freeSpace);
+
+  HAL_UART_Transmit(&huart2 , (uint8_t*)buffer,30, HAL_MAX_DELAY);
+
+  fres = f_open(&fil, "file1.txt",FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
+  if(fres != FR_OK){
+    HAL_UART_Transmit(&huart2, "Can't open file\n",16,HAL_MAX_DELAY);
+    return;
+  }
+
+  iteration = 0; 
 }
 
 
@@ -50,6 +92,43 @@ void FEB_circBuf_read(circBuffer *cb){
   int size_len = sprintf(str, "ID: %ld \n", cb->buffer[cb->read].id);
   HAL_UART_Transmit(&huart2, (uint8_t*) str, size_len , HAL_MAX_DELAY);
   //printf("ID: %d", cb->buffer[cb->read]->id);
+  fres = f_lseek(&fil, f_size(&fil));
+  if(fres != FR_OK){
+    HAL_UART_Transmit(&huart2, "Can't find eof\n",15, HAL_MAX_DELAY);
+    f_close(&fil);
+    return;
+  }
+
+  fres = f_write(&fil, (const void *)&cb->buffer[cb->read].id, sizeof(uint32_t), &bw);
+  if(fres != FR_OK){
+    HAL_UART_Transmit(&huart2, "Can't write CAN id\n",19, HAL_MAX_DELAY);
+    f_close(&fil);
+    return;
+  }
+
+  fres = f_lseek(&fil, f_size(&fil));
+  if(fres != FR_OK){
+    HAL_UART_Transmit(&huart2, "Can't find eof\n",15, HAL_MAX_DELAY);
+    f_close(&fil);
+    return;
+  } 
+
+  fres = f_write(&fil,cb->buffer[cb->read].data, sizeof(cb->buffer[cb->read].data), &bw);
+  if(fres != FR_OK){
+    HAL_UART_Transmit(&huart2, "Can't write data\n",15, HAL_MAX_DELAY);
+    f_close(&fil);
+    return;
+  } 
+
+  if(iteration >= 5){
+    fres = f_sync(&fil);
+    if(fres != FR_OK){
+      HAL_UART_Transmit(&huart2, "Can't sync data\n",15, HAL_MAX_DELAY);
+      f_close(&fil);
+      return;
+    } 
+    iteration = 0; 
+  }
 
   // print data
   for (int i = 0; i < 8; i++) {
@@ -63,6 +142,8 @@ void FEB_circBuf_read(circBuffer *cb){
 
   cb->read = (cb->read + 1) % cb->capacity;
   cb->count--;
+
+  iteration++;
 }
 
 

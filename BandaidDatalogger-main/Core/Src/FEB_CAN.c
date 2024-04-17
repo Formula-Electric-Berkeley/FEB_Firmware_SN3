@@ -90,12 +90,23 @@ uint8_t FEB_CAN_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t
 void FEB_CAN_Transmit_Test_Data(CAN_HandleTypeDef* hcan) {
 	// Initialize Transmission Header
     // Write Code Here
-	FEB_CAN_Tx_Header.DLC =1;
+	FEB_CAN_Tx_Header.DLC =8;
 	FEB_CAN_Tx_Header.StdId = 0x1;
 	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
-	FEB_CAN_Tx_Data[0] = 0x1;
+
+	FEB_CAN_Tx_Data[0] = 0x11;
+	FEB_CAN_Tx_Data[1] = 0x22;
+	FEB_CAN_Tx_Data[2] = 0x33;
+	FEB_CAN_Tx_Data[3] = 0x44;
+	FEB_CAN_Tx_Data[4] = 0x55;
+	FEB_CAN_Tx_Data[5] = 0x66;
+	FEB_CAN_Tx_Data[6] = 0x77;
+	FEB_CAN_Tx_Data[7] = 0x88;
+
+
+
 
 
 	// Configure FEB_CAN_Tx_Data
@@ -114,12 +125,20 @@ void FEB_CAN_Transmit_Test_Data(CAN_HandleTypeDef* hcan) {
 void FEB_CAN_Transmit_Test_Data_ExtId(CAN_HandleTypeDef* hcan) {
 	// Initialize Transmission Header
     // Write Code Here
-	FEB_CAN_Tx_Header.DLC =1;
+	FEB_CAN_Tx_Header.DLC =8;
 	FEB_CAN_Tx_Header.ExtId = 0x2;
 	FEB_CAN_Tx_Header.IDE = CAN_ID_EXT;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
-	FEB_CAN_Tx_Data[0] = 0x2;
+	FEB_CAN_Tx_Data[0] = 0x01;
+	FEB_CAN_Tx_Data[1] = 0x02;
+	FEB_CAN_Tx_Data[2] = 0x03;
+	FEB_CAN_Tx_Data[3] = 0x04;
+	FEB_CAN_Tx_Data[4] = 0x05;
+	FEB_CAN_Tx_Data[5] = 0x06;
+	FEB_CAN_Tx_Data[6] = 0x07;
+	FEB_CAN_Tx_Data[7] = 0x08;
+
 
 
 	// Configure FEB_CAN_Tx_Data

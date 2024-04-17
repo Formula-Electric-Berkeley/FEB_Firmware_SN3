@@ -26,12 +26,10 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "fatfs.h"
 
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "fatfs_sd.h"
 #include <string.h>
 #include <stdio.h>
 /* USER CODE END Includes */
@@ -75,20 +73,8 @@ static void MX_CAN1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-FATFS fs;//file system
-FIL fil; //file
-FRESULT fres;//store result
 
-UINT br,bw; //file read/write count
-
-char buffer[1024]; // store data
 circBuffer FEBBuffer;
-
-
-//Capacity related stuff
-FATFS *pfs;
-DWORD fre_clust;
-uint32_t totalSpace, freeSpace;
 /* USER CODE END 0 */
 
 /**
@@ -99,7 +85,6 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  FEB_circBuf_init(&FEBBuffer);
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -125,11 +110,12 @@ int main(void)
   MX_USART2_UART_Init();
   MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
+
+  FEB_circBuf_init(&FEBBuffer);
 //  fres = f_mount(&fs, "", 0);
 //  if (fres != FR_OK) send_uart ("error in mounting SD Card...\n");
 //  else send_uart("SD Card mounted successfully...");
 //
-//  f_getfree("", &fre_clust, &pfs);
 //
 //  totalSpace = (uint32_t)((pfs->n_fatent - 2) * pfs->csize * 0.5);
 //  sprintf (buffer, "SD CARD Total Size: \t%lu\n", totalSpace);
@@ -235,11 +221,11 @@ int main(void)
 //	  HAL_Delay(10);
 
 //	  transmit_data = transmit_data + 0.5;
-	  FEB_CAN_Transmit_Test_Data(&hcan1);
+	FEB_CAN_Transmit_Test_Data(&hcan1);
     FEB_CAN_Transmit_Test_Data_ExtId(&hcan1);
     FEB_circBuf_read(&FEBBuffer);
     FEB_circBuf_read(&FEBBuffer);
-	  HAL_Delay(200);
+	HAL_Delay(200);
 
 
 
