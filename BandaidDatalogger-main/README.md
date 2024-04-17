@@ -25,5 +25,5 @@ Extended and Standard Ids
 	TODO: Finish filesystem related stuff. Must be able to write to a file.
 
 ## 4/16/24 
-Data logging aspect has been finished. Should probably think about how to recover the sd card in the event any of the FATfs syscalls fail. 
-TODO: Add time stamps to entries
+Data logging aspect has been finished. Should probably think about how to recover the sd card in the event any of the FATfs syscalls fail. Timestamps in ms has been added 
+	TODO: Needs a new file system to create new file on startup, and to try restarting the file on syscall failure. Also needs python script.
