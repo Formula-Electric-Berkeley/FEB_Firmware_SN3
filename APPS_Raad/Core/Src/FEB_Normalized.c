@@ -104,6 +104,32 @@ void FEB_Read_Accel_Pedal2() {
 	HAL_UART_Transmit(&huart2,(uint8_t *)buf1, strlen(buf1), HAL_MAX_DELAY);
 }
 
+void FEB_Read_Brake_Pedal() {
+	uint16_t brake_pedal_raw = FEB_Read_ADC(BRAKE_PEDAL);
+
+	float brake_pedal_position = 0.03256 * brake_pedal_raw - 13.4;
+
+	if (brake_pedal_position > 100.0) {
+		brake_pedal_position = 100.0;
+	}
+
+	if (brake_pedal_position < 0.0) {
+		brake_pedal_position = 0.0;
+	}
+
+	int brake_pedal_position_int1 = brake_pedal_position;
+	float brake_pedal_position_frac = brake_pedal_position - brake_pedal_position_int1;
+	int brake_pedal_position_int2 = brake_pedal_position_frac * 1000;
+
+	char buf[128];
+	sprintf(buf, "[SENSOR] Brake Position RAW: %d\n", brake_pedal_raw);
+	HAL_UART_Transmit(&huart2,(uint8_t *)buf, strlen(buf), HAL_MAX_DELAY);
+
+	char buf1[128];
+	sprintf(buf1, "[SENSOR] Brake Position: %d.%d%%\n", brake_pedal_position_int1, brake_pedal_position_int2);
+	HAL_UART_Transmit(&huart2,(uint8_t *)buf1, strlen(buf1), HAL_MAX_DELAY);
+}
+
 void FEB_Normalized_updateAcc(){
 	normalized_acc = FEB_Normalized_Acc_Pedals();
 }
@@ -159,12 +185,16 @@ float FEB_Normalized_Acc_Pedals() {
 	}
 }
 
-float FEB_Normalized_getBrake(){
+float FEB_Normalized_getBrake() {
 	return normalized_brake;
 }
 
-float FEB_Normalized_Brake_Pedals(){
-	uint16_t brake_pedal_1 =  FEB_Read_ADC(BRAKE_PRESS_1);   //HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
+void FEB_Normalized_update_Brake() {
+	normalized_brake = FEB_Normalized_Brake_Pedals();
+}
+
+float FEB_Normalized_Brake_Pedals() {
+	uint16_t brake_pedal_1 =  FEB_Read_ADC(BRAKE_PEDAL);   //HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
 	char buf[128];
 	uint8_t buf_len;
 	buf_len = sprintf(buf, "brake%d\n", brake_pedal_1);
@@ -174,18 +204,18 @@ float FEB_Normalized_Brake_Pedals(){
 	final_normalized = final_normalized > 1 ? 1 : final_normalized;
 	final_normalized = final_normalized < 0.05 ? 0 : final_normalized;
 
-	if (brake_pedal_1 < 10 || brake_pedal_1 > 4085) {
+	if (brake_pedal_1 < BRAKE_PEDAL_1_START || brake_pedal_1 > BRAKE_PEDAL_1_END) {
 		return 0.0;
 	}
 
 	return final_normalized;
 }
 
-void FEB_Normalized_CAN_sendBrake(){
+void FEB_Normalized_CAN_sendBrake() {
 	// Initialize transmission header
 	FEB_CAN_Tx_Header.DLC = 4;
-	FEB_CAN_Tx_Header.ExtId = FEB_CAN_ID_APPS_BRAKE_PEDAL;
-	FEB_CAN_Tx_Header.IDE = CAN_ID_EXT;
+	FEB_CAN_Tx_Header.StdId = FEB_CAN_ID_APPS_BRAKE_PEDAL;
+	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
 

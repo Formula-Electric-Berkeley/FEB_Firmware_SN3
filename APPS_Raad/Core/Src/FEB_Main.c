@@ -42,9 +42,13 @@ void FEB_Main_While(void){
 //	FEB_CAN_BSPD_Transmit();
 //	FEB_Normalized_Brake_Pedals();
 
-	FEB_Read_Accel_Pedal1();
-	FEB_Read_Accel_Pedal2();
-	FEB_Normalized_Acc_Pedals();
+//	FEB_Read_Accel_Pedal1();
+//	FEB_Read_Accel_Pedal2();
+//	FEB_Normalized_Acc_Pedals();
+
+	FEB_Read_Brake_Pedal();
+	FEB_Normalized_update_Brake();
+	FEB_Normalized_CAN_sendBrake();
 
 	HAL_Delay(10);
 }
