@@ -44,11 +44,12 @@ void FEB_CAN_APPS_Str_Msg(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_CA
 	switch(FEB_CAN_Rx_Header->StdId) {
 	    case FEB_CAN_ID_APPS_BRAKE_PEDAL:
 	    	//concatonate float from the array into temp   https://forum.arduino.cc/t/how-to-extract-float-data-from-longer-array/696454
-		    uint32_t data_brakepedal = FEB_CAN_Rx_Data[0];        // MSB
-		    data_brakepedal = (data_brakepedal << 8) | FEB_CAN_Rx_Data[1];
-		    data_brakepedal = (data_brakepedal << 8) | FEB_CAN_Rx_Data[2];
-		    data_brakepedal = (data_brakepedal << 8) | FEB_CAN_Rx_Data[3]; // LSB
-	    	memcpy(&(FEB_CAN_APPS_Message.brake_pedal), &(data_brakepedal), 4);
+//		    uint32_t data_brakepedal = FEB_CAN_Rx_Data[0];        // MSB
+//		    data_brakepedal = (data_brakepedal << 8) | FEB_CAN_Rx_Data[1];
+//		    data_brakepedal = (data_brakepedal << 8) | FEB_CAN_Rx_Data[2];
+//		    data_brakepedal = (data_brakepedal << 8) | FEB_CAN_Rx_Data[3]; // LSB
+//	    	memcpy(&(FEB_CAN_APPS_Message.brake_pedal), &(data_brakepedal), 4);
+	    	memcpy(&(FEB_CAN_APPS_Message.brake_pedal), FEB_CAN_Rx_Data, FEB_CAN_Rx_Header->DLC);
 	    	break;
 	    case FEB_CAN_ID_APPS_TPS:
 	    	//concatonate float from the array into temp
