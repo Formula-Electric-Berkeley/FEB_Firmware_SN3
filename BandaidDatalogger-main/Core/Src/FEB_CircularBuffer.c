@@ -75,6 +75,7 @@ void FEB_circBuf_write(circBuffer *cb, uint32_t rec_id , uint8_t *rec_data)
 
   memcpy(cb->buffer[cb->write].data, rec_data, 8);
   cb->buffer[cb->write].id = rec_id;
+  cb->buffer[cb->write].timestamp = HAL_GetTick();
   cb->write = (cb->write + 1) % cb->capacity;
   cb->count++;
 }
@@ -89,9 +90,27 @@ void FEB_circBuf_read(circBuffer *cb){
   }
 
   // print id
-  int size_len = sprintf(str, "ID: %ld \n", cb->buffer[cb->read].id);
+
+  int size_len = sprintf(str, "Time(ms): %ld \n", cb->buffer[cb->read].timestamp);
   HAL_UART_Transmit(&huart2, (uint8_t*) str, size_len , HAL_MAX_DELAY);
-  //printf("ID: %d", cb->buffer[cb->read]->id);
+
+  fres = f_lseek(&fil, f_size(&fil));
+  if(fres != FR_OK){
+    HAL_UART_Transmit(&huart2, "Can't find eof\n",15, HAL_MAX_DELAY);
+    f_close(&fil);
+    return;
+  }
+
+  fres = f_write(&fil, (const void *)&cb->buffer[cb->read].timestamp, sizeof(uint32_t), &bw);
+  if(fres != FR_OK){
+    HAL_UART_Transmit(&huart2, "Can't write timestamp\n",19, HAL_MAX_DELAY);
+    f_close(&fil);
+    return;
+  }
+
+  size_len = sprintf(str, "ID: %ld \n", cb->buffer[cb->read].id);
+  HAL_UART_Transmit(&huart2, (uint8_t*) str, size_len , HAL_MAX_DELAY);
+
   fres = f_lseek(&fil, f_size(&fil));
   if(fres != FR_OK){
     HAL_UART_Transmit(&huart2, "Can't find eof\n",15, HAL_MAX_DELAY);
@@ -105,6 +124,8 @@ void FEB_circBuf_read(circBuffer *cb){
     f_close(&fil);
     return;
   }
+
+  
 
   fres = f_lseek(&fil, f_size(&fil));
   if(fres != FR_OK){
@@ -134,7 +155,6 @@ void FEB_circBuf_read(circBuffer *cb){
   for (int i = 0; i < 8; i++) {
     int size_len = sprintf(str, "\t Byte: %d \n", cb->buffer[cb->read].data[i]);
     HAL_UART_Transmit(&huart2, (uint8_t*) str, size_len , HAL_MAX_DELAY);
-    //printf("\t Byte %d: %d\n", i, cb->buffer[cb->read]->data[i]);
   }
 
   memset(cb->buffer[cb->read].data, 0, 8);

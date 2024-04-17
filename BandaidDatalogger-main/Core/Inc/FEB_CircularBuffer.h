@@ -15,6 +15,7 @@
 //typedef struct circBuffer CircularBuffer;
 
 struct FEB_CAN_Payload {
+  uint32_t timestamp;
   uint32_t id;
   uint8_t data[8];
 };
