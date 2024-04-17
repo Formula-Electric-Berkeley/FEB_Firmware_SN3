@@ -22,6 +22,8 @@ uint8_t iteration;
 
 void FEB_circBuf_init(circBuffer *cb)
 {
+
+  //Initialize the Circular buffer
     if (cb->buffer == NULL) {
     printf("Error! Memory not allocated for buffer.");
     exit(0);
@@ -37,6 +39,8 @@ void FEB_circBuf_init(circBuffer *cb)
   cb->write = 0;
   cb->read = 0; 
 
+
+  //Mount SD card
   fres = f_mount(&fs,"",0);
   if (fres!= FR_OK){
 	  HAL_UART_Transmit(&huart2, "error mounting SD Card ...\n",27, HAL_MAX_DELAY);
@@ -52,7 +56,11 @@ void FEB_circBuf_init(circBuffer *cb)
   freeSpace = (uint32_t)(fre_clust * pfs->csize * 0.5);
   sprintf (buffer, "SD CARD Free Space: \t%lu\n",freeSpace);
 
-  HAL_UART_Transmit(&huart2 , (uint8_t*)buffer,30, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart2 , (uint8_t*)buffer,30, HAL_MAX_DELAY); 
+
+  //TODO: Store file # in a header file. Open file, read number and increment. The incremented number is added to file name
+  // thus on startup, we automatically log data into a new file. 
+
 
   fres = f_open(&fil, "file1.txt",FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
   if(fres != FR_OK){
