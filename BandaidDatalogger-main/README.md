@@ -22,4 +22,8 @@ Moving over to saving data as byte arrays instead of strings. Split code into tw
 ## 4/15/24 
 Alex finished converting the circular buffer to just bytes. At this point all we need to work on is the file system stuff with FAT FS. Some test functions were added to test 
 Extended and Standard Ids 
-	TODO: Finish filesystem related stuff. Must be able to write to a file. 
+	TODO: Finish filesystem related stuff. Must be able to write to a file.
+
+## 4/16/24 
+Data logging aspect has been finished. Should probably think about how to recover the sd card in the event any of the FATfs syscalls fail. 
+TODO: Add time stamps to entries
