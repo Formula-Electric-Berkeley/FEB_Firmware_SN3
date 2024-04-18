@@ -15,6 +15,8 @@
   - [3.4 DCU](#34-dcu)
   - [3.5 ICS](#35-ics)
     - [3.5.1 Buttons & Swtiches](#351-buttons--swtiches)
+  - [3.6 BBB](#36-bbb)
+    - [3.6.1 (DART) Fan Speed Set](#361-dart-fan-speed-set)
 
 # 1 Overview
 STM32 Files:
@@ -484,3 +486,39 @@ Other files:
     <td>uint8_t</td>
   </tr>
 </table>
+
+## 3.6 BBB
+### 3.6.1 (DART) Fan Speed Set
+<table>
+  <tr>
+    <th>Byte</th>
+    <th>Value</th>
+    <th>Datatype</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>Desired fan speed for fan 1, with 0 turning fan off and 255 putting fan at full speed</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>Equivalent for fan 2</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>Equivalent for fan 3</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>Equivalent for fan 4</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>Equivalent for fan 5</td>
+    <td>uint8_t</td>
+  </tr>
+</table>
+
