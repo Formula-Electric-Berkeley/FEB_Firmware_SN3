@@ -24,14 +24,14 @@ void FEB_Main_Task1_VT(void) {
 //		HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
 
 		// Voltage
-//		FEB_LTC6811_Poll_Voltage();
+		FEB_LTC6811_Poll_Voltage();
 //		FEB_LTC6811_Validate_Voltage();
 
 		// Temperature
 //		FEB_LTC6811_Poll_Temperature();
 //		FEB_LTC6811_Validate_Temperature();
 
-		osDelay(3000);
+		osDelay(200);
 	}
 }
 
@@ -58,13 +58,8 @@ void FEB_Main_Task4_Balance(void) {
 
 void FEB_Main_Task5_IVT(void) {
 	while (1) {
-//		char UART_Str[64];
-//		sprintf(UART_Str, "Debug 1\n");
-//		HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
-//		FEB_Relay_Buzzer(FEB_RELAY_ST_CLOSE);
-
 		FEB_CAN_IVT_Process();
-		osDelay(1000);
+		osDelay(100);
 	}
 }
 

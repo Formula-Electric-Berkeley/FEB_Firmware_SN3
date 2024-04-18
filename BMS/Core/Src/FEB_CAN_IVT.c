@@ -51,11 +51,7 @@ uint8_t FEB_CAN_IVT_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignme
 }
 
 void FEB_CAN_IVT_Store_Msg(CAN_RxHeaderTypeDef* rx_header, uint8_t rx_data[]) {
-	char UART_Str[64];
-	sprintf(UART_Str, "IVT U1: %f, IVT Current: %f\n", FEB_CAN_IVT_Message.voltage_1_mV * 1e-3, FEB_CAN_IVT_Message.current_mA * 1e-3);
-	HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
-
-	switch(rx_header->ExtId) {
+	switch(rx_header->StdId) {
 	    case FEB_CAN_ID_IVT_CURRENT:
 	    	IVT_CAN_flag.current = true;
 	    	FEB_CAN_IVT_Message.current_mA = (rx_data[2] << 24) + (rx_data[3] << 16) + (rx_data[4] << 8) + rx_data[5];
@@ -84,11 +80,17 @@ void FEB_CAN_IVT_Process(void) {
 	if (IVT_CAN_flag.voltage_1) {
 		IVT_CAN_flag.voltage_1 = false;
 
+		char UART_Str[64];
+		sprintf(UART_Str, "IVT U1: %f, IVT Current: %f\n", FEB_CAN_IVT_Message.voltage_1_mV * 1e-3, FEB_CAN_IVT_Message.current_mA * 1e-3);
+		HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
+
+		sprintf(UART_Str, "Total voltage: %f\n", FEB_LTC6811_Get_Total_Voltage() * FEB_CONST_PRECHARGE_PCT);
+		HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
+
 		if (FEB_SM_Get_Current_State() == FEB_SM_ST_PRECHARGE) {
 			// TODO: Check precharge complete
 			float voltage_V = (float) FEB_CAN_IVT_Message.voltage_1_mV * 0.001;
-//			float target_voltage_V = FEB_LTC6811_Get_Total_Voltage() * FEB_CONST_PRECHARGE_PCT;
-			float target_voltage_V = 24;
+			float target_voltage_V = FEB_LTC6811_Get_Total_Voltage() * FEB_CONST_PRECHARGE_PCT;
 			if (voltage_V >= target_voltage_V) {
 				FEB_SM_Set_Current_State(FEB_SM_ST_DRIVE);
 			}

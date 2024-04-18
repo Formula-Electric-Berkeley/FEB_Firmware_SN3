@@ -155,7 +155,7 @@ static void precharge(void) {
 static void precharge_to_drive(void) {
 	current_state = FEB_SM_ST_DRIVE;
 	FEB_Relay_AIR_Plus(FEB_RELAY_ST_CLOSE);
-	// TODO: Delay 100ms
+	osDelay(500);
 	FEB_Relay_Precharge(FEB_RELAY_ST_OPEN);
 }
 

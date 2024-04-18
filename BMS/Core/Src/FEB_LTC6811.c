@@ -91,6 +91,7 @@ Channel									0	1	2	3	4	0	1	2	3	4	0	1	2	3	4	0	1	2	3	4
 
 void FEB_LTC6811_Init(void) {
 	init_all_IC();
+	accumulator.total_volt_V = 600;
 }
 
 static void init_all_IC(void) {
@@ -183,7 +184,7 @@ static void store_voltage_values(void) {
 
 			char UART_Str[64];
 			sprintf(UART_Str, "Bank %d, Cell %d: %d\n", bank, cell, volt_100uV);
-			HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
+//			HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
 
 			accumulator.total_volt_V += (float) volt_100uV * 0.0001;
 		}
@@ -193,14 +194,14 @@ static void store_voltage_values(void) {
 		uint16_t volt_100uV = IC_config[0].cells.c_codes[i];
 		char UART_Str[64];
 		sprintf(UART_Str, "IC 0, Pin: %d: %d\n", i, volt_100uV);
-		HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
+//		HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
 	}
 
 	for (uint8_t i = 0 ; i < 12; i++) {
 		uint16_t volt_100uV = IC_config[1].cells.c_codes[i];
 		char UART_Str[64];
 		sprintf(UART_Str, "IC 1, Pin: %d: %d\n", i, volt_100uV);
-		HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
+//		HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
 	}
 }
 

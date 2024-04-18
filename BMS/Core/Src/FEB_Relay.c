@@ -18,20 +18,20 @@ void FEB_Relay_Shutdown(FEB_Relay_ST_t relay_state) {
 	if (relay_state == FEB_RELAY_ST_CLOSE && close_guard == 0) {
 		close_guard = 1;
 		relay_ST.shutdown = FEB_RELAY_ST_CLOSE;
-		// TODO: Close relay
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_SET);
 	} else if (relay_state == FEB_RELAY_ST_OPEN) {
 		relay_ST.shutdown = FEB_RELAY_ST_OPEN;
-		// TODO: Open relay
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET);
 	}
 }
 
 void FEB_Relay_AIR_Plus(FEB_Relay_ST_t relay_state) {
 	if (relay_state == FEB_RELAY_ST_CLOSE) {
 		relay_ST.AIR_plus = FEB_RELAY_ST_CLOSE;
-		// TODO: Close relay
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_2, GPIO_PIN_SET);
 	} else if (relay_state == FEB_RELAY_ST_OPEN) {
 		relay_ST.AIR_plus = FEB_RELAY_ST_OPEN;
-		// TODO: Open relay
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_2, GPIO_PIN_RESET);
 	}
 }
 
