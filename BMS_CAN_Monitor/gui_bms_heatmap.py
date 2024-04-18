@@ -46,7 +46,12 @@ class BMSHeatMap(ctk.CTkFrame):
             self._update_cell(bank, cell, mcd.bms.temp[(bank, cell)])
 
     def _update_cell(self, bank: int, cell: int, temp: float):
-        cell = self._cell_map.get((bank, cell), None)
+        if bank % 2 == 0:
+            heatmap_cell = constants.NUM_CELLS_PER_BANK + 1 - cell
+        else:
+            heatmap_cell = cell
+        
+        cell = self._cell_map.get((bank, heatmap_cell), None)
         if cell is not None:
             red_value = str(hex(255))[2:]
             green_value = str(hex(self.color_hex_map(temp)))[2:]
