@@ -11,6 +11,7 @@ extern uint32_t FEB_CAN_Tx_Mailbox;
 // ******************************** Variables ********************************
 
 FEB_CAN_ICS_Message_t FEB_CAN_ICS_Message;
+ICS_CAN_Rx_t ICS_CAN_Rx;
 
 uint8_t speed = 0;
 
@@ -65,32 +66,12 @@ uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
 }
 
 void FEB_CAN_ICS_Rx_Handler(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_CAN_Rx_Data[]) {
-	char str[1024];
-
-	sprintf(str, "[RECEIVE] CAN ID: %ld\n", FEB_CAN_Rx_Header->StdId);
-//	sprintf(str, "[RECEIVE] CAN ID\n");
-
-	HAL_UART_Transmit(&huart3, (uint8_t *) str, strlen(str), 100);
-
-	char canIdStr[4];
-	char dlcStr[4];
-	char dataStr[32];
-
-	sprintf(dataStr, "%x %x %x %x %x %x %x %x", FEB_CAN_Rx_Data[0], FEB_CAN_Rx_Data[1], FEB_CAN_Rx_Data[2], FEB_CAN_Rx_Data[3], FEB_CAN_Rx_Data[4], FEB_CAN_Rx_Data[5], FEB_CAN_Rx_Data[6], FEB_CAN_Rx_Data[7]);
-
-	sprintf(canIdStr, "0x%x", FEB_CAN_Rx_Header->StdId);
-	sprintf(dlcStr, "%ld", FEB_CAN_Rx_Header->DLC);
-
-	lv_label_set_text(ui_canIdLabel, canIdStr);
-	lv_label_set_text(ui_dlcLabel, dlcStr);
-
-	lv_label_set_text(ui_dataLabel, dataStr);
+	ICS_CAN_Rx.id = FEB_CAN_Rx_Header->StdId;
+	ICS_CAN_Rx.dlc = FEB_CAN_Rx_Header->DLC;
+	memcpy(ICS_CAN_Rx.data, FEB_CAN_Rx_Data, 8);
 
 	switch(FEB_CAN_Rx_Header->StdId) {
 		case FEB_CAN_ID_ICS_BUTTON_STATE:
-			char button_state_str[9];
-			uint8_to_binary_string(FEB_CAN_Rx_Data[0], button_state_str);
-			FEB_UART_Transmit_String(button_state_str);
 			break;
 		case FEB_CAN_ID_ICS_TEST:
 			FEB_CAN_ICS_Message.speed = FEB_CAN_Rx_Data[0];

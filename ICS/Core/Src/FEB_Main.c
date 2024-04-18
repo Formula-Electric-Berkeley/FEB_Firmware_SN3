@@ -13,7 +13,7 @@ void FEB_Main_Setup(void) {
 }
 
 void FEB_Main_Loop(void) {
-	FEB_UI_Update();
+//	FEB_UI_Update();
 
 	FEB_IO_ICS_Loop();
 
