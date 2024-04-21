@@ -198,7 +198,7 @@ float FEB_Normalized_Brake_Pedals() {
 	char buf[128];
 	uint8_t buf_len;
 	buf_len = sprintf(buf, "brake%d\n", brake_pedal_1);
-	HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+//	HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 
 	float final_normalized = (brake_pedal_1 - BRAKE_PEDAL_1_START)/ (BRAKE_PEDAL_1_END - BRAKE_PEDAL_1_START);
 	final_normalized = final_normalized > 1 ? 1 : final_normalized;
@@ -223,12 +223,21 @@ void FEB_Normalized_CAN_sendBrake() {
 	memcpy(FEB_CAN_Tx_Data, &normalized_brake, sizeof(float));
 
 
+	char buf[128];
+	uint8_t buf_len;
+	buf_len = sprintf(buf, "Mail box level: %ld\n", HAL_CAN_GetTxMailboxesFreeLevel(&hcan1));
+	HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+
 	// Delay until mailbox available
 	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
-
+//
 	// Add Tx data to mailbox
 	if (HAL_CAN_AddTxMessage(&hcan1, &FEB_CAN_Tx_Header, FEB_CAN_Tx_Data, &FEB_CAN_Tx_Mailbox) != HAL_OK) {
 		//error - shutdown
+		char buf[128];
+		uint8_t buf_len;
+		buf_len = sprintf(buf, "CAN MESSAGE FAIL TO SEND: %f\n", normalized_brake);
+		HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 	}
 
 }

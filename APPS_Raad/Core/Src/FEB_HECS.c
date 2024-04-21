@@ -50,5 +50,5 @@ void FEB_HECS_indicate(){ //sends GPIO output to HECS Indicator
 	}else{
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET); //sets GPIPO PA5 to low
 	}
-	HAL_Delay(1000);
+//	HAL_Delay(1000);
 }
