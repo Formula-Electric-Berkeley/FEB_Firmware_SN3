@@ -222,7 +222,6 @@ void FEB_Normalized_CAN_sendBrake() {
 	// Copy data to Tx buffer
 	memcpy(FEB_CAN_Tx_Data, &normalized_brake, sizeof(float));
 
-
 	char buf[128];
 	uint8_t buf_len;
 	buf_len = sprintf(buf, "Mail box level: %ld\n", HAL_CAN_GetTxMailboxesFreeLevel(&hcan1));
