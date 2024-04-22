@@ -17,14 +17,14 @@ extern "C" {
 // SCREEN: ui_Screen1
 void ui_Screen1_screen_init(void);
 extern lv_obj_t *ui_Screen1;
-extern lv_obj_t *ui_canIdLabel;
-extern lv_obj_t *ui_dlcLabel;
-extern lv_obj_t *ui_dataLabel;
-extern lv_obj_t *ui_Label2;
 extern lv_obj_t *ui_Label1;
+extern lv_obj_t *ui_canIdLabel;
+extern lv_obj_t *ui_Label2;
+extern lv_obj_t *ui_dlcLabel;
 extern lv_obj_t *ui_Label3;
-extern lv_obj_t *ui_buttonField;
+extern lv_obj_t *ui_dataLabel;
 extern lv_obj_t *ui_Label4;
+extern lv_obj_t *ui_buttonField;
 extern lv_obj_t *ui____initial_actions0;
 
 
