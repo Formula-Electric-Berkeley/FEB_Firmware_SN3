@@ -213,7 +213,7 @@ float FEB_Normalized_Brake_Pedals() {
 
 void FEB_Normalized_CAN_sendBrake() {
 	// Initialize transmission header
-	FEB_CAN_Tx_Header.DLC = 4;
+	FEB_CAN_Tx_Header.DLC = 8;
 	FEB_CAN_Tx_Header.StdId = FEB_CAN_ID_APPS_BRAKE_PEDAL;
 	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
@@ -224,7 +224,7 @@ void FEB_Normalized_CAN_sendBrake() {
 
 	char buf[128];
 	uint8_t buf_len;
-	buf_len = sprintf(buf, "Mail box level: %ld\n", HAL_CAN_GetTxMailboxesFreeLevel(&hcan1));
+	buf_len = sprintf(buf, "Mail box level: %ld, Data: %d  %d  %d  %d  %d  %d  %d\n", HAL_CAN_GetTxMailboxesFreeLevel(&hcan1), FEB_CAN_Tx_Data[0], FEB_CAN_Tx_Data[1], FEB_CAN_Tx_Data[2], FEB_CAN_Tx_Data[3], FEB_CAN_Tx_Data[4], FEB_CAN_Tx_Data[5], FEB_CAN_Tx_Data[6]);
 	HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 
 	// Delay until mailbox available
@@ -240,6 +240,7 @@ void FEB_Normalized_CAN_sendBrake() {
 	}
 
 }
+
 
 
 
