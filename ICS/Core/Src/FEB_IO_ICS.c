@@ -111,7 +111,7 @@ void FEB_IO_ICS_Loop(void) {
 	// display button state on UI
 	char button_state_str[9];
 	uint8_to_binary_string(button_state, button_state_str);
-	lv_label_set_text(ui_buttonField, button_state_str);
+//	lv_label_set_text(ui_buttonField, button_state_str);
 }
 
 // set nth bit

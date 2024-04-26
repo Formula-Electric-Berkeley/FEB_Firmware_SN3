@@ -32,7 +32,7 @@ void FEB_UI_Set_Values(void) {
 	sprintf(canIdStr, "0x%x", ICS_CAN_Rx.id);
 	sprintf(dlcStr, "%ld", ICS_CAN_Rx.dlc);
 
-	lv_label_set_text(ui_canIdLabel, canIdStr);
-	lv_label_set_text(ui_dlcLabel, dlcStr);
-	lv_label_set_text(ui_dataLabel, dataStr);
+//	lv_label_set_text(ui_canIdLabel, canIdStr);
+//	lv_label_set_text(ui_dlcLabel, dlcStr);
+//	lv_label_set_text(ui_dataLabel, dataStr);
 }
