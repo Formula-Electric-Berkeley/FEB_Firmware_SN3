@@ -23,7 +23,7 @@ RMS_MOTOR = 0xa5
 RMS_COMMAND = 0xc0
 RMS_PARAMETER = 0xc1
 
-# PPS
+# APPS
 APPS_TPS = 0x80
 
 # **************************************** Dynamic CAN IDs ****************************************
@@ -35,13 +35,13 @@ BMS_VOLTAGE = 0x2
 BMS_STATE = 0x3
 BMS_BALANCE = 0x4
 
-# CS
+# ICS
 ICS_BUTTON_STATE = 0x5
 ICS_TEST = 0x6
 
-# PPS
+# APPS
 APPS_BRAKE_PEDAL = 0x7
 APPS_BSPD = 0x8
 
-# BB
+# BBB
 BBB_SET_FAN_SPEED = 0x9

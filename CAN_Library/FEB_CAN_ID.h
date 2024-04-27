@@ -26,7 +26,7 @@
 #define FEB_CAN_ID_RMS_COMMAND 0xc0
 #define FEB_CAN_ID_RMS_PARAMETER 0xc1
 
-//APPS
+// APPS
 #define FEB_CAN_ID_APPS_TPS 0x80
 
 // **************************************** Dynamic CAN IDs ****************************************
@@ -38,15 +38,15 @@
 #define FEB_CAN_ID_BMS_STATE 0x3
 #define FEB_CAN_ID_BMS_BALANCE 0x4
 
-//ICS
+// ICS
 #define FEB_CAN_ID_ICS_BUTTON_STATE 0x5
 #define FEB_CAN_ID_ICS_TEST 0x6
 
-//APPS
+// APPS
 #define FEB_CAN_ID_APPS_BRAKE_PEDAL 0x7
 #define FEB_CAN_ID_APPS_BSPD 0x8
 
-//BBB
+// BBB
 #define FEB_CAN_ID_BBB_SET_FAN_SPEED 0x9
 
 #endif /* INC_FEB_CAN_ID_H_ */

@@ -25,5 +25,5 @@ RMS Motor, 0xA5
 RMS Command, 0x0C0
 RMS Parameter, 0x0C1
 
-//APPS,
+// APPS,
 APPS TPS, 0x80

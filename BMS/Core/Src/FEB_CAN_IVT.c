@@ -2,10 +2,6 @@
 
 #include "FEB_CAN_IVT.h"
 
-// TODO: REMOVE
-#include <string.h>
-#include <stdio.h>
-extern UART_HandleTypeDef huart2;
 
 // ******************************** Struct ********************************
 
@@ -79,14 +75,6 @@ void FEB_CAN_IVT_Process(void) {
 	}
 	if (IVT_CAN_flag.voltage_1) {
 		IVT_CAN_flag.voltage_1 = false;
-
-		char UART_Str[64];
-		sprintf(UART_Str, "IVT U1: %f, IVT Current: %f\n", FEB_CAN_IVT_Message.voltage_1_mV * 1e-3, FEB_CAN_IVT_Message.current_mA * 1e-3);
-		HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
-
-		sprintf(UART_Str, "Total voltage: %f\n", FEB_LTC6811_Get_Total_Voltage() * FEB_CONST_PRECHARGE_PCT);
-		HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
-
 		if (FEB_SM_Get_Current_State() == FEB_SM_ST_PRECHARGE) {
 			// TODO: Check precharge complete
 			float voltage_V = (float) FEB_CAN_IVT_Message.voltage_1_mV * 0.001;
