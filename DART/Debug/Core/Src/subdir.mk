@@ -9,6 +9,7 @@ C_SRCS += \
 ../Core/Src/FEB_CAN.c \
 ../Core/Src/FEB_CAN_BBB.c \
 ../Core/Src/FEB_Fan.c \
+../Core/Src/FEB_Input_Capture.c \
 ../Core/Src/FEB_PID.c \
 ../Core/Src/FEB_main.c \
 ../Core/Src/main.c \
@@ -23,6 +24,7 @@ OBJS += \
 ./Core/Src/FEB_CAN.o \
 ./Core/Src/FEB_CAN_BBB.o \
 ./Core/Src/FEB_Fan.o \
+./Core/Src/FEB_Input_Capture.o \
 ./Core/Src/FEB_PID.o \
 ./Core/Src/FEB_main.o \
 ./Core/Src/main.o \
@@ -37,6 +39,7 @@ C_DEPS += \
 ./Core/Src/FEB_CAN.d \
 ./Core/Src/FEB_CAN_BBB.d \
 ./Core/Src/FEB_Fan.d \
+./Core/Src/FEB_Input_Capture.d \
 ./Core/Src/FEB_PID.d \
 ./Core/Src/FEB_main.d \
 ./Core/Src/main.d \
@@ -54,7 +57,7 @@ Core/Src/%.o Core/Src/%.su Core/Src/%.cyclo: ../Core/Src/%.c Core/Src/subdir.mk
 clean: clean-Core-2f-Src
 
 clean-Core-2f-Src:
-	-$(RM) ./Core/Src/FEB_ADC.cyclo ./Core/Src/FEB_ADC.d ./Core/Src/FEB_ADC.o ./Core/Src/FEB_ADC.su ./Core/Src/FEB_CAN.cyclo ./Core/Src/FEB_CAN.d ./Core/Src/FEB_CAN.o ./Core/Src/FEB_CAN.su ./Core/Src/FEB_CAN_BBB.cyclo ./Core/Src/FEB_CAN_BBB.d ./Core/Src/FEB_CAN_BBB.o ./Core/Src/FEB_CAN_BBB.su ./Core/Src/FEB_Fan.cyclo ./Core/Src/FEB_Fan.d ./Core/Src/FEB_Fan.o ./Core/Src/FEB_Fan.su ./Core/Src/FEB_PID.cyclo ./Core/Src/FEB_PID.d ./Core/Src/FEB_PID.o ./Core/Src/FEB_PID.su ./Core/Src/FEB_main.cyclo ./Core/Src/FEB_main.d ./Core/Src/FEB_main.o ./Core/Src/FEB_main.su ./Core/Src/main.cyclo ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/stm32f0xx_hal_msp.cyclo ./Core/Src/stm32f0xx_hal_msp.d ./Core/Src/stm32f0xx_hal_msp.o ./Core/Src/stm32f0xx_hal_msp.su ./Core/Src/stm32f0xx_it.cyclo ./Core/Src/stm32f0xx_it.d ./Core/Src/stm32f0xx_it.o ./Core/Src/stm32f0xx_it.su ./Core/Src/syscalls.cyclo ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32f0xx.cyclo ./Core/Src/system_stm32f0xx.d ./Core/Src/system_stm32f0xx.o ./Core/Src/system_stm32f0xx.su
+	-$(RM) ./Core/Src/FEB_ADC.cyclo ./Core/Src/FEB_ADC.d ./Core/Src/FEB_ADC.o ./Core/Src/FEB_ADC.su ./Core/Src/FEB_CAN.cyclo ./Core/Src/FEB_CAN.d ./Core/Src/FEB_CAN.o ./Core/Src/FEB_CAN.su ./Core/Src/FEB_CAN_BBB.cyclo ./Core/Src/FEB_CAN_BBB.d ./Core/Src/FEB_CAN_BBB.o ./Core/Src/FEB_CAN_BBB.su ./Core/Src/FEB_Fan.cyclo ./Core/Src/FEB_Fan.d ./Core/Src/FEB_Fan.o ./Core/Src/FEB_Fan.su ./Core/Src/FEB_Input_Capture.cyclo ./Core/Src/FEB_Input_Capture.d ./Core/Src/FEB_Input_Capture.o ./Core/Src/FEB_Input_Capture.su ./Core/Src/FEB_PID.cyclo ./Core/Src/FEB_PID.d ./Core/Src/FEB_PID.o ./Core/Src/FEB_PID.su ./Core/Src/FEB_main.cyclo ./Core/Src/FEB_main.d ./Core/Src/FEB_main.o ./Core/Src/FEB_main.su ./Core/Src/main.cyclo ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/stm32f0xx_hal_msp.cyclo ./Core/Src/stm32f0xx_hal_msp.d ./Core/Src/stm32f0xx_hal_msp.o ./Core/Src/stm32f0xx_hal_msp.su ./Core/Src/stm32f0xx_it.cyclo ./Core/Src/stm32f0xx_it.d ./Core/Src/stm32f0xx_it.o ./Core/Src/stm32f0xx_it.su ./Core/Src/syscalls.cyclo ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32f0xx.cyclo ./Core/Src/system_stm32f0xx.d ./Core/Src/system_stm32f0xx.o ./Core/Src/system_stm32f0xx.su
 
 .PHONY: clean-Core-2f-Src
 
