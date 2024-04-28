@@ -2,7 +2,7 @@
 #include "FEB_Fan.h"
 
 extern TIM_HandleTypeDef htim1;
-extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim3;
 
 // ********************************** Fan Configuration **********************************
 
@@ -34,7 +34,7 @@ void FEB_Fan_Init(){
 
 	FEB_Fan_PWM_Init();
 	FEB_Fan_All_Speed_Set(255 * 0);
-	FEB_Fan_2_Speed_Set(255 * 0.3);
+
 
 
 	//FEB_PID_Init_All();
@@ -184,8 +184,8 @@ void FEB_Fan_PWM_Init(void) {
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
-	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 }
 
 void FEB_Fan_All_Speed_Set(uint8_t speed) {
@@ -213,10 +213,10 @@ void FEB_Fan_3_Speed_Set(uint8_t speed) {
 
 void FEB_Fan_4_Speed_Set(uint8_t speed) {
 	FEB_Fan_4_Speed = speed;
-	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, FEB_Fan_4_Speed);
+	__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, FEB_Fan_4_Speed);
 }
 
 void FEB_Fan_5_Speed_Set(uint8_t speed) {
 	FEB_Fan_5_Speed = speed;
-	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, FEB_Fan_5_Speed);
+	__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, FEB_Fan_5_Speed);
 }

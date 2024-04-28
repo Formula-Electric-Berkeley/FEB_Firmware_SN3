@@ -1,7 +1,10 @@
 #include "FEB_main.h"
 extern UART_HandleTypeDef huart2;
-extern TIM_HandleTypeDef htim16;
+extern TIM_HandleTypeDef htim14;
 extern TIM_HandleTypeDef htim2;
+
+volatile uint8_t gu8_MSGG[64] = {'\0'};
+
 
 char uart_tx_buffer[5];
 uint32_t tach_val;
@@ -18,96 +21,78 @@ void FEB_Init(void){
 
 void FEB_Main_Loop(void){
 
-	// fan 1
-	FEB_Fan_1_Speed_Set(255 * 0.3);
-	HAL_TIM_IC_Start_IT(&htim16, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim16, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim16, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim16, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim16, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim16, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim16, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim16, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim16, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim16, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim16, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim16, TIM_CHANNEL_1);
+
+		FEB_Fan_3_Speed_Set(255 * 0.2);
+		FEB_Fan_5_Speed_Set(255 * 0.3);
 
 
-	// fan 2
-	FEB_Fan_All_Speed_Set(255 * 0);
+		//start fan 3 reading
+		 sprintf(gu8_MSGG, "Starting 3");
+		 HAL_UART_Transmit(&huart2, gu8_MSGG, sizeof(gu8_MSGG), 100);
 
-	HAL_Delay(5000);
+		 HAL_Delay(1000);
 
-	FEB_Fan_2_Speed_Set(255 * 0.3);
-	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-	HAL_Delay(500);
-	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
+	  if (HAL_TIM_Base_Start_IT(&htim14) != HAL_OK)
+		  		    {
+		  		      /* Starting Error */
+		  		      Error_Handler();
+		  		    }
 
+	  if (HAL_TIM_IC_Start_IT(&htim14, TIM_CHANNEL_1) != HAL_OK)
+	  {
+	 	      /* Starting Error */
+	 	      Error_Handler();
+	 	    }
 
-	FEB_Fan_All_Speed_Set(255 * 0);
+	HAL_Delay(10000);
 
-	HAL_Delay(5000);
+	  if (HAL_TIM_IC_Stop_IT(&htim14, TIM_CHANNEL_1) != HAL_OK)
+	  {
+	 	      /* Starting Error */
+	 	      Error_Handler();
+	 	    }
+
+		  if (HAL_TIM_Base_Stop_IT(&htim14) != HAL_OK)
+		    {
+		      /* Starting Error */
+		      Error_Handler();
+		    }
 
 
+		//end fan 3 reading
 
-	//HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-	//HAL_Delay(800);
-	//FEB_CAN_Transmit();
-	//FEB_Update_PWM_All_Fans();
-	//memset(uart_tx_buffer, 0, sizeof(uart_tx_buffer));
-	//FEB_Test_PWM();
-	//tach_val = 0x0;
-	//sprintf(uart_tx_buffer, "%lu\n", tach_val);
-	//HAL_UART_Transmit(&huart2, (uint8_t *)uart_tx_buffer, sizeof(uart_tx_buffer), HAL_MAX_DELAY);
-//
-//	tach_val = FEB_Read_Tachometer_Fan_2();
-//	sprintf(uart_tx_buffer, "%lu\n", tach_val);
-//	HAL_UART_Transmit(&huart2, (uint8_t *)uart_tx_buffer, sizeof(uart_tx_buffer), HAL_MAX_DELAY);
-//
-//	tach_val = FEB_Read_Tachometer_Fan_3();
-//	sprintf(uart_tx_buffer, "%lu\n", tach_val);
-//	HAL_UART_Transmit(&huart2, (uint8_t *)uart_tx_buffer, sizeof(uart_tx_buffer), HAL_MAX_DELAY);
-//
-//	tach_val = FEB_Read_Tachometer_Fan_4();
-//	sprintf(uart_tx_buffer, "%lu\n", tach_val);
-//	HAL_UART_Transmit(&huart2, (uint8_t *)uart_tx_buffer, sizeof(uart_tx_buffer), HAL_MAX_DELAY);
-//
-//	tach_val = FEB_Read_Tachometer_Fan_5();
-//	sprintf(uart_tx_buffer, "%lu\n", tach_val);
-//	HAL_UART_Transmit(&huart2, (uint8_t *)uart_tx_buffer, sizeof(uart_tx_buffer), HAL_MAX_DELAY);
+		 sprintf(gu8_MSGG, "Starting 5");
+		 HAL_UART_Transmit(&huart2, gu8_MSGG, sizeof(gu8_MSGG), 100);
+		HAL_Delay(1000);
 
-//HAL_Delay(1000);
+		//start fan 5 reading
+
+		if (HAL_TIM_Base_Start_IT(&htim2) != HAL_OK)
+				  		    {
+				  		      /* Starting Error */
+				  		      Error_Handler();
+				  		    }
+
+		  if (HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1) != HAL_OK)
+		  {
+				  /* Starting Error */
+				  Error_Handler();
+				}
+
+		HAL_Delay(10000);
+
+		  if (HAL_TIM_IC_Stop_IT(&htim2, TIM_CHANNEL_1) != HAL_OK)
+		  {
+				  /* Starting Error */
+				  Error_Handler();
+				}
+
+		  if (HAL_TIM_Base_Stop_IT(&htim2) != HAL_OK)
+			{
+			  /* Starting Error */
+			  Error_Handler();
+			}
+
+			//end fan 5 reading
 
 }
