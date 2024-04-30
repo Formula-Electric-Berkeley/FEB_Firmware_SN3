@@ -10,11 +10,14 @@
     - [3.1.3 State](#313-state)
     - [3.1.4 Balance](#314-balance)
     - [3.1.5 Enabled Temperature Sensors](#315-enabled-temperature-sensors)
+    - [3.1.6 Desired Fan Speeds (Both DART1 and DART2)](#316-desired-fan-speeds-both-dart1-and-dart2)
   - [3.2 APPS](#32-apps)
   - [3.3 LVPDB](#33-lvpdb)
   - [3.4 DCU](#34-dcu)
   - [3.5 ICS](#35-ics)
     - [3.5.1 Buttons & Swtiches](#351-buttons--swtiches)
+  - [3.6 DART](#36-dart)
+    - [3.6.1 Measured Fan Speeds (Both DART1 and DART2)](#361-measured-fan-speeds-both-dart1-and-dart2)
 
 # 1 Overview
 STM32 Files:
@@ -263,6 +266,40 @@ Other files:
   </tr>
 </table>
 
+### 3.1.6 Desired Fan Speeds (Both DART1 and DART2)
+<table>
+  <tr>
+    <th>Byte</th>
+    <th>Value</th>
+    <th>Datatype</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>Desired fan speed for fan 1, with 0 being fan off and 255 being fan at full speed</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>Equivalent for fan 2</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>Equivalent for fan 3</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>Equivalent for fan 4</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>Equivalent for fan 5</td>
+    <td>uint8_t</td>
+  </tr>
+</table>
+
 ## 3.2 APPS
 ### 3.2.1 Normalized Brake
 <table>
@@ -481,6 +518,41 @@ Other files:
   <tr>
     <td>7</td>
     <td>Switch 3 (Accumulator Fans)</td>
+    <td>uint8_t</td>
+  </tr>
+</table>
+
+## 3.6 DART
+### 3.6.1 Measured Fan Speeds (Both DART1 and DART2)
+<table>
+  <tr>
+    <th>Byte</th>
+    <th>Value</th>
+    <th>Datatype</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>Measured fan speed for fan 1, with 0 being fan off and 255 being fan at full speed</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>Equivalent for fan 2</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>Equivalent for fan 3</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>Equivalent for fan 4</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>Equivalent for fan 5</td>
     <td>uint8_t</td>
   </tr>
 </table>
