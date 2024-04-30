@@ -8,6 +8,8 @@ BMS Enabled Temperature Sensors
 BMS Voltage
 BMS State
 BMS Balance
+BMS DART1 Requested Fan Speeds
+BMS DART2 Requested Fan Speeds
 
 // ICS
 ICS Button State
@@ -17,5 +19,6 @@ ICS TEST
 APPS Brake Pedal
 APPS BSPD
 
-// BBB
-BBB Set Fan Speed
+//DART
+DART DART1 Measured Fan Speeds
+DART DART2 Measured Fan Speeds
