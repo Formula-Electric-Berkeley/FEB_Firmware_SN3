@@ -1,3 +1,2 @@
-../Core/Src/FEB_main.c:19:6:FEB_Error_Handler	1
-../Core/Src/FEB_main.c:26:6:FEB_Init	1
-../Core/Src/FEB_main.c:34:6:FEB_Main_Loop	1
+../Core/Src/FEB_main.c:3:6:FEB_Init	1
+../Core/Src/FEB_main.c:8:6:FEB_Main_Loop	1

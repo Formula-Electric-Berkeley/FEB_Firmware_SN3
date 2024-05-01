@@ -34,7 +34,6 @@ extern "C" {
 #include <string.h>
 #include <stdio.h>
 #include "FEB_main.h"
-#include "FEB_Input_Capture.h"
 //#include "stdio.h"
 /* USER CODE END Includes */
 

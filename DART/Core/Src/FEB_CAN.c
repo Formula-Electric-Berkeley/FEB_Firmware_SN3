@@ -19,7 +19,7 @@ uint32_t FEB_CAN_Tx_Mailbox;
 void FEB_CAN_Init(void) {
 	FEB_CAN_Filter_Config();
 	if (HAL_CAN_Start(&hcan) != HAL_OK) {
-        // Code Error - Shutdown
+		Error_Handler();
 	}
 	HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING);
 }
@@ -27,8 +27,6 @@ void FEB_CAN_Init(void) {
 void FEB_CAN_Filter_Config(void) {
 	uint8_t filter_bank = 0;
 	filter_bank = FEB_CAN_BMS_Filter(&hcan, CAN_RX_FIFO0, filter_bank);
-	// Assign Filter
-    // filter_bank = Function(&hcan1, CAN_RX_FIFO0, filter_bank);
 }
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan) {

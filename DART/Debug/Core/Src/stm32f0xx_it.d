@@ -31,7 +31,7 @@ Core/Src/stm32f0xx_it.o: ../Core/Src/stm32f0xx_it.c ../Core/Inc/main.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart_ex.h \
  ../Core/Inc/FEB_main.h ../Core/Inc/FEB_Fan.h ../Core/Inc/FEB_CAN.h \
  ../Core/Inc/FEB_CAN_BMS.h ../Core/Inc/FEB_CAN_ID.h ../Core/Inc/Main.h \
- ../Core/Inc/FEB_Input_Capture.h ../Core/Inc/stm32f0xx_it.h
+ ../Core/Inc/stm32f0xx_it.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h:
 ../Core/Inc/stm32f0xx_hal_conf.h:
@@ -69,5 +69,4 @@ Core/Src/stm32f0xx_it.o: ../Core/Src/stm32f0xx_it.c ../Core/Inc/main.h \
 ../Core/Inc/FEB_CAN_BMS.h:
 ../Core/Inc/FEB_CAN_ID.h:
 ../Core/Inc/Main.h:
-../Core/Inc/FEB_Input_Capture.h:
 ../Core/Inc/stm32f0xx_it.h:
