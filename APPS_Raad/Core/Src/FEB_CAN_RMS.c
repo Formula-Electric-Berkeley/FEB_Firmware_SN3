@@ -108,6 +108,7 @@ int16_t min(int16_t x1, int16_t x2) {
 // **** TORQUE FUNCTIONS****
 //
 uint16_t FEB_CAN_RMS_getMaxTorque(void){
+	return 20;
 	int16_t accumulator_voltage = min(INIT_VOLTAGE, (RMS_MESSAGE.HV_Bus_Voltage-50) / 10);
 	int16_t motor_speed = -1 * RMS_MESSAGE.Motor_Speed * RPM_TO_RAD_S;
   // If speed is less than 15, we should command max torque
@@ -151,7 +152,7 @@ void FEB_CAN_RMS_Transmit_updateTorque(void) { //TODO: Create Custom Transmit fu
 	FEB_CAN_Tx_Data[1] = RMSControl.torque >> 8;
 	FEB_CAN_Tx_Data[2] = 0;
 	FEB_CAN_Tx_Data[3] = 0;
-	FEB_CAN_Tx_Data[4] = 0;
+	FEB_CAN_Tx_Data[4] = 1;
 	FEB_CAN_Tx_Data[5] = RMSControl.enabled;
 	FEB_CAN_Tx_Data[6] = 0;
 	FEB_CAN_Tx_Data[7] = 0;

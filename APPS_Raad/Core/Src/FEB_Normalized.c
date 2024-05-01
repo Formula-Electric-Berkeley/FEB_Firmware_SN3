@@ -132,6 +132,12 @@ void FEB_Read_Brake_Pedal() {
 
 void FEB_Normalized_updateAcc(){
 	normalized_acc = FEB_Normalized_Acc_Pedals();
+
+	char buf[128];
+	uint8_t buf_len;
+	buf_len = sprintf(buf, "normalized_acc: %f\n", normalized_acc);
+	HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+
 }
 
 float FEB_Normalized_Acc_Pedals() {
@@ -141,16 +147,16 @@ float FEB_Normalized_Acc_Pedals() {
 	char buf[128];
 	uint8_t buf_len;
 	buf_len = sprintf(buf, "acc1:%d acc2:%d\n", acc_pedal_1, acc_pedal_2);
-	HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+//	HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 
 
 	// check implausibility for shorting
-//	if (acc_pedal_1 < Sensor_Min || acc_pedal_1 > Sensor_Max
-//			|| acc_pedal_2 < Sensor_Min || acc_pedal_2 > Sensor_Max
-//			|| abs(acc_pedal_1 - acc_pedal_2) < 100) {
-//		isImpl = true;
-//		return 0.0;
-//	}
+	if (acc_pedal_1 < Sensor_Min || acc_pedal_1 > Sensor_Max
+			|| acc_pedal_2 < Sensor_Min || acc_pedal_2 > Sensor_Max
+			|| abs(acc_pedal_1 - acc_pedal_2) < 100) {
+		isImpl = true;
+		return 0.0;
+	}
 
 	//convert to % travel
 	// sensor 1 has positive slope
@@ -166,7 +172,8 @@ float FEB_Normalized_Acc_Pedals() {
 
 	float final_normalized = 0.5*(ped1_normalized + ped2_normalized);
 
-	// Implausiblity check if both pedals are stepped
+
+//	 Implausiblity check if both pedals are stepped
 	if (normalized_brake > 0.2 && normalized_acc > 0.1) {
 		isImpl = true;
 	}
@@ -225,7 +232,7 @@ void FEB_Normalized_CAN_sendBrake() {
 	char buf[128];
 	uint8_t buf_len;
 	buf_len = sprintf(buf, "Mail box level: %ld, Data: %d  %d  %d  %d  %d  %d  %d\n", HAL_CAN_GetTxMailboxesFreeLevel(&hcan1), FEB_CAN_Tx_Data[0], FEB_CAN_Tx_Data[1], FEB_CAN_Tx_Data[2], FEB_CAN_Tx_Data[3], FEB_CAN_Tx_Data[4], FEB_CAN_Tx_Data[5], FEB_CAN_Tx_Data[6]);
-	HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+//	HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 
 	// Delay until mailbox available
 	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
