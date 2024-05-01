@@ -6,6 +6,6 @@ void FEB_Init(void){
 }
 
 void FEB_Main_Loop(void){
-	//Fan speed set by CAN receive function
+	//Fan speed set by CAN receive interrupt
 	HAL_Delay(100);
 }
