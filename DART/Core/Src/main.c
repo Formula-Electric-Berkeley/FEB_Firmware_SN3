@@ -121,31 +121,7 @@ int main(void)
   MX_CAN_Init();
   MX_TIM14_Init();
   /* USER CODE BEGIN 2 */
-  //FEB_Fan_Init();
 
-
-  sprintf(gu8_MSG, "Init", gu32_T1);
-  HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 10);
-
-  //for fan 3
-//  if (HAL_TIM_Base_Start_IT(&htim14) != HAL_OK)
-//    {
-//      /* Starting Error */
-//      Error_Handler();
-//    }
-
-  //for fan 5
-//
-//  if (HAL_TIM_Base_Start_IT(&htim2) != HAL_OK)
-//      {
-//        /* Starting Error */
-//        Error_Handler();
-//      }
-//
-//  //HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-//
-//  //HAL_TIM_IC_Start_IT(&htim3, TIM_CHANNEL_1);
-//  HAL_TIM_IC_Start_IT(&htim14, TIM_CHANNEL_1);
   FEB_Init();
 
   /* USER CODE END 2 */
@@ -154,8 +130,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  //HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-	 FEB_Main_Loop();
+
+	  FEB_Main_Loop();
 
     /* USER CODE END WHILE */
 
@@ -563,138 +539,133 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef* htim)
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef* htim){
 
-{
 
-    if(gu8_State == IDLE)
-    {
-        //gu32_T1 = TIM2->CCR1;
-    	gu32_T1 = htim->Instance->CCR1;
-        gu16_TIM2_OVC = 0;
-        gu8_State = DONE;
-    }
-    else if(gu8_State == DONE)
-    {
-        //gu32_T2 = TIM2->CCR1;
-    	gu32_T2 = htim->Instance->CCR1;
-        gu32_Ticks = (gu32_T2 + (gu16_TIM2_OVC * 256)) - gu32_T1;
-        gu32_Freq = (uint32_t)(F_CLK/gu32_Ticks);
-        if(gu32_Freq != 0)
-        {
-          sprintf(gu8_MSG, "Frequency = %lu Hz\n\r", gu32_Freq);
-          HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 100);
-        }
-        if(gu32_Freq == 0)
-                {
+ sprintf(gu8_MSG, "Callback \n");
+  HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 100);
+//	FEB_IC_Process(htim);
 
-                  sprintf(gu8_MSG, "Failed = %lu Hz\n\r", gu32_Freq);
-                  HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 100);
-                }
-        gu8_State = IDLE;
-//        HAL_TIM_IC_Stop_IT(htim, TIM_CHANNEL_1);
-    }
+switch(htim->Channel){
+
+case HAL_TIM_ACTIVE_CHANNEL_1:
+
+		if(gu8_State == IDLE)
+		{
+			gu32_T1 = htim->Instance->CCR1;
+			gu16_TIM2_OVC = 0;
+			gu8_State = DONE;
+		}
+		else if(gu8_State == DONE)
+		{
+			//gu32_T2 = TIM2->CCR1;
+			gu32_T2 = htim->Instance->CCR1;
+			gu32_Ticks = (gu32_T2 + (gu16_TIM2_OVC * 256)) - gu32_T1;
+			gu32_Freq = (uint32_t)(F_CLK/gu32_Ticks);
+			if(gu32_Freq != 0)
+			{
+			  sprintf(gu8_MSG, "Frequency = %lu Hz\n\r", gu32_Freq);
+			  HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 100);
+			}
+			if(gu32_Freq == 0)
+			{
+			  sprintf(gu8_MSG, "Failed = %lu Hz\n\r", gu32_Freq);
+			  HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 100);
+			}
+			gu8_State = IDLE;
+		}
+		break;
+
+case HAL_TIM_ACTIVE_CHANNEL_2:
+
+		if(gu8_State == IDLE)
+		{
+			gu32_T1 = htim->Instance->CCR2;
+			gu16_TIM2_OVC = 0;
+			gu8_State = DONE;
+		}
+		else if(gu8_State == DONE)
+		{
+			//gu32_T2 = TIM2->CCR1;
+			gu32_T2 = htim->Instance->CCR2;
+			gu32_Ticks = (gu32_T2 + (gu16_TIM2_OVC * 256)) - gu32_T1;
+			gu32_Freq = (uint32_t)(F_CLK/gu32_Ticks);
+			if(gu32_Freq != 0)
+			{
+			  sprintf(gu8_MSG, "Frequency = %lu Hz\n\r", gu32_Freq);
+			  HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 100);
+			}
+			if(gu32_Freq == 0)
+			{
+			  sprintf(gu8_MSG, "Failed = %lu Hz\n\r", gu32_Freq);
+			  HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 100);
+			}
+			gu8_State = IDLE;
+		}
+		break;
+
+case HAL_TIM_ACTIVE_CHANNEL_3:
+
+		if(gu8_State == IDLE)
+		{
+			gu32_T1 = htim->Instance->CCR3;
+			gu16_TIM2_OVC = 0;
+			gu8_State = DONE;
+		}
+		else if(gu8_State == DONE)
+		{
+			//gu32_T2 = TIM2->CCR1;
+			gu32_T2 = htim->Instance->CCR3;
+			gu32_Ticks = (gu32_T2 + (gu16_TIM2_OVC * 256)) - gu32_T1;
+			gu32_Freq = (uint32_t)(F_CLK/gu32_Ticks);
+			if(gu32_Freq != 0)
+			{
+			  sprintf(gu8_MSG, "Frequency = %lu Hz\n\r", gu32_Freq);
+			  HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 100);
+			}
+			if(gu32_Freq == 0)
+			{
+			  sprintf(gu8_MSG, "Failed = %lu Hz\n\r", gu32_Freq);
+			  HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 100);
+			}
+			gu8_State = IDLE;
+		}
+		break;
+
+case HAL_TIM_ACTIVE_CHANNEL_4:
+
+		if(gu8_State == IDLE)
+		{
+			gu32_T1 = htim->Instance->CCR4;
+			gu16_TIM2_OVC = 0;
+			gu8_State = DONE;
+		}
+		else if(gu8_State == DONE)
+		{
+			//gu32_T2 = TIM2->CCR1;
+			gu32_T2 = htim->Instance->CCR4;
+			gu32_Ticks = (gu32_T2 + (gu16_TIM2_OVC * 256)) - gu32_T1;
+			gu32_Freq = (uint32_t)(F_CLK/gu32_Ticks);
+			if(gu32_Freq != 0)
+			{
+			  sprintf(gu8_MSG, "Frequency = %lu Hz\n\r", gu32_Freq);
+			  HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 100);
+			}
+			if(gu32_Freq == 0)
+			{
+			  sprintf(gu8_MSG, "Failed = %lu Hz\n\r", gu32_Freq);
+			  HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 100);
+			}
+			gu8_State = IDLE;
+		}
+		break;
+
+	}
 }
-//{
-//
-////		if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1){
-////				//sprintf(gu8_MSG, "channel 1\n\r", gu32_Freq);
-////				//HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 112);
-////			}
-//
-//	    if(gu8_State == IDLE)
-//	    {
-//	        gu32_T1 = TIM2->CCR1;
-//		    gu16_TIM3_OVC = 0;
-//	        gu8_State = DONE;
-//
-//	        //sprintf(gu8_MSG, "T1 = %lu Hz\n\r", gu32_T1);
-//		    //HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 10);
-//	    }
-//	    else if(gu8_State == DONE)
-//	    {
-//	    	gu32_T2 = TIM2->CCR1;
-//	    	//sprintf(gu8_MSG, "T2 = %lu Hz\n\r", gu32_T2);
-//			//HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 10);
-//
-//	        gu32_Ticks = (gu32_T2 + (gu16_TIM3_OVC * 65536)) - gu32_T1;
-//
-//	        gu32_Freq = (uint32_t)(F_CLK/gu32_Ticks);
-//
-//	        //sprintf(gu8_MSG, "Frequency = %lu Hz\n\r", gu32_Freq);
-//		    //HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 10);
-//
-//	        if(gu32_Freq != 0)
-//	        {
-//	          sprintf(gu8_MSG, "Frequency = %lu Hz\n\r", gu32_Freq);
-//	          HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 10);
-//	        }
-//	        else{
-//	        	sprintf(gu8_MSG, "Failure \n\r", gu32_Freq);
-//	        	HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 10);
-//	        }
-//	        gu8_State = IDLE;
-//	        //HAL_TIM_IC_Stop_IT(&htim16, TIM_CHANNEL_1);
-//	    }
-
-	// fan 1 and 2
-//	if(htim->Instance == htim16.Instance){
-//		sprintf(gu8_MSG, "htim16\n\r", gu32_Freq);
-//		HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 112);
-//	}
-//
-//	if(htim->Instance == htim2.Instance){
-//			sprintf(gu8_MSG, "htim2\n\r", gu32_Freq);
-//			HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 112);
-//		}
-//
-//	if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1){
-//			sprintf(gu8_MSG, "channel 1\n\r", gu32_Freq);
-//			HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 112);
-//		}
-//
-//    if(gu8_State == IDLE)
-//    {
-//        gu32_T1 = TIM16->CCR1;
-//	    gu16_TIM3_OVC = 0;
-//
-//        sprintf(gu8_MSG, "T1 = %lu", gu32_T1);
-//		HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 10);
-//
-//        gu8_State = DONE;
-//    }
-//    else if(gu8_State == DONE)
-//    {
-//        gu32_T2 = TIM16->CCR1;
-//        gu32_Ticks = (gu32_T2 + (gu16_TIM3_OVC * 65536)) - gu32_T1;
-//
-//        sprintf(gu8_MSG, "T2 = %lu", gu32_T2);
-//		HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 10);
-//
-//        gu32_Freq = (uint32_t)(F_CLK/gu32_Ticks);
-//
-//        //maybe also try printing gu32_ticks
-//        sprintf(gu8_MSG, "Freq = %lu", gu32_Freq);
-//		HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 10);
-//
-//
-//        if(gu32_Freq != 0)
-//        {
-//          sprintf(gu8_MSG, "Frequency = %lu Hz\n\r", gu32_Freq);
-//          HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 10);
-//        }
-//        else{
-//        	sprintf(gu8_MSG, "Failure = %lu Hz\n\r", gu32_Freq);
-//        	HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 10);
-//        }
-//        gu8_State = IDLE;
-//        //HAL_TIM_IC_Stop_IT(&htim16, TIM_CHANNEL_1);
-//    }
-
-//}
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
+//	FEB_Period_Elapsed();
     gu16_TIM2_OVC++;
 }
 
@@ -710,10 +681,12 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
+
   while (1)
   {
-	  sprintf(gu8_MSG, "HAL ERROR\n\r", gu32_Freq);
-	  HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 100);
+	  FEB_Error_Handler();
+//	  sprintf(gu8_MSG, "HAL ERROR\n\r");
+//	  HAL_UART_Transmit(&huart2, gu8_MSG, sizeof(gu8_MSG), 100);
   }
   /* USER CODE END Error_Handler_Debug */
 }

@@ -1,19 +1,17 @@
-#include "FEB_CAN_BBB.h"
+#include "FEB_CAN_BMS.h"
 
 extern CAN_HandleTypeDef hcan1;
 extern CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
 extern uint8_t FEB_CAN_Tx_Data[8];
 extern uint32_t FEB_CAN_Tx_Mailbox;
-
-#define FEB_CAN_ID_BBB_SPEED 0x0
-#define FEB_CAN_ID_FAN1_FREQ 0x0
-
+extern uint8_t FEB_CAN_Measured_Speed[8];
+extern UART_HandleTypeDef huart2;
 
 
-uint8_t FEB_CAN_BBB_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
+uint8_t FEB_CAN_BMS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
     // For multiple filters, create array of filter IDs and loop over IDs.
 
-	uint16_t filter_arr[] = {FEB_CAN_ID_BBB_SPEED};
+	uint16_t filter_arr[] = {FEB_CAN_ID_BMS_DART1_REQUESTED_FAN_SPEEDS};
 
 	for (uint8_t i = 0; i < 1; i++) {
 
@@ -41,36 +39,35 @@ uint8_t FEB_CAN_BBB_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
 	return filter_bank;
 }
 
-void FEB_CAN_BBB_Str_Message(CAN_RxHeaderTypeDef *rx_header, uint8_t FEB_CAN_Rx_Data[]) {
+void FEB_CAN_BMS_Process_Message(CAN_RxHeaderTypeDef *rx_header, uint8_t FEB_CAN_Rx_Data[]) {
 	switch(rx_header->ExtId) {
-			case FEB_CAN_ID_BBB_SPEED:
-				FEB_Fan_1_Speed_Set(FEB_CAN_Rx_Data[0]);
-				FEB_Fan_2_Speed_Set(FEB_CAN_Rx_Data[1]);
-				FEB_Fan_3_Speed_Set(FEB_CAN_Rx_Data[2]);
-				FEB_Fan_4_Speed_Set(FEB_CAN_Rx_Data[3]);
-				FEB_Fan_5_Speed_Set(FEB_CAN_Rx_Data[4]);
-				break;
+		case FEB_CAN_ID_BMS_DART1_REQUESTED_FAN_SPEEDS:
+			FEB_Fan_CAN_Process(FEB_CAN_Rx_Data);
+			break;
 		}
 	}
 
 
-void FEB_CAN_Transmit(void) {
+void FEB_CAN_Transmit() {
 	// Initialize Transmission Header
 	FEB_CAN_Tx_Header.DLC = 4;
-	FEB_CAN_Tx_Header.StdId = FEB_CAN_ID_FAN1_FREQ;
+	FEB_CAN_Tx_Header.StdId = FEB_CAN_ID_DART_DART1_MEASURED_FAN_SPEEDS;
 	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
 
 
 	// Configure FEB_CAN_Tx_Data
-    FEB_CAN_Tx_Data[0] = 0x0;
+//    FEB_CAN_Tx_Data[0] = 0x0;
 
 	// Delay until mailbox available
 	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
-
 	// Add Tx data to mailbox
-	if (HAL_CAN_AddTxMessage(&hcan1, &FEB_CAN_Tx_Header, FEB_CAN_Tx_Data, &FEB_CAN_Tx_Mailbox) != HAL_OK) {
+
+	//Print values that would be transmitted via CAN
+	HAL_UART_Transmit(&huart2, FEB_CAN_Measured_Speed, sizeof(FEB_CAN_Measured_Speed), 100);
+
+	if (HAL_CAN_AddTxMessage(&hcan1, &FEB_CAN_Tx_Header, FEB_CAN_Measured_Speed, &FEB_CAN_Tx_Mailbox) != HAL_OK) {
 		// Code Error - Shutdown
 	}
 }

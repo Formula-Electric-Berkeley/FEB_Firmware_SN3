@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (12.3.rel1)
+# Toolchain: GNU Tools for STM32 (11.3.rel1)
 ################################################################################
 
 -include ../makefile.init
@@ -60,8 +60,8 @@ all: main-build
 main-build: DART_3.elf secondary-outputs
 
 # Tool invocations
-DART_3.elf DART_3.map: $(OBJS) $(USER_OBJS) C:\Users\alexp\OneDrive\Desktop\FEBFolder\FEB_Firmware_SN3\DART\STM32F042K6TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "DART_3.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0 -T"C:\Users\alexp\OneDrive\Desktop\FEBFolder\FEB_Firmware_SN3\DART\STM32F042K6TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="DART_3.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+DART_3.elf DART_3.map: $(OBJS) $(USER_OBJS) /Users/evanrobert/Documents/FEB/FEB_Firmware_SN3/DART/STM32F042K6TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "DART_3.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0 -T"/Users/evanrobert/Documents/FEB/FEB_Firmware_SN3/DART/STM32F042K6TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="DART_3.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

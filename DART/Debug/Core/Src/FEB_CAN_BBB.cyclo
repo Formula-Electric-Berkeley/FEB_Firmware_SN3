@@ -1,3 +1,0 @@
-../Core/Src/FEB_CAN_BBB.c:13:9:FEB_CAN_BBB_Filter	2
-../Core/Src/FEB_CAN_BBB.c:44:6:FEB_CAN_BBB_Str_Message	2
-../Core/Src/FEB_CAN_BBB.c:57:6:FEB_CAN_Transmit	2
