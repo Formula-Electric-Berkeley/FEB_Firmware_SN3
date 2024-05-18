@@ -4,6 +4,7 @@
 // ******************************** Includes ********************************
 
 #include "FEB_CAN_ID.h"
+#include "FEB_CAN_ICS.h"
 #include "FEB_Const.h"
 #include "FEB_LTC6811.h"
 #include "FEB_SM.h"

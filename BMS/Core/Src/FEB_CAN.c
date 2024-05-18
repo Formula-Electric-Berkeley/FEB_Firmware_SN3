@@ -34,6 +34,8 @@ void FEB_CAN_Init(void) {
 void FEB_CAN_Filter_Config(void) {
 	uint8_t filter_bank = 0;
 	filter_bank = FEB_CAN_IVT_Filter_Config(&hcan1, CAN_RX_FIFO0, filter_bank);
+	filter_bank = FEB_CAN_ICS_Filter(&hcan1, CAN_RX_FIFO0, filter_bank);
+
 //	filter_bank = FEB_CAN_Charger_Filter_Config(&hcan1, CAN_RX_FIFO0, filter_bank);
 }
 
@@ -41,5 +43,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 	if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &FEB_CAN_Rx_Header, FEB_CAN_Rx_Data) == HAL_OK) {
 		FEB_CAN_IVT_Store_Msg(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);
 		FEB_CAN_Charger_Store_Msg(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);
+		FEB_CAN_ICS_Store_Msg(&FEB_CAN_Rx_Header, FEB_CAN_Rx_Data);
+
 	}
 }

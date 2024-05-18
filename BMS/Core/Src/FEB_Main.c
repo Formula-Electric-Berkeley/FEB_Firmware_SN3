@@ -1,6 +1,6 @@
 // ******************************** Includes ********************************
 
-#include "FEB_Main.h"
+#include "FEB_SM.h"
 
 
 // TODO: REMOVE
@@ -25,6 +25,20 @@ void FEB_Main_Task1_VT(void) {
 
 		// Voltage
 		FEB_LTC6811_Poll_Voltage();
+		FEB_SM_ST_t get_curr_state = FEB_SM_Get_Current_State();
+
+		bool pin4 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4);
+		bool pin5 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_5);
+
+		char buffer[20];
+		sprintf(buffer, "Pin4: %d Pin5: %d\n", pin4, pin5);
+		HAL_UART_Transmit(&huart2, (uint8_t*) buffer, strlen(buffer),HAL_MAX_DELAY);
+
+
+//		char buffer[5];
+//		sprintf(buffer, "State: %d\n", get_curr_state);
+
+		//HAL_UART_Transmit(&huart2,(uint8_t*)buffer,strlen(buffer),HAL_MAX_DELAY);
 //		FEB_LTC6811_Validate_Voltage();
 
 		// Temperature
@@ -71,7 +85,7 @@ void FEB_Main_Task6_CAN(void) {
 
 //		FEB_LTC6811_CAN_Transmit_Voltage();
 //		FEB_LTC6811_CAN_Transmit_Temperature();
-//		FEB_SM_CAN_Transmit();
+		FEB_SM_CAN_Transmit();
 		// TODO: CAN transmit LTC6811 balance, add bit to indicate currently balancing
 		// TODO: CAN transmit LTC6811 enabled temperature sensors
 		osDelay(200);

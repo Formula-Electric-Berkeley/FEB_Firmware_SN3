@@ -33,11 +33,13 @@
 #define FEB_CAN_ID_BMS_STATE 0x3
 #define FEB_CAN_ID_BMS_BALANCE 0x4
 
-//SW
-#define FEB_CAN_ID_SW_ID 0x5
-#define FEB_CAN_ID_SW_READY_TO_DRIVE 0x6
-#define FEB_CAN_ID_SW_COOLANT_PUMP 0x7
-#define FEB_CAN_ID_SW_EXTRA 0x8
-#define FEB_CAN_ID_SW_ACUMULATOR_FANS 0x9
+//SW -TODO: This is just copied for now
+#define FEB_CAN_ID_ICS_BUTTON_STATE 0x5
+#define FEB_CAN_ID_ICS_TEST 0x6
+//#define FEB_CAN_ID_SW_ID 0x5
+//#define FEB_CAN_ID_SW_READY_TO_DRIVE 0x6
+//#define FEB_CAN_ID_SW_COOLANT_PUMP 0x7
+//#define FEB_CAN_ID_SW_EXTRA 0x8
+//#define FEB_CAN_ID_SW_ACUMULATOR_FANS 0x9
 
 #endif /* INC_FEB_CAN_ID_H_ */

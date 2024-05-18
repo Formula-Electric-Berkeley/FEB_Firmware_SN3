@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include "stm32f4xx_hal.h"
 
+
 // ******************************** Enum & Struct ********************************
 
 // List of states for state machine

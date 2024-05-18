@@ -1,6 +1,10 @@
 // ******************************** Includes & External ********************************
 
 #include "FEB_CAN_IVT.h"
+#include <string.h>
+#include <stdio.h>
+
+
 
 
 // ******************************** Struct ********************************
@@ -16,6 +20,8 @@ typedef struct {
 
 static IVT_CAN_flag_t IVT_CAN_flag;
 FEB_CAN_IVT_Message_t FEB_CAN_IVT_Message;
+extern UART_HandleTypeDef huart2;
+
 
 // ******************************** Functions ********************************
 
@@ -68,14 +74,20 @@ void FEB_CAN_IVT_Store_Msg(CAN_RxHeaderTypeDef* rx_header, uint8_t rx_data[]) {
 }
 
 void FEB_CAN_IVT_Process(void) {
+	char buf[20];
+//	sprintf(buf,"%ld\n", FEB_CAN_IVT_Message.voltage_1_mV);
+//	HAL_UART_Transmit(&huart2, (uint8_t*) buf,strlen(buf),HAL_MAX_DELAY );
+
 	if (IVT_CAN_flag.current) {
 		IVT_CAN_flag.current = false;
 		// TODO: Check current flowing through battery
 		// float current_A = FEB_CAN_IVT_Message.current_mA * 0.001;
 	}
+
+	//TODO: Manually trigger driving state
 	if (IVT_CAN_flag.voltage_1) {
 		IVT_CAN_flag.voltage_1 = false;
-		if (FEB_SM_Get_Current_State() == FEB_SM_ST_PRECHARGE) {
+		if (FEB_SM_Get_Current_State() == FEB_SM_ST_PRECHARGE && FEB_Ready_To_Drive()) {
 			// TODO: Check precharge complete
 			float voltage_V = (float) FEB_CAN_IVT_Message.voltage_1_mV * 0.001;
 			float target_voltage_V = FEB_LTC6811_Get_Total_Voltage() * FEB_CONST_PRECHARGE_PCT;

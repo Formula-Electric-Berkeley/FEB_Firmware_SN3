@@ -7,7 +7,7 @@
 #define FEB_CONST_NUM_ACC_CELLS_PER_IC 10 		// Number of accumulator cells per LTC6811 IC
 #define FEB_CONST_NUM_LTC_CELLS_PER_IC 12		// Number of LTC6811 cells per LTC6811 IC
 #define FEB_CONST_NUM_CELLS_PER_BANK 20
-#define FEB_CONST_NUM_BANKS 1
+#define FEB_CONST_NUM_BANKS 7
 #define FEB_CONST_NUM_CELLS (FEB_CONST_NUM_CELLS_PER_BANK * FEB_CONST_NUM_BANKS)
 
 // Cell temperature thresholds

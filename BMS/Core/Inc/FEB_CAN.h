@@ -6,6 +6,8 @@
 #include "FEB_CAN_Charger.h"
 #include "FEB_CAN_IVT.h"
 #include "FEB_SM.h"
+#include "FEB_CAN_ICS.h"
+
 
 #include "stm32f4xx_hal.h"
 
