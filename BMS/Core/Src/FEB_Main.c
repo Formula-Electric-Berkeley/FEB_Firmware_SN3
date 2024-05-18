@@ -25,14 +25,14 @@ void FEB_Main_Task1_VT(void) {
 
 		// Voltage
 		FEB_LTC6811_Poll_Voltage();
-		FEB_SM_ST_t get_curr_state = FEB_SM_Get_Current_State();
-
-		bool pin4 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4);
-		bool pin5 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_5);
-
-		char buffer[20];
-		sprintf(buffer, "Pin4: %d Pin5: %d\n", pin4, pin5);
-		HAL_UART_Transmit(&huart2, (uint8_t*) buffer, strlen(buffer),HAL_MAX_DELAY);
+//		FEB_SM_ST_t get_curr_state = FEB_SM_Get_Current_State();
+//
+//		bool pin4 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4);
+//		bool pin5 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_5);
+//
+//		char buffer[20];
+//		sprintf(buffer, "Pin4: %d Pin5: %d\n", pin4, pin5);
+//		HAL_UART_Transmit(&huart2, (uint8_t*) buffer, strlen(buffer),HAL_MAX_DELAY);
 
 
 //		char buffer[5];
@@ -73,7 +73,7 @@ void FEB_Main_Task4_Balance(void) {
 void FEB_Main_Task5_IVT(void) {
 	while (1) {
 		FEB_CAN_IVT_Process();
-		osDelay(100);
+		osDelay(50);
 	}
 }
 

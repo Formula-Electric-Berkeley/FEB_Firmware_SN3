@@ -74,9 +74,9 @@ void FEB_CAN_IVT_Store_Msg(CAN_RxHeaderTypeDef* rx_header, uint8_t rx_data[]) {
 }
 
 void FEB_CAN_IVT_Process(void) {
-	char buf[20];
-//	sprintf(buf,"%ld\n", FEB_CAN_IVT_Message.voltage_1_mV);
-//	HAL_UART_Transmit(&huart2, (uint8_t*) buf,strlen(buf),HAL_MAX_DELAY );
+	char buf[64];
+	sprintf(buf,"Volt: %f, Current: %f\n", FEB_CAN_IVT_Message.voltage_1_mV * 1e-3, FEB_CAN_IVT_Message.current_mA * 1e-3);
+	HAL_UART_Transmit(&huart2, (uint8_t*) buf,strlen(buf),HAL_MAX_DELAY );
 
 	if (IVT_CAN_flag.current) {
 		IVT_CAN_flag.current = false;
@@ -87,6 +87,10 @@ void FEB_CAN_IVT_Process(void) {
 	//TODO: Manually trigger driving state
 	if (IVT_CAN_flag.voltage_1) {
 		IVT_CAN_flag.voltage_1 = false;
+
+		sprintf(buf,"Target: %f\n", FEB_LTC6811_Get_Total_Voltage() * FEB_CONST_PRECHARGE_PCT);
+//		HAL_UART_Transmit(&huart2, (uint8_t*) buf,strlen(buf),HAL_MAX_DELAY );
+
 		if (FEB_SM_Get_Current_State() == FEB_SM_ST_PRECHARGE && FEB_Ready_To_Drive()) {
 			// TODO: Check precharge complete
 			float voltage_V = (float) FEB_CAN_IVT_Message.voltage_1_mV * 0.001;

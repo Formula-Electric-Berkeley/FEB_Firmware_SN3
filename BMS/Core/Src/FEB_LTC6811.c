@@ -182,8 +182,8 @@ static void store_voltage_values(void) {
 			uint16_t volt_100uV = IC_config[get_IC(bank, cell)].cells.c_codes[get_LTC6811_cell(cell)];
 			accumulator.banks[bank].cells[cell].volt_100uV = volt_100uV;
 
-			char UART_Str[64];
-			sprintf(UART_Str, "Bank %d, Cell %d: %d\n", bank, cell, volt_100uV);
+//			char UART_Str[64];
+//			sprintf(UART_Str, "Bank %d, Cell %d: %d\n", bank, cell, volt_100uV);
 //			HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
 
 			accumulator.total_volt_V += (float) volt_100uV * 0.0001;
