@@ -22,8 +22,8 @@ struct FEB_CAN_Payload {
 
 typedef struct circBuffer {
   struct FEB_CAN_Payload buffer[16];
-  size_t capacity; // max capacity of buffer -- number of string pointers buffer
-                   // will contain
+  uint8_t IMU_DATA[23];
+  size_t capacity; // max capacity of buffer -- number of string pointers buffer will contain
   size_t count;    // number of pointers in buffer
   size_t write;    // index of write
   size_t read;     // index of read

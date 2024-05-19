@@ -223,6 +223,7 @@ int main(void)
 //	  transmit_data = transmit_data + 0.5;
 	FEB_CAN_Transmit_Test_Data(&hcan1);
     FEB_CAN_Transmit_Test_Data_ExtId(&hcan1);
+    // put IMU data into buffer
     FEB_circBuf_read(&FEBBuffer);
     FEB_circBuf_read(&FEBBuffer);
 	HAL_Delay(200);
