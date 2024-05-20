@@ -1,0 +1,5 @@
+../Core/Src/FEB_TPS2482.c:20:6:FEB_SETUP_TPS2482	1
+../Core/Src/FEB_TPS2482.c:52:6:FEB_TPS2482_shutdownIfError	4
+../Core/Src/FEB_TPS2482.c:77:6:FEB_TPS2482_pullLowIfOutOfBounds	5
+../Core/Src/FEB_TPS2482.c:104:7:FEB_TPS2482_PollBusCurrent	6
+../Core/Src/FEB_TPS2482.c:125:6:FEB_TPS2482_Poll_Currents	1
