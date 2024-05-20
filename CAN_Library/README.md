@@ -474,51 +474,52 @@ Other files:
 
 ## 3.5 ICS
 ### 3.5.1 Buttons & Swtiches
+The DASH_Breakout Board transmits a 1 byte message corresponding to status of the I/O on the I/O expander, the bits in the message are broken down in the table below:
 <table>
   <tr>
-    <th>Button State Value</th>
+    <th>Bit</th>
     <th>Value</th>
     <th>Datatype</th>
   </tr>
   <tr>
     <td>0</td>
     <td>Buzzer State</td>
-    <td>uint8_t</td>
+    <td>bool</td>
   </tr>
   <tr>
     <td>1</td>
     <td>Button 1 (Ready-To-Drive)</td>
-    <td>uint8_t</td>
+    <td>bool</td>
   </tr>
   <tr>
     <td>2</td>
     <td>Button 2</td>
-    <td>uint8_t</td>
+    <td>bool</td>
   </tr>
   <tr>
     <td>3</td>
     <td>Button 3</td>
-    <td>uint8_t</td>
+    <td>bool</td>
   </tr>
   <tr>
     <td>4</td>
     <td>Button 4</td>
-    <td>uint8_t</td>
+    <td>bool</td>
   </tr>
   <tr>
     <td>5</td>
     <td>Switch 1 (Coolant Pump)</td>
-    <td>uint8_t</td>
+    <td>bool</td>
   </tr>
   <tr>
     <td>6</td>
     <td>Switch 2 (Radiator Fans)</td>
-    <td>uint8_t</td>
+    <td>bool</td>
   </tr>
   <tr>
     <td>7</td>
     <td>Switch 3 (Accumulator Fans)</td>
-    <td>uint8_t</td>
+    <td>bool</td>
   </tr>
 </table>
 
