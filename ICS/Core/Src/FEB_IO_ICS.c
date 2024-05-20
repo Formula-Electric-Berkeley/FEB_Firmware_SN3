@@ -11,8 +11,8 @@ static const uint32_t RTD_BUZZER_TIME = 2000;
 // **************************************** Functions ****************************************
 uint32_t rtd_press_start_time;
 uint32_t rtd_buzzer_start_time = 0;
-uint8_t set_rtd_buzzer = 0;
-uint8_t button_state = 0b11111110;
+uint8_t set_rtd_buzzer = 1;
+uint8_t button_state = 0b11111111;
 
 void FEB_IO_ICS_Init(void) {
 	uint8_t initial_io_exp_state = button_state; // initialize RTD (P0) to low
@@ -31,7 +31,7 @@ void FEB_IO_ICS_Loop(void) {
 	if (!(received_data & (1<<1))) {
 		if ((HAL_GetTick() - rtd_press_start_time) >= BTN_HOLD_TIME) {
 			button_state = (uint8_t) set_n_bit(button_state, 1, 1);
-			set_rtd_buzzer = 1;
+			set_rtd_buzzer = 0;
 			if (rtd_buzzer_start_time == 0) {
 				rtd_buzzer_start_time = HAL_GetTick();
 			}
@@ -72,6 +72,7 @@ void FEB_IO_ICS_Loop(void) {
 	if (!(received_data & (1<<7))) {
 		button_state = (uint8_t) set_n_bit(button_state, 5, 1);
 		FEB_CAN_ICS_Transmit_Button_State(button_state);
+		//Enable coolant pump on TPS chip
 	} else {
 		button_state = (uint8_t) set_n_bit(button_state, 5, 0);
 	}
@@ -79,6 +80,7 @@ void FEB_IO_ICS_Loop(void) {
 	// Switch 2 - Radiator Fans
 	if (!(received_data & (1<<5))) {
 		button_state = (uint8_t) set_n_bit(button_state, 6, 1);
+		//Enable
 		FEB_CAN_ICS_Transmit_Button_State(button_state);
 	} else {
 		button_state = (uint8_t) set_n_bit(button_state, 6, 0);
@@ -94,11 +96,11 @@ void FEB_IO_ICS_Loop(void) {
 
 	if ((HAL_GetTick() - rtd_buzzer_start_time) >= RTD_BUZZER_TIME) {
 		rtd_buzzer_start_time = 0;
-		set_rtd_buzzer = 0;
+		set_rtd_buzzer = 1;
 	}
 
 	// Handle buzzer
-	if (set_rtd_buzzer == 1) {
+	if (set_rtd_buzzer == 0) {
 		button_state = set_n_bit(button_state, 0, 1);
 		lv_label_set_text(ui_RTDTEXT, "RTD ON");
 		lv_obj_set_style_text_color(ui_RTDTEXT, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT );
