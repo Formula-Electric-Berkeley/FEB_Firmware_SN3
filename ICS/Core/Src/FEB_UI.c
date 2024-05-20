@@ -3,6 +3,7 @@
 #include "FEB_UI.h"
 
 extern FEB_CAN_ICS_Message_t FEB_CAN_ICS_Message;
+extern ICS_CAN_Rx_t ICS_CAN_Rx;
 
 // **************************************** Functions ****************************************
 
@@ -22,8 +23,16 @@ void FEB_UI_Update(void) {
 }
 
 void FEB_UI_Set_Values(void) {
-	char speedStr[20];
+	char canIdStr[4];
+	char dlcStr[4];
+	char dataStr[32];
 
-	sprintf(speedStr, "%d", FEB_CAN_ICS_Message.speed);
-	lv_label_set_text(ui_speedField, speedStr);
+	sprintf(dataStr, "%x %x %x %x %x %x %x %x", ICS_CAN_Rx.data[0], ICS_CAN_Rx.data[1], ICS_CAN_Rx.data[2], ICS_CAN_Rx.data[3], ICS_CAN_Rx.data[4], ICS_CAN_Rx.data[5], ICS_CAN_Rx.data[6], ICS_CAN_Rx.data[7]);
+
+	sprintf(canIdStr, "0x%x", ICS_CAN_Rx.id);
+	sprintf(dlcStr, "%ld", ICS_CAN_Rx.dlc);
+
+//	lv_label_set_text(ui_canIdLabel, canIdStr);
+//	lv_label_set_text(ui_dlcLabel, dlcStr);
+//	lv_label_set_text(ui_dataLabel, dataStr);
 }

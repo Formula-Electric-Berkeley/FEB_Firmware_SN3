@@ -14,6 +14,12 @@
 #include "ui.h"
 
 typedef struct {
+	volatile uint32_t id;
+	volatile uint32_t dlc;
+	volatile uint8_t data[8];
+} ICS_CAN_Rx_t;
+
+typedef struct {
 	volatile uint8_t speed;
 } FEB_CAN_ICS_Message_t;
 

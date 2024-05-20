@@ -11,6 +11,7 @@ extern uint32_t FEB_CAN_Tx_Mailbox;
 // ******************************** Variables ********************************
 
 FEB_CAN_ICS_Message_t FEB_CAN_ICS_Message;
+ICS_CAN_Rx_t ICS_CAN_Rx;
 
 uint8_t speed = 0;
 
@@ -38,9 +39,9 @@ uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
 		// Code Error - Shutdown
 	}
 
-//	uint16_t ids[] = {FEB_CAN_ID_ICS_BUTTON_STATE, FEB_CAN_ID_ICS_TEST, 10};
+//	uint16_t ids[] = {FEB_CAN_ID_APPS_BRAKE_PEDAL};
 //
-//	for (uint8_t i = 0; i < 3; i++) {
+//	for (uint8_t i = 0; i < 1; i++) {
 //		CAN_FilterTypeDef filter_config;
 //
 //		// Standard CAN - 2.0A - 11 bit
@@ -65,23 +66,17 @@ uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
 }
 
 void FEB_CAN_ICS_Rx_Handler(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_CAN_Rx_Data[]) {
-	char str[1024];
+	ICS_CAN_Rx.id = FEB_CAN_Rx_Header->StdId;
+	ICS_CAN_Rx.dlc = FEB_CAN_Rx_Header->DLC;
+	memcpy(ICS_CAN_Rx.data, FEB_CAN_Rx_Data, FEB_CAN_Rx_Header->DLC);
 
-	sprintf(str, "[RECEIVE] CAN ID: %d\n", FEB_CAN_Rx_Header->StdId);
-//	sprintf(str, "[RECEIVE] CAN ID\n");
-
-	HAL_UART_Transmit(&huart3, (uint8_t *) str, strlen(str), 100);
-
-	switch(FEB_CAN_Rx_Header->StdId) {
-		case FEB_CAN_ID_ICS_BUTTON_STATE:
-			char button_state_str[9];
-			uint8_to_binary_string(FEB_CAN_Rx_Data[0], button_state_str);
-			FEB_UART_Transmit_String(button_state_str);
-			break;
-		case FEB_CAN_ID_ICS_TEST:
-			FEB_CAN_ICS_Message.speed = FEB_CAN_Rx_Data[0];
-			break;
-	}
+//	switch(FEB_CAN_Rx_Header->StdId) {
+//		case FEB_CAN_ID_ICS_BUTTON_STATE:
+//			break;
+//		case FEB_CAN_ID_ICS_TEST:
+//			FEB_CAN_ICS_Message.speed = FEB_CAN_Rx_Data[0];
+//			break;
+//	}
 }
 
 void FEB_CAN_ICS_Transmit_Button_State(uint8_t transmit_button_state) {

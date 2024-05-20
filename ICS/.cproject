@@ -268,15 +268,6 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
-	<storageModule moduleId="scannerConfiguration">
-		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.974752329;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.974752329.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1065232008;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1005032237">
-			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.118535684;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.118535684.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.649134948;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1620826226">
-			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Debug">
 			<resource resourceType="PROJECT" workspacePath="/LVGL_STM32f469I_Disco"/>
@@ -285,4 +276,5 @@
 			<resource resourceType="PROJECT" workspacePath="/LVGL_STM32f469I_Disco"/>
 		</configuration>
 	</storageModule>
+	<storageModule moduleId="scannerConfiguration"/>
 </cproject>

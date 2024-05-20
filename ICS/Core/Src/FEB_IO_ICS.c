@@ -6,9 +6,12 @@ extern I2C_HandleTypeDef hi2c1;
 
 static const uint16_t IOEXP_ADDR = 0x40;
 static const uint32_t BTN_HOLD_TIME = 2000;
+static const uint32_t RTD_BUZZER_TIME = 2000;
 
 // **************************************** Functions ****************************************
 uint32_t rtd_press_start_time;
+uint32_t rtd_buzzer_start_time = 0;
+uint8_t set_rtd_buzzer = 0;
 uint8_t button_state = 0b11111110;
 
 void FEB_IO_ICS_Init(void) {
@@ -24,13 +27,14 @@ void FEB_IO_ICS_Loop(void) {
 
 	button_state = 00000000;
 
-	uint8_t set_rtd_buzzer = 0;
-
 	// Button 1 - Ready-to-Drive (RTD) button
 	if (!(received_data & (1<<1))) {
 		if ((HAL_GetTick() - rtd_press_start_time) >= BTN_HOLD_TIME) {
 			button_state = (uint8_t) set_n_bit(button_state, 1, 1);
 			set_rtd_buzzer = 1;
+			if (rtd_buzzer_start_time == 0) {
+				rtd_buzzer_start_time = HAL_GetTick();
+			}
 			FEB_CAN_ICS_Transmit_Button_State(button_state);
 		} else {
 			button_state = (uint8_t) set_n_bit(button_state, 1, 0);
@@ -38,7 +42,6 @@ void FEB_IO_ICS_Loop(void) {
 	} else {
 		button_state = (uint8_t) set_n_bit(button_state, 1, 0);
 		rtd_press_start_time = HAL_GetTick();
-		set_rtd_buzzer = 0;
 	}
 
 	// Button 2
@@ -89,9 +92,17 @@ void FEB_IO_ICS_Loop(void) {
 		button_state = (uint8_t) set_n_bit(button_state, 7, 0);
 	}
 
+	if ((HAL_GetTick() - rtd_buzzer_start_time) >= RTD_BUZZER_TIME) {
+		rtd_buzzer_start_time = 0;
+		set_rtd_buzzer = 0;
+	}
+
 	// Handle buzzer
 	if (set_rtd_buzzer == 1) {
 		button_state = set_n_bit(button_state, 0, 1);
+		lv_label_set_text(ui_RTDTEXT, "RTD ON");
+		lv_obj_set_style_text_color(ui_RTDTEXT, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT );
+		lv_obj_set_style_bg_color(ui_RTDCOLOR, lv_color_hex(0x27ff00), LV_PART_MAIN | LV_STATE_DEFAULT );
 	} else {
 		button_state = set_n_bit(button_state, 0, 0);
 	}
@@ -103,7 +114,7 @@ void FEB_IO_ICS_Loop(void) {
 	// display button state on UI
 	char button_state_str[9];
 	uint8_to_binary_string(button_state, button_state_str);
-	lv_label_set_text(ui_buttonField, button_state_str);
+//	lv_label_set_text(ui_buttonField, button_state_str);
 }
 
 // set nth bit
