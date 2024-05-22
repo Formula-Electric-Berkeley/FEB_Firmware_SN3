@@ -2,22 +2,37 @@
 
 extern FEB_CAN_APPS_Message_t FEB_CAN_APPS_Message;
 
-static bool isDriving = false;
 
 void FEB_Peripherals_Control(){
 	  // activate peripheral devices if ready to drive
-	  if (FEB_Ready_To_Drive()) {
-		  isDriving = true;
-		  Enable_Coolant_Pump();
-		  Enable_Accumulator_Fans();
-		  Enable_Extra();
+	  if (FEB_Ready_To_Drive_Status()) {
+//		  Enable_Coolant_Pump();
+//		  Enable_Accumulator_Fans();
+//		  Enable_Extra();
+
+		  //Only enable if we are ready to drive and if we get signal to
+		  //not turn ono, then disable.
+		  if(FEB_Accum_Fan_Control()){
+			  Enable_Accumulator_Fans();
+		  }else {
+			  Disable_Accumulator_Fans();
+		  }
+
+		  //Enable Coolant pump, else disable if not received signal
+		  if(FEB_Coolant_Pump_Control()){
+			  Enable_Coolant_Pump();
+		  }else{
+			  Disable_Coolant_Pump();
+		  }
+
 	  // de-activate if not ready to drive
-	  } else if (FEB_Ready_To_Drive()) {
-		  isDriving = false;
+	  } else {
 		  Disable_Coolant_Pump();
 		  Disable_Accumulator_Fans();
 		  Disable_Extra();
 	  }
+
+
 }
 
 

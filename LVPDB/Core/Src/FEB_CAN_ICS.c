@@ -8,7 +8,15 @@ extern uint8_t FEB_CAN_Tx_Data[8];
 extern uint32_t FEB_CAN_Tx_Mailbox;
 
 // ******************************** Variables ********************************
-bool READY_TO_DRIVE = 0;
+
+/* FOLLOW THE FOLLOWING CONVENTIONS:
+	0 - R2D - This command should probably come from the APPS
+	1 - Enable Accumulator Fans
+	2 - Enable coolant pump
+*/
+
+bool ICS_States[3]; // Array to store the latest commands from the ICS via button
+
 
 // **************************************** Functions ****************************************
 
@@ -44,11 +52,21 @@ uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
 void FEB_CAN_ICS_Store_Msg(CAN_RxHeaderTypeDef *rx_header, uint8_t rx_data[]) {
 	switch(rx_header->StdId) {
 		case FEB_CAN_ID_ICS_BUTTON_STATE:
-				READY_TO_DRIVE = rx_data[0] & (1 << 1);
+				ICS_States[0] = rx_data[0] & (1 << 1);
+				ICS_States[1] = rx_data[0] & (1<<6);
+				ICS_States[2] = rx_data[0] & (1<<7);
 				break;
 	}
 }
 
-bool FEB_Ready_To_Drive() {
-	return READY_TO_DRIVE;
+bool FEB_Ready_To_Drive_Status() {
+	return ICS_States[0];
+}
+
+
+bool FEB_Accum_Fan_Control(){
+	return ICS_States[1];
+}
+bool FEB_Coolant_Pump_Control(){
+	return ICS_States[2];
 }
