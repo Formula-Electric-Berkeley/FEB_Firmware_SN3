@@ -11,6 +11,8 @@ static uint32_t rtd_buzzer_start_time = 0;
 static uint8_t set_rtd_buzzer = 1;
 static uint8_t IO_state = 0xFF;
 
+static uint8_t r2d = 0;
+
 // **************************************** Functions ****************************************
 
 void FEB_IO_ICS_Init(void) {
@@ -31,16 +33,17 @@ void FEB_IO_ICS_Loop(void) {
 	// Button 1 - Ready-to-Drive (RTD) button
 	if (!(received_data & (1<<1))) {
 		if ((HAL_GetTick() - rtd_press_start_time) >= BTN_HOLD_TIME) {
+			r2d = 1;
 			IO_state = (uint8_t) set_n_bit(IO_state, 1, 1);
 			set_rtd_buzzer = 0;
 			if (rtd_buzzer_start_time == 0) {
 				rtd_buzzer_start_time = HAL_GetTick();
 			}
 		} else {
-			IO_state = (uint8_t) set_n_bit(IO_state, 1, 0);
+			IO_state = (uint8_t) set_n_bit(IO_state, 1, r2d);
 		}
 	} else {
-		IO_state = (uint8_t) set_n_bit(IO_state, 1, 0);
+		IO_state = (uint8_t) set_n_bit(IO_state, 1, r2d);
 		rtd_press_start_time = HAL_GetTick();
 	}
 
