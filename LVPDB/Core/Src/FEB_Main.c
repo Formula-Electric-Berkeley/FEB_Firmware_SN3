@@ -86,7 +86,7 @@ void FEB_Main_Setup(void) {
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
 
 	//Not sure if enable seperately from ready to drive
-	//	Enable_Shutdown_Source();
+		Enable_Shutdown_Source();
 
 }
 
@@ -102,8 +102,16 @@ void FEB_Main_Loop(void) {
 //  FEB_CAN_Transmit(&hcan1, LVPDB_CP_CURRENT, &cp_current_reading);
 	apps_current_reading = FEB_CAN_APPS_Message.current;
 
-	buf_len = sprintf((char*) buf, "Current Draw (LV, EX, CP, APPS): %.3f, %.3f, %.3f, %.3f\r\n", current_reading, ex_current_reading, cp_current_reading, apps_current_reading);
+//	buf_len = sprintf((char*) buf, "Current Draw (LV, EX, CP, APPS): %.3f, %.3f, %.3f, %.3f\r\n", current_reading, ex_current_reading, cp_current_reading, apps_current_reading);
+//	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+
+	buf_len= sprintf((char*)buf, "Ready to Drive: %d , CP Status: %d , Accum Status: %d\n", FEB_Ready_To_Drive_Status(), FEB_Coolant_Pump_Control(), FEB_Accum_Fan_Control());
 	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+
+	//Print the brake pedal position for debugging purposes
+
+//	buf_len = sprintf((char*) buf, "Brake Pedal position: %f\n",  FEB_CAN_APPS_Message.brake_pedal);
+//	HAL_UART_Transmit(&huart2, (uint8_t*)buf, buf_len, HAL_MAX_DELAY);
 
 	HAL_Delay(10);
 }

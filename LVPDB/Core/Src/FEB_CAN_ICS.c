@@ -52,9 +52,10 @@ uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
 void FEB_CAN_ICS_Store_Msg(CAN_RxHeaderTypeDef *rx_header, uint8_t rx_data[]) {
 	switch(rx_header->StdId) {
 		case FEB_CAN_ID_ICS_BUTTON_STATE:
-				ICS_States[0] = rx_data[0] & (1 << 1);
-				ICS_States[1] = rx_data[0] & (1<<6);
-				ICS_States[2] = rx_data[0] & (1<<7);
+				ICS_States[0] = ((rx_data[0] | 0b11111101) == 0b11111111);
+				ICS_States[1] = ((rx_data[0] | 0b01111111) == 0b11111111);
+				ICS_States[2] = ((rx_data[0] | 0b10111111) == 0b11111111);
+				ICS_States[3] = ((rx_data[0] | 0b11011111) == 0b11111111);
 				break;
 	}
 }
@@ -69,4 +70,9 @@ bool FEB_Accum_Fan_Control(){
 }
 bool FEB_Coolant_Pump_Control(){
 	return ICS_States[2];
+}
+
+
+bool FEB_Extra_Control(){
+	return ICS_States[3];
 }

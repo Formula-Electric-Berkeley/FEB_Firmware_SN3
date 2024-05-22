@@ -20,4 +20,6 @@ bool FEB_Accum_Fan_Control(); //Get the accum fan status from ICs
 
 bool FEB_Coolant_Pump_Control(); //Get the collant pump status from ICS
 
+bool FEB_Extra_Control();
+
 #endif /* INC_FEB_CAN_ICS_H_ */

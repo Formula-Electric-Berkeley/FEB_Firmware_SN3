@@ -25,6 +25,12 @@ void FEB_Peripherals_Control(){
 			  Disable_Coolant_Pump();
 		  }
 
+		  if(FEB_Extra_Control()){
+			  Enable_Extra();
+		  }else{
+			  Disable_Extra();
+		  }
+
 	  // de-activate if not ready to drive
 	  } else {
 		  Disable_Coolant_Pump();
