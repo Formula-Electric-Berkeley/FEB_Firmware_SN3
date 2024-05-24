@@ -20,7 +20,7 @@ void FEB_Main_Setup(void){
 
 void FEB_Main_While(void){
 //	FEB_CAN_ICS_Transmit();
-
+//
 	if (FEB_Ready_To_Drive()) {
 		FEB_Normalized_updateAcc();
 		FEB_CAN_RMS_Process();
@@ -29,10 +29,10 @@ void FEB_Main_While(void){
 		FEB_CAN_RMS_Disable();
 	}
 	FEB_HECS_update();
-	FEB_CAN_RMS_Torque();
+//	FEB_CAN_RMS_Torque();
 	FEB_Normalized_update_Brake();
 	FEB_Normalized_CAN_sendBrake();
-	FEB_CAN_BSPD_Transmit();
+//	FEB_CAN_BSPD_Transmit();
 
 //	FEB_TPS2482_sendReadings(); //TODO: create transmit function for TPS2482
 //	FEB_CAN_RMS_torqueTransmit(); //UART for debugging

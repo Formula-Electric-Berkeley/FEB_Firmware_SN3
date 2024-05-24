@@ -416,7 +416,7 @@ HAL_StatusTypeDef HAL_CAN_Init(CAN_HandleTypeDef *hcan)
   /* Set the receive FIFO locked mode */
   if (hcan->Init.ReceiveFifoLocked == ENABLE)
   {
-    SET_BIT(hcan->Instance->MCR, CAN_MCR_RFLM);
+     SET_BIT(hcan->Instance->MCR, CAN_MCR_RFLM);
   }
   else
   {

@@ -44,7 +44,7 @@ uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
 void FEB_CAN_ICS_Store_Msg(CAN_RxHeaderTypeDef *rx_header, uint8_t rx_data[]) {
 	switch(rx_header->StdId) {
 		case FEB_CAN_ID_ICS_BUTTON_STATE:
-				READY_TO_DRIVE = rx_data[0] & (1 << 1);
+				READY_TO_DRIVE = ((rx_data[0] | 0b11111101) == 0b11111111);
 				break;
 	}
 }

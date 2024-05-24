@@ -148,8 +148,8 @@ void FEB_CAN_RMS_Transmit_updateTorque(void) { //TODO: Create Custom Transmit fu
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
 
 	// Copy data to Tx buffer
-	FEB_CAN_Tx_Data[0] = RMSControl.torque & 0xFF;
-	FEB_CAN_Tx_Data[1] = RMSControl.torque >> 8;
+	FEB_CAN_Tx_Data[0] = (uint8_t)RMSControl.torque & 0xFF;
+	FEB_CAN_Tx_Data[1] = (uint8_t)RMSControl.torque >> 8;
 	FEB_CAN_Tx_Data[2] = 0;
 	FEB_CAN_Tx_Data[3] = 0;
 	FEB_CAN_Tx_Data[4] = 1;

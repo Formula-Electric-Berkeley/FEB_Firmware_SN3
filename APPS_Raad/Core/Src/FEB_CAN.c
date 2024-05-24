@@ -13,12 +13,14 @@ uint8_t FEB_CAN_Tx_Data[8];
 uint8_t FEB_CAN_Rx_Data[8];
 
 uint32_t FEB_CAN_Tx_Mailbox;
+uint8_t setup = 0;
 
 // **************************************** Functions ****************************************
 
 void FEB_CAN_Init(void) {
 	FEB_CAN_Filter_Config();
 	if (HAL_CAN_Start(&hcan1) != HAL_OK) {
+		setup = 1;
         // Code Error - Shutdown
 	}
 	HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);

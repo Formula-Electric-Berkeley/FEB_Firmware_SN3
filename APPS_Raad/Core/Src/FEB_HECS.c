@@ -3,6 +3,7 @@
 #include "FEB_HECS.h"
 
 extern ADC_HandleTypeDef hadc1;
+extern UART_HandleTypeDef huart2;
 
 
 
@@ -32,21 +33,24 @@ uint16_t FEB_Read_ADC1(uint32_t channel){
 
 void FEB_HECS_update(){
 	uint16_t current_value = FEB_Read_ADC1(HECS_SIGNAL);
-//	char buf[128];
-//	uint8_t buf_len;
-//	buf_len = sprintf(buf, "HECS Current:%d\n", current_value);
+	char buf[128];
+	uint8_t buf_len;
+	buf_len = sprintf(buf, "HECS Current:%d\n", current_value);
+	HAL_UART_Transmit(&huart2, buf, strlen(buf), HAL_MAX_DELAY);
 
-	if (current_value > HECS_CURRENT){ //checks if current is above value (to be determined)
+	if (current_value >= HECS_CURRENT){ //checks if current is above value (to be determined)
 		currHigh = true;
+	}else{
+		currHigh = false;
 	}
 	FEB_HECS_indicate();
 }
 
 void FEB_HECS_indicate(){ //sends GPIO output to HECS Indicator
 	if (currHigh == true){
-		if (FEB_Normalized_getBrake() > 0.0){ //should check whether brake is pressed -- get double checked
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET); // sets GPIO PA5 to high
-		}
+
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET); // sets GPIO PA5 to high
+
 	}else{
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET); //sets GPIPO PA5 to low
 	}

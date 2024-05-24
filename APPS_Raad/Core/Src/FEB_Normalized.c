@@ -150,10 +150,9 @@ float FEB_Normalized_Acc_Pedals() {
 //	HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 
 
-	// check implausibility for shorting
-	if (acc_pedal_1 < Sensor_Min || acc_pedal_1 > Sensor_Max
-			|| acc_pedal_2 < Sensor_Min || acc_pedal_2 > Sensor_Max
-			|| abs(acc_pedal_1 - acc_pedal_2) < 100) {
+	// check implausibility for shorting. TODO: check if this fulfills the short circuiting rules.
+	if (acc_pedal_1 < ACC_PEDAL_1_END - 20 || acc_pedal_1 > ACC_PEDAL_1_START + 20
+			|| acc_pedal_2 < ACC_PEDAL_2_START - 50 || acc_pedal_2 > ACC_PEDAL_2_END + 50) {
 		isImpl = true;
 		return 0.0;
 	}
@@ -201,38 +200,47 @@ void FEB_Normalized_update_Brake() {
 }
 
 float FEB_Normalized_Brake_Pedals() {
-	uint16_t brake_pedal_1 =  FEB_Read_ADC(BRAKE_PEDAL);   //HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
-	char buf[128];
-	uint8_t buf_len;
-	buf_len = sprintf(buf, "brake%d\n", brake_pedal_1);
+	//TODO: This might need to change based on which sensor ends up getting used.
+	uint16_t brake_pres_2 =  FEB_Read_ADC(BRAKE_PRESS_2);   //HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
+
 //	HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 
-	float final_normalized = (brake_pedal_1 - BRAKE_PEDAL_1_START)/ (BRAKE_PEDAL_1_END - BRAKE_PEDAL_1_START);
+	float final_normalized = (brake_pres_2 - PRESSURE_START)/ (PRESSURE_END - PRESSURE_START);
 	final_normalized = final_normalized > 1 ? 1 : final_normalized;
 	final_normalized = final_normalized < 0.05 ? 0 : final_normalized;
 
-	if (brake_pedal_1 < BRAKE_PEDAL_1_START || brake_pedal_1 > BRAKE_PEDAL_1_END) {
+
+	if (brake_pres_2 < PRESSURE_START-20) {
 		return 0.0;
 	}
+
+	char buf[128];
+	uint8_t buf_len;
+	buf_len = sprintf(buf, "brake_Pos: %f\n", final_normalized);
+
+	HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 
 	return final_normalized;
 }
 
 void FEB_Normalized_CAN_sendBrake() {
 	// Initialize transmission header
-	FEB_CAN_Tx_Header.DLC = 8;
+	FEB_CAN_Tx_Header.DLC = 2;
 	FEB_CAN_Tx_Header.StdId = FEB_CAN_ID_APPS_BRAKE_PEDAL;
 	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
 
-	// Copy data to Tx buffer
-	memcpy(FEB_CAN_Tx_Data, &normalized_brake, sizeof(float));
+	// Copy data to Tx buffer. This might be incorrect. It's possible you have to do some bit shifting
+//	memcpy(FEB_CAN_Tx_Data, &normalized_brake, sizeof(float));
+	uint8_t converted_brake_val = (uint8_t)(normalized_brake * 100);
 
-	char buf[128];
-	uint8_t buf_len;
-	buf_len = sprintf(buf, "Mail box level: %ld, Data: %d  %d  %d  %d  %d  %d  %d\n", HAL_CAN_GetTxMailboxesFreeLevel(&hcan1), FEB_CAN_Tx_Data[0], FEB_CAN_Tx_Data[1], FEB_CAN_Tx_Data[2], FEB_CAN_Tx_Data[3], FEB_CAN_Tx_Data[4], FEB_CAN_Tx_Data[5], FEB_CAN_Tx_Data[6]);
-//	HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+	FEB_CAN_Tx_Data[0] = converted_brake_val;
+
+
+
+	//Debug to see the position of the Brake position sensor
+
 
 	// Delay until mailbox available
 	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
@@ -243,6 +251,11 @@ void FEB_Normalized_CAN_sendBrake() {
 		char buf[128];
 		uint8_t buf_len;
 		buf_len = sprintf(buf, "CAN MESSAGE FAIL TO SEND: %f\n", normalized_brake);
+		HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+	}else{
+		char buf[128];
+		uint8_t buf_len;
+		buf_len = sprintf(buf, "BRAKE CAN SENT \n");
 		HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 	}
 

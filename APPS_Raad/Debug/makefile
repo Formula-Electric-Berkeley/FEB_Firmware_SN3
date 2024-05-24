@@ -60,8 +60,8 @@ all: main-build
 main-build: APPS.elf secondary-outputs
 
 # Tool invocations
-APPS.elf APPS.map: $(OBJS) $(USER_OBJS) /Users/raadwan/Developer/FEB_Firmware_SN3/APPS_Raad/STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "APPS.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/raadwan/Developer/FEB_Firmware_SN3/APPS_Raad/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="APPS.map" -Wl,--gc-sections -static -u _printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+APPS.elf APPS.map: $(OBJS) $(USER_OBJS) /Users/alexlu/Desktop/FEBFolder/APPSStuff/FEB_Firmware_SN3/APPS_Raad/STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "APPS.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/alexlu/Desktop/FEBFolder/APPSStuff/FEB_Firmware_SN3/APPS_Raad/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="APPS.map" -Wl,--gc-sections -static -u _printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

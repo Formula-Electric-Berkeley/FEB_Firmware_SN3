@@ -15,6 +15,7 @@ struct {
 
 // ********************************** Functions **********************************
 
+//Reads the status of the BSPD if the BSPD reset is active.
 void FEB_CAN_BSPD_checkReset(){
 	if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2)){
 		BSPD.state = 1;
