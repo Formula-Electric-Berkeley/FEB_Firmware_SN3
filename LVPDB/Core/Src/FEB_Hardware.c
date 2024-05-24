@@ -43,7 +43,7 @@ void FEB_Peripherals_Control(){
 
 
 void FEB_Brake_Light_Control(){
-	if (FEB_CAN_APPS_Message.brake_pedal > BRAKE_THRE) {
+	if (FEB_CAN_APPS_Message.brake_pedal >= 4) {
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);// PA1 high
 	} else {
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);// PA1 low

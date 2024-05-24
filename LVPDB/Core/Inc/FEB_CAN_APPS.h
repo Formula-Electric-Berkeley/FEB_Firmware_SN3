@@ -11,7 +11,7 @@
 
 
 typedef struct {
-	float brake_pedal;
+	uint8_t brake_pedal; // Brake pedal stores value from 0 to 100
 	float current;
 } FEB_CAN_APPS_Message_t;
 
