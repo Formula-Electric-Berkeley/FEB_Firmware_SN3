@@ -59,10 +59,6 @@ uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
 		}
 	}
 
-
-	ICS_UI_Values.bms_state = 0;
-
-
 	return filter_bank++;
 }
 

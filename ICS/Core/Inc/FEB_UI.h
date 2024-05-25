@@ -21,6 +21,8 @@ void FEB_UI_Init(void);
 
 void FEB_UI_Update(void);
 
+void UI_Demo_Mode(void);
+
 void FEB_UI_Set_Values(void);
 
 #endif /* INC_FEB_UI_H_ */
