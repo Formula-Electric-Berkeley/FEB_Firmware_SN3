@@ -2,8 +2,12 @@
 
 #include "FEB_UI.h"
 
-extern FEB_CAN_ICS_Message_t FEB_CAN_ICS_Message;
-extern ICS_CAN_Rx_t ICS_CAN_Rx;
+// **************************************** Variables ****************************************
+
+extern ICS_UI_Values_t ICS_UI_Values;
+
+const char* BMS_STATE_LABELS[] = {"PRECHARGE", "CHARGE", "BALANCE", "DRIVE", "SHUTDOWN", "NULL"};
+const int BMS_STATE_COLORS[] = {0xFAFF00, 0x33FF00, 0x00F0FF, 0xFA00FF, 0xFF0000, 0xC2C2C2};
 
 // **************************************** Functions ****************************************
 
@@ -20,19 +24,11 @@ void FEB_UI_Update(void) {
 	lv_task_handler();
 
 	FEB_UI_Set_Values();
+
+	ICS_UI_Values.bms_state++;
 }
 
 void FEB_UI_Set_Values(void) {
-	char canIdStr[4];
-	char dlcStr[4];
-	char dataStr[32];
-
-	sprintf(dataStr, "%x %x %x %x %x %x %x %x", ICS_CAN_Rx.data[0], ICS_CAN_Rx.data[1], ICS_CAN_Rx.data[2], ICS_CAN_Rx.data[3], ICS_CAN_Rx.data[4], ICS_CAN_Rx.data[5], ICS_CAN_Rx.data[6], ICS_CAN_Rx.data[7]);
-
-	sprintf(canIdStr, "0x%x", ICS_CAN_Rx.id);
-	sprintf(dlcStr, "%ld", ICS_CAN_Rx.dlc);
-
-//	lv_label_set_text(ui_canIdLabel, canIdStr);
-//	lv_label_set_text(ui_dlcLabel, dlcStr);
-//	lv_label_set_text(ui_dataLabel, dataStr);
+	lv_label_set_text(ui_Label10, BMS_STATE_LABELS[ICS_UI_Values.bms_state % 6]);
+	lv_obj_set_style_text_color(ui_Label10, lv_color_hex(BMS_STATE_COLORS[ICS_UI_Values.bms_state % 6]), LV_PART_MAIN | LV_STATE_DEFAULT );
 }
