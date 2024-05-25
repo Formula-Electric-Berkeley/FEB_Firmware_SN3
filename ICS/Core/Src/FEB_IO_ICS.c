@@ -71,22 +71,28 @@ void FEB_IO_ICS_Loop(void) {
 	// Switch 1 - Coolant Pump
 	if (!(received_data & (1<<7))) {
 		IO_state = (uint8_t) set_n_bit(IO_state, 7, 1);
+		lv_obj_set_style_bg_color(ui_TextArea2, lv_color_hex(0x019F02), LV_PART_MAIN | LV_STATE_DEFAULT );
 	} else {
 		IO_state = (uint8_t) set_n_bit(IO_state, 7, 0);
+		lv_obj_set_style_bg_color(ui_TextArea2, lv_color_hex(0xFE0000), LV_PART_MAIN | LV_STATE_DEFAULT );
 	}
 
 	// Switch 2 - Radiator Fans
 	if (!(received_data & (1<<5))) {
 		IO_state = (uint8_t) set_n_bit(IO_state, 5, 1);
+		lv_obj_set_style_bg_color(ui_TextArea1, lv_color_hex(0x019F02), LV_PART_MAIN | LV_STATE_DEFAULT );
 	} else {
 		IO_state = (uint8_t) set_n_bit(IO_state, 5, 0);
+		lv_obj_set_style_bg_color(ui_TextArea1, lv_color_hex(0xFE0000), LV_PART_MAIN | LV_STATE_DEFAULT );
 	}
 
 	// Switch 3 - Accumulator Fans
 	if (!(received_data & (1<<6))) {
 		IO_state = (uint8_t) set_n_bit(IO_state, 6, 1);
+		lv_obj_set_style_bg_color(ui_TextArea4, lv_color_hex(0x019F02), LV_PART_MAIN | LV_STATE_DEFAULT );
 	} else {
 		IO_state = (uint8_t) set_n_bit(IO_state, 6, 0);
+		lv_obj_set_style_bg_color(ui_TextArea4, lv_color_hex(0xFE0000), LV_PART_MAIN | LV_STATE_DEFAULT );
 	}
 
 
@@ -98,11 +104,10 @@ void FEB_IO_ICS_Loop(void) {
 
 	if (set_rtd_buzzer == 0) {
 		IO_state = set_n_bit(IO_state, 0, 1);
-//		lv_label_set_text(ui_RTDTEXT, "RTD ON");
-//		lv_obj_set_style_text_color(ui_RTDTEXT, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT );
-//		lv_obj_set_style_bg_color(ui_RTDCOLOR, lv_color_hex(0x27ff00), LV_PART_MAIN | LV_STATE_DEFAULT );
+		lv_obj_set_style_bg_color(ui_TextArea3, lv_color_hex(0x019F02), LV_PART_MAIN | LV_STATE_DEFAULT );
 	} else {
 		IO_state = set_n_bit(IO_state, 0, 0);
+		lv_obj_set_style_bg_color(ui_TextArea3, lv_color_hex(0xFE0000), LV_PART_MAIN | LV_STATE_DEFAULT );
 	}
 
 	// transmit RTD

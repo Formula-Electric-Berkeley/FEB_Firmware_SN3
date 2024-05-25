@@ -159,10 +159,6 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  FEB_Main_Loop();
-//	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_SET);
-//	  HAL_Delay(100);
-//	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_RESET);
-//	  HAL_Delay(100);
   }
   /* USER CODE END 3 */
 }

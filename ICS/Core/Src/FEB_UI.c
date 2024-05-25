@@ -20,6 +20,8 @@ void FEB_UI_Init(void) {
 	screen_driver_init();
 	touch_sensor_driver_init();
 
+	ICS_UI_Values.bms_state = 5;
+
 	ui_init();
 }
 
@@ -28,7 +30,15 @@ void FEB_UI_Update(void) {
 
 	FEB_UI_Set_Values();
 
-	UI_Demo_Mode();
+//	UI_Demo_Mode();
+}
+
+void FEB_UI_Set_Values(void) {
+	lv_label_set_text(ui_Label10, BMS_STATE_LABELS[ICS_UI_Values.bms_state % 6]);
+	lv_obj_set_style_text_color(ui_Label10, lv_color_hex(BMS_STATE_COLORS[ICS_UI_Values.bms_state % 6]), LV_PART_MAIN | LV_STATE_DEFAULT );
+
+	lv_label_set_text(ui_Label6, HV_STATUS_LABELS[ICS_UI_Values.ivt_voltage > 60.0]);
+	lv_obj_set_style_text_color(ui_Label6, lv_color_hex(HV_STATUS_COLORS[ICS_UI_Values.ivt_voltage > 60.0]), LV_PART_MAIN | LV_STATE_DEFAULT );
 }
 
 void UI_Demo_Mode(void) {
@@ -47,12 +57,4 @@ void UI_Demo_Mode(void) {
     char temp_str[20];
     sprintf(temp_str, "%d°C", ((int) ICS_UI_Values.acc_temp) % 65);
 	lv_label_set_text(ui_Label5, temp_str);
-}
-
-void FEB_UI_Set_Values(void) {
-	lv_label_set_text(ui_Label10, BMS_STATE_LABELS[ICS_UI_Values.bms_state % 6]);
-	lv_obj_set_style_text_color(ui_Label10, lv_color_hex(BMS_STATE_COLORS[ICS_UI_Values.bms_state % 6]), LV_PART_MAIN | LV_STATE_DEFAULT );
-
-	lv_label_set_text(ui_Label6, HV_STATUS_LABELS[ICS_UI_Values.ivt_voltage > 60.0]);
-	lv_obj_set_style_text_color(ui_Label6, lv_color_hex(HV_STATUS_COLORS[ICS_UI_Values.ivt_voltage > 60.0]), LV_PART_MAIN | LV_STATE_DEFAULT );
 }

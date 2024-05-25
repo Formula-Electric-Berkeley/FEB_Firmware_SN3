@@ -15,7 +15,7 @@ void FEB_Main_Setup(void) {
 void FEB_Main_Loop(void) {
 	FEB_UI_Update();
 
-//	FEB_IO_ICS_Loop();
+	FEB_IO_ICS_Loop();
 
-	HAL_Delay(1000); // TODO: set back to 20
+	HAL_Delay(20);
 }
