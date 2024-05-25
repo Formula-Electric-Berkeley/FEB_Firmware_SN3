@@ -25,6 +25,8 @@ typedef struct {
 
 typedef struct {
 	volatile uint8_t bms_state;
+	volatile float ivt_voltage;
+	volatile float acc_temp;
 } ICS_UI_Values_t;
 
 // **************************************** Functions ****************************************

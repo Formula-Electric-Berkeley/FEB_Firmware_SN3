@@ -36,9 +36,9 @@ uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
 //		// Code Error - Shutdown
 //	}
 
-	uint16_t ids[] = {FEB_CAN_ID_BMS_STATE, FEB_CAN_ID_BMS_TEMPERATURE, FEB_CAN_ID_BMS_VOLTAGE};
+	uint16_t ids[] = {FEB_CAN_ID_BMS_STATE, FEB_CAN_ID_IVT_VOLTAGE_1};
 
-	for (uint8_t i = 0; i < 3; i++) {
+	for (uint8_t i = 0; i < 2; i++) {
 		CAN_FilterTypeDef filter_config;
 
 		// Standard CAN - 2.0A - 11 bit
@@ -66,6 +66,9 @@ void FEB_CAN_ICS_Rx_Handler(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_
 	switch(FEB_CAN_Rx_Header->StdId) {
 		case FEB_CAN_ID_BMS_STATE:
 			ICS_UI_Values.bms_state = FEB_CAN_Rx_Data[0];
+			break;
+		case FEB_CAN_ID_IVT_VOLTAGE_1:
+			ICS_UI_Values.ivt_voltage = ((FEB_CAN_Rx_Data[2] << 24) + (FEB_CAN_Rx_Data[3] << 16) + (FEB_CAN_Rx_Data[4] << 8) + FEB_CAN_Rx_Data[5]) * 0.001;
 			break;
 	}
 }
