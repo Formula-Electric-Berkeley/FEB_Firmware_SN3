@@ -1,36 +1,28 @@
-// ******************************** Includes & External ********************************
-
 #include "FEB_LTC6811.h"
-
-extern CAN_HandleTypeDef hcan1;
-extern CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
-extern uint8_t FEB_CAN_Tx_Data[8];
-extern uint32_t FEB_CAN_Tx_Mailbox;
-
-// TODO: REMOVE
-#include <string.h>
-#include <stdio.h>
-extern UART_HandleTypeDef huart2;
-
-// ******************************** Struct ********************************
+#include "FEB_Config.h"
 
 typedef struct {
-	int16_t temp_100mC;
-	uint16_t volt_100uV;
-	bool balance;
+	uint16_t voltage_mV;		// Mili-volts
+	int16_t temperature_dC;		// Deci-celsius
 } cell_t;
 
 typedef struct {
-	cell_t cells[FEB_CONST_NUM_CELLS_PER_BANK];
-} bank_t;
-
-typedef struct {
-	bank_t banks[FEB_CONST_NUM_BANKS];
-	uint16_t target_voltage_100uV;		// Cell balancing target voltage
-	bool balance;
-	bool balance_done;
-	float total_volt_V;
+	cell_t cells[FEB_CONFIG_NUM_BANKS][FEB_CONFIG_NUM_CELLS_PER_BANK];
+	uint32_t total_voltage_mV;	// Mili-volts
 } accumulator_t;
+
+static accumulator_t accumulator;
+static cell_asic IC_config[NUM_IC];
+
+/* ******** LTC6811 Configuration ******** */
+
+static bool REFON = 1; 												//!< Reference Powered Up Bit
+static bool ADCOPT = 0; 											//!< ADC Mode option bit
+static bool GPIOBITS_A[5] = {1, 1, 0, 0, 0}; 						//!< GPIO Pin Control // (1, 2) ADC // (3, 4, 5) MUX Select
+static uint16_t UV = UV_THRESHOLD; 									//!< Under-voltage Comparison Voltage
+static uint16_t OV = OV_THRESHOLD; 									//!< Over-voltage Comparison Voltage
+static bool DCCBITS_A[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 	//!< Discharge cell switch 	// DCC 1,2,3,4,5,6,7,8,9,10,11,12
+static bool DCTOBITS[4] = {1, 0, 0, 0}; 							//!< Discharge time value // DCTO 0, 1, 2, 3 // Programmed for 30s
 
 // ******************************** Static Function Declaration ********************************
 
@@ -66,16 +58,7 @@ static void configure_DCCBITS_A(uint8_t IC);
 // TODO: Look through configuration bits
 
 // Set configuration bits
-static bool REFON = 1; 												//!< Reference Powered Up Bit
-static bool ADCOPT = 0; 											//!< ADC Mode option bit
-static bool GPIOBITS_A[5] = {1, 1, 0, 0, 0}; 						//!< GPIO Pin Control // (1, 2) ADC // (3, 4, 5) MUX Select
-static uint16_t UV = UV_THRESHOLD; 									//!< Under-voltage Comparison Voltage
-static uint16_t OV = OV_THRESHOLD; 									//!< Over-voltage Comparison Voltage
-static bool DCCBITS_A[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 	//!< Discharge cell switch 	// DCC 1,2,3,4,5,6,7,8,9,10,11,12
-static bool DCTOBITS[4] = {1, 0, 0, 0}; 							//!< Discharge time value // DCTO 0, 1, 2, 3 // Programmed for 30s
 
-static accumulator_t accumulator;
-static cell_asic IC_config[NUM_IC];
 
 // ******************************** Accumulator Mapping ********************************
 

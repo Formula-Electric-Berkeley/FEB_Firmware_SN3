@@ -91,6 +91,11 @@ const osThreadAttr_t Task6_CAN_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityBelowNormal,
 };
+/* Definitions for FEB_SM_Lock */
+osMutexId_t FEB_SM_LockHandle;
+const osMutexAttr_t FEB_SM_Lock_attributes = {
+  .name = "FEB_SM_Lock"
+};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -158,6 +163,9 @@ int main(void)
 
   /* Init scheduler */
   osKernelInitialize();
+  /* Create the mutex(es) */
+  /* creation of FEB_SM_Lock */
+  FEB_SM_LockHandle = osMutexNew(&FEB_SM_Lock_attributes);
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */

@@ -2,7 +2,7 @@ from can_data import MonitorCanData
 import customtkinter as ctk
 from gui_bms_state import BmsState
 from gui_charge import Charge
-from gui_ivt import IVT
+# from gui_ivt import IVT
 from gui_bms_heatmap import BMSHeatMap
 from gui_volt_temp_table import VoltTempTable
 import threading
@@ -79,9 +79,9 @@ class TabView(ctk.CTkTabview):
         self._charge_data.pack(pady=15)
 
         # IVT tab
-        self.add("IVT")
-        self._ivt = IVT(self.tab("IVT"))
-        self._ivt.pack(pady=15)
+        # self.add("IVT")
+        # self._ivt = IVT(self.tab("IVT"))
+        # self._ivt.pack(pady=15)
 
         # Heatmap data tab
         self.add("HeatMap")
