@@ -32,7 +32,7 @@ void FEB_IO_ICS_Loop(void) {
 
 	// Button 1 - Ready-to-Drive (RTD) button
 	if (!(received_data & (1<<1))) {
-		if ((HAL_GetTick() - rtd_press_start_time) >= BTN_HOLD_TIME) {
+		if (((HAL_GetTick() - rtd_press_start_time) >= BTN_HOLD_TIME)) {
 			r2d = 1;
 			IO_state = (uint8_t) set_n_bit(IO_state, 1, 1);
 			set_rtd_buzzer = 0;
@@ -104,10 +104,17 @@ void FEB_IO_ICS_Loop(void) {
 
 	if (set_rtd_buzzer == 0) {
 		IO_state = set_n_bit(IO_state, 0, 1);
-		lv_obj_set_style_bg_color(ui_TextArea3, lv_color_hex(0x019F02), LV_PART_MAIN | LV_STATE_DEFAULT );
 	} else {
 		IO_state = set_n_bit(IO_state, 0, 0);
+	}
+
+	//r2d should trigger the color not the buzzer state.
+	if (r2d == 1){
+		lv_obj_set_style_bg_color(ui_TextArea3, lv_color_hex(0x019F02), LV_PART_MAIN | LV_STATE_DEFAULT );
+
+	}else{
 		lv_obj_set_style_bg_color(ui_TextArea3, lv_color_hex(0xFE0000), LV_PART_MAIN | LV_STATE_DEFAULT );
+
 	}
 
 	// transmit RTD
