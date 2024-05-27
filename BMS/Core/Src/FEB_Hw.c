@@ -10,7 +10,7 @@ typedef struct {
 } relay_state_t;
 
 /* Stores all relay state. Requires synchronization. */
-static relay_state_t relay_state;
+relay_state_t relay_state;
 
 /* Open/close shutdown relay. Assume serial access (SM lock held). */
 void FEB_Hw_Shutdown_Relay(FEB_Hw_Relay_t state) {

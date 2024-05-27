@@ -48,7 +48,7 @@ class SerialConnection:
             try:
                 message = self.__connection.readline().decode("utf-8")
                 message = message.replace("\n", "").split()
-                self.__bms_data.__store_message(message)
+                self.__bms_data.store_message(message)
             except KeyboardInterrupt:
                 sys.exit(1)
             except:

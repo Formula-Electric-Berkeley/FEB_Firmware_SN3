@@ -13,18 +13,9 @@ static int32_t pack_max_current_mA = 0;
 
 /* Assume serial access (SM lock held). */
 void FEB_Config_Update(FEB_SM_ST_t current_state) {
-	int32_t current_resolution_mA = 25;
-
+	int32_t current_resolution_mA = 5;
 	switch (current_state) {
 		case FEB_SM_ST_STARTUP:
-			cell_min_voltage_mV = 2500;
-			cell_max_voltage_mV = 4200;
-			cell_min_temperature_dC = -200;
-			cell_max_temperature_dC = 600;
-			pack_min_current_mA = 0 - current_resolution_mA;
-			pack_max_current_mA = 0 + current_resolution_mA;
-			break;
-		case FEB_SM_ST_IDLE:
 			cell_min_voltage_mV = 2500;
 			cell_max_voltage_mV = 4200;
 			cell_min_temperature_dC = -200;
@@ -99,7 +90,7 @@ void FEB_Config_Update(FEB_SM_ST_t current_state) {
 	}
 }
 
-/* ******** Get Functions ******** */
+/* ******** Interface ******** */
 
 uint16_t FEB_Config_Get_Cell_Min_Voltage_mV(void) {
 	while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);

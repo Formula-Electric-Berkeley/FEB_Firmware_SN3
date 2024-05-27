@@ -60,21 +60,21 @@ const osThreadAttr_t Task1_VT_attributes = {
 osThreadId_t Task2_StateHandle;
 const osThreadAttr_t Task2_State_attributes = {
   .name = "Task2_State",
-  .stack_size = 128 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityAboveNormal,
 };
 /* Definitions for Task3_Charge */
 osThreadId_t Task3_ChargeHandle;
 const osThreadAttr_t Task3_Charge_attributes = {
   .name = "Task3_Charge",
-  .stack_size = 128 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityHigh,
 };
 /* Definitions for Task4_Balance */
 osThreadId_t Task4_BalanceHandle;
 const osThreadAttr_t Task4_Balance_attributes = {
   .name = "Task4_Balance",
-  .stack_size = 128 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityAboveNormal1,
 };
 /* Definitions for Task5_IVT */
@@ -95,6 +95,11 @@ const osThreadAttr_t Task6_CAN_attributes = {
 osMutexId_t FEB_SM_LockHandle;
 const osMutexAttr_t FEB_SM_Lock_attributes = {
   .name = "FEB_SM_Lock"
+};
+/* Definitions for FEB_LTC6811_Lock */
+osMutexId_t FEB_LTC6811_LockHandle;
+const osMutexAttr_t FEB_LTC6811_Lock_attributes = {
+  .name = "FEB_LTC6811_Lock"
 };
 /* USER CODE BEGIN PV */
 
@@ -166,6 +171,9 @@ int main(void)
   /* Create the mutex(es) */
   /* creation of FEB_SM_Lock */
   FEB_SM_LockHandle = osMutexNew(&FEB_SM_Lock_attributes);
+
+  /* creation of FEB_LTC6811_Lock */
+  FEB_LTC6811_LockHandle = osMutexNew(&FEB_LTC6811_Lock_attributes);
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -295,10 +303,10 @@ static void MX_CAN1_Init(void)
 
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 5;
+  hcan1.Init.Prescaler = 18;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_16TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_3TQ;
   hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = DISABLE;

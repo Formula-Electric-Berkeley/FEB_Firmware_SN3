@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import tkinter as tk
 from app_cell_view import CellView
+import bms_data
 from bms_data import BmsData
 
 class App(ctk.CTk):
@@ -55,4 +56,7 @@ class StatusBar(ctk.CTkFrame):
         self.__bms_state_text.grid(row=0, column=1)
     
     def update_data(self, data: BmsData):
-        self.__bms_state_text.configure(text="precharge")
+        bms_data.lock.acquire()
+        value = data.state.bms_state
+        bms_data.lock.release()
+        self.__bms_state_text.configure(text=value)
