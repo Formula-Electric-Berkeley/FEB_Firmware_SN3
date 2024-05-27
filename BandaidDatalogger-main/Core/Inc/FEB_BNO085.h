@@ -8,6 +8,10 @@
 #ifndef INC_FEB_BNO085_H_
 #define INC_FEB_BNO085_H_
 
-void FEB_BNO085_Poll(I2C_HandleTypeDef * hi2c);
+#include <stm32f4xx_hal.h>
+
+void FEB_BNO085_Poll(I2C_HandleTypeDef* hi2c);
+
+void FEB_BNO085_Setup();
 
 #endif /* INC_FEB_BNO085_H_ */

@@ -149,6 +149,22 @@ void FEB_circBuf_read(circBuffer *cb){
     return;
   } 
 
+
+  fres = f_lseek(&fil, f_size(&fil));
+  if(fres != FR_OK){
+    HAL_UART_Transmit(&huart2, "Can't find eof\n",15, HAL_MAX_DELAY);
+    f_close(&fil);
+    return;
+  }
+
+  fres = f_write(&fil,cb->IMU_DATA, sizeof(cb->IMU_DATA), &bw);
+  if(fres != FR_OK){
+    HAL_UART_Transmit(&huart2, "Can't write IMU data\n",15, HAL_MAX_DELAY);
+    f_close(&fil);
+    return;
+  }
+
+
   if(iteration >= 5){
     fres = f_sync(&fil);
     if(fres != FR_OK){
@@ -158,6 +174,7 @@ void FEB_circBuf_read(circBuffer *cb){
     } 
     iteration = 0; 
   }
+
 
   // print data
   for (int i = 0; i < 8; i++) {
