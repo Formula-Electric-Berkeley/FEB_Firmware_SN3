@@ -29,16 +29,21 @@ void FEB_IO_ICS_Loop(void) {
 	HAL_I2C_Master_Receive(&hi2c1, IOEXP_ADDR, &received_data, 1, HAL_MAX_DELAY);
 
 	IO_state = 0;
+	uint8_t brake_pressure = FEB_CAN_APPS_Get_Brake_Pos();
 
 	// Button 1 - Ready-to-Drive (RTD) button
 	if (!(received_data & (1<<1))) {
-		if (((HAL_GetTick() - rtd_press_start_time) >= BTN_HOLD_TIME)) {
-			r2d = 1;
+		if (((HAL_GetTick() - rtd_press_start_time) >= BTN_HOLD_TIME) && brake_pressure >= 4) {
+
+			//Flio ready to drive if pressed again to turn it off
+			r2d = (r2d == 1) ? 0 : 1;
 			IO_state = (uint8_t) set_n_bit(IO_state, 1, 1);
 			set_rtd_buzzer = 0;
 			if (rtd_buzzer_start_time == 0) {
 				rtd_buzzer_start_time = HAL_GetTick();
 			}
+			//Restart the start time so we don't constantly toggle r2d
+			rtd_press_start_time = HAL_GetTick();
 		} else {
 			IO_state = (uint8_t) set_n_bit(IO_state, 1, r2d);
 		}

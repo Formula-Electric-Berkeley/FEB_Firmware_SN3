@@ -10,9 +10,9 @@ extern uint32_t FEB_CAN_Tx_Mailbox;
 uint8_t FEB_CAN_APPS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
     // For multiple filters, create array of filter IDs and loop over IDs.
 
-	uint16_t ids[] = {FEB_CAN_ID_APPS_BRAKE_PEDAL, FEB_CAN_ID_APPS_TPS};
+	uint16_t ids[] = {FEB_CAN_ID_APPS_BRAKE_PEDAL};
 
-	for(uint8_t i = 0; i < 2; i ++){
+	for(uint8_t i = 0; i < 1; i ++){
 
 		CAN_FilterTypeDef filter_config;
 
@@ -36,6 +36,27 @@ uint8_t FEB_CAN_APPS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, ui
 	}
 
 	return filter_bank;
+
+//
+//	CAN_FilterTypeDef filter_config;
+//
+//	// Standard CAN - 2.0A - 11 bit
+//	filter_config.FilterActivation = CAN_FILTER_ENABLE;
+//	filter_config.FilterBank = filter_bank;
+//	filter_config.FilterFIFOAssignment = FIFO_assignment;
+//	filter_config.FilterIdHigh = 0 << 5;
+//	filter_config.FilterIdLow = 0;
+//	filter_config.FilterMaskIdHigh =0;
+//	filter_config.FilterMaskIdLow = 0;
+//	filter_config.FilterMode = CAN_FILTERMODE_IDMASK;
+//	filter_config.FilterScale = CAN_FILTERSCALE_32BIT;
+//	filter_config.SlaveStartFilterBank = 14;
+//	filter_bank++;
+//
+//
+//	if (HAL_CAN_ConfigFilter(hcan, &filter_config) != HAL_OK) {
+//		// Code Error - Shutdown
+//	}
 }
 
 
