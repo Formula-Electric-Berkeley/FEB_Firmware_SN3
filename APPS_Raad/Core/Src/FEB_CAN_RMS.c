@@ -1,6 +1,7 @@
 // ********************************** Includes & External **********************************
 
 #include "FEB_CAN_RMS.h"
+#include <math.h>
 
 extern CAN_HandleTypeDef hcan1;
 extern UART_HandleTypeDef huart2;
@@ -11,7 +12,7 @@ extern uint32_t FEB_CAN_Tx_Mailbox;
 // *********************************** Struct ************************************
 
 struct {
-  uint16_t torque;
+  int16_t torque;
   uint8_t enabled;
 } RMSControl;
 
@@ -44,12 +45,7 @@ void FEB_CAN_RMS_Disable(void){
 	RMSControl.enabled = 0;
 }
 
-int16_t min(int16_t x1, int16_t x2) {
-	if (x1 < x2) {
-		return x1;
-	}
-	return x2;
-}
+#define min(x1, x2) x1 < x2 ? x1 : x2;
 
 //void FEB_CAN_RMS_torqueTransmit(void){
 //	//	  buf_len = sprintf(buf, "rtd:%d, enable:%d lockout:%d impl:%d acc: %.3f brake: %.3f Bus Voltage: %d Motor Speed: %d\n", SW_MESSAGE.ready_to_drive, Inverter_enable, Inverter_enable_lockout, isImpl, normalized_acc, normalized_brake, RMS_MESSAGE.HV_Bus_Voltage, RMS_MESSAGE.Motor_Speed);
@@ -62,66 +58,130 @@ int16_t min(int16_t x1, int16_t x2) {
 
 // ****** REGEN FUNCTIONS ****
 
+// Returns maximum torque available within 20A limit of the cells
+// V_acc * 20 * efficiency = torque / w
+float FEB_getElecMaxRegenTorque(){
+	float accumulator_voltage = min(INIT_VOLTAGE, (RMS_MESSAGE.HV_Bus_Voltage-50) / 10); // TODO: consider reading from IVT
+	float motor_speed_rads = RMS_MESSAGE.Motor_Speed * RPM_TO_RAD_S;
 
-/*
- * BELOW FUNC
- * returns the regen torque we want to command
- * Considers the battery temperature to make sure we're not going over the temp limit
- * Commands 0 torque for certain unsafe conditions specified by MIT paper
- *
- * (The electrical limit for regen is enforced with the inverter EEPROM which caps it)
-*/
-//void FEB_CAN_RMS_getRegenTorque(void){
-//	speedMPH = RMS_MESSAGE.Motor_Speed; //rad/s
-//
-//	uint8_t soc = FEB_CAN_BMS_getState(); //TODO: define
-//	uint16_t batteryTemp = FEB_CAN_BMS_getTemp(); //TODO: create BMS file to read battery temperature
-//	if (soc > 0.8 || speedMPH < 3 || FEB_Normalized_getAcc() > 0.05 || batteryTemp > 42){
-//		return 0;
-//	}
-//	else if (batteryTemp > 40 ){
-//		return 0.4 * FEB_CAN_RMS_getDesiredRegenTorque();
-//	}
-//	else if (batteryTemp > 37){
-//		return 0.6 * FEB_CAN_RMS_getDesiredRegenTorque();
-//	}
-//	else if (batteryTemp > 37){
-//		return 0.8 * FEB_CAN_RMS_getDesiredRegenTorque();
-//	}
-//	else{
-//		FEB_CAN_RMS_getDesiredRegenTorque();
-//	}
-//
-//}
-//
-///*
-// * maxRegenTorqueMech computes the max regen torque we can exert from the mechanical perspective (awaiting that function)
-// * A function that outputs our desired regen torque, only considering mechanical limitations
-// */
-//
-//void FEB_CAN_RMS_getDesiredRegenTorque(void){
-//	return -(min(getTotalNegTorque() - getMechTorque(), getMaxRegenTorqueMech()));
-//	//TODO: define all functions above
-//}
-//
+	float maxTorque = min(MAX_TORQUE_REGEN, (accumulator_voltage * PEAK_CURRENT_REGEN) / motor_speed_rads);
+	return maxTorque;
+}
+
+// Step function at from 0 to 1 at FADE_SPEED
+float FEB_regen_filter_Speed(float unfiltered_regen_torque){
+    float motor_speed_rpm = RMS_MESSAGE.Motor_Speed; 
+
+    if (motor_speed_rpm < FADE_SPEED_RPM)
+    {
+        return 0;
+    }
+    else
+    {
+        return unfiltered_regen_torque;
+    }
+}
+
+// Saturated linear function between
+// (START_REGEN_SOC, 0) and (MAX_REGEN_SOC, 1)
+float FEB_regen_filter_SOC(float unfiltered_regen_torque){
+	float state_of_charge = FEB_BMS_getSOC(); // TODO 
+
+	// m = (y_1 - y_0) / (x_1 - x_0)
+	float slope = (1 - 0) / (MAX_REGEN_SOC - START_REGEN_SOC);
+	// y - y_0 = m (x - x_0)
+	float k_SOC = slope * (state_of_charge - START_REGEN_SOC);
+    
+	// Saturate between 0 and 1
+	if (k_SOC > 1)
+	{
+		k_SOC = 1;
+	}
+	if (k_SOC < 0)
+	{
+		return 0;
+	}
+	return k_SOC * unfiltered_regen_torque; // be wary of typing (float vs int)
+}
+
+// Consider linear function similar to the above if driver doesn't like the exponential
+// This will depend on how fast cells heat up
+// Function with a vertical asymptote at 45 deg C
+float FEB_regen_filter_Temp(float unfiltered_regen_torque){
+	float hottest_cell_temp_C = FEB_BMS_getHottestCellTemp(); // TODO
+	float e = 2.71828;
+	float exponent = TEMP_FILTER_SHARPNESS * (hottest_cell_temp_C - MAX_CELL_TEMP);
+	float k_temp = 1 - pow(e, exponent);
+	if (k_temp < 0)
+	{
+		return 0;
+	}
+	return k_temp * unfiltered_regen_torque;
+}
+
+// Wrapper function for various filters
+float FEB_regen_filter(float regen_torque_max){
+	float filtered_regen_torque = regen_torque_max;
+	filtered_regen_torque = FEB_regen_filter_Speed(filtered_regen_torque);
+	filtered_regen_torque = FEB_regen_filter_SOC(filtered_regen_torque);
+	filtered_regen_torque = FEB_regen_filter_Temp(filtered_regen_torque);
+	return filtered_regen_torque * USER_REGEN_FILTER;
+}
 
 // **** TORQUE FUNCTIONS****
-//
-uint16_t FEB_CAN_RMS_getMaxTorque(void){
-	return 20;
-	int16_t accumulator_voltage = min(INIT_VOLTAGE, (RMS_MESSAGE.HV_Bus_Voltage-50) / 10);
-	int16_t motor_speed = -1 * RMS_MESSAGE.Motor_Speed * RPM_TO_RAD_S;
-  // If speed is less than 15, we should command max torque
-  // This catches divide by 0 errors and also negative speeds (which may create very high negative torque values)
+
+// Returns MAGNITUDE of regen torque
+float FEB_CAN_RMS_getFilteredTorque_Regen(void){
+	float present_regen_max = FEB_getElecMaxRegenTorque();
+	return FEB_regen_filter(present_regen_max);
+}
+
+
+float FEB_CAN_RMS_getMaxTorque(void){
+ 	return 20; // what the
+	float accumulator_voltage = min(INIT_VOLTAGE, (RMS_MESSAGE.HV_Bus_Voltage-50) / 10); // TODO: consider reading from IVT
+	float motor_speed = RMS_MESSAGE.Motor_Speed * RPM_TO_RAD_S;
+ 	// If speed is less than 15, we should command max torque
+  	// This catches divide by 0 errors and also negative speeds (which may create very high negative torque values)
 	if (motor_speed < 15) {
 		return MAX_TORQUE;
 	}
-	uint16_t maxTorque = min(MAX_TORQUE, (accumulator_voltage * PEAK_CURRENT) / motor_speed);
+	float maxTorque = min(MAX_TORQUE, (accumulator_voltage * PEAK_CURRENT) / motor_speed);
 	return maxTorque;
 }
 
 void FEB_CAN_RMS_Torque(void){
-	RMSControl.torque = 10*FEB_Normalized_getAcc()*FEB_CAN_RMS_getMaxTorque();
+	FEB_SM_ST_t current_BMS_state = FEB_SM_Get_Current_State();
+	float accPos = FEB_Normalized_getAcc();
+	float brkPos = FEB_Normalized_getBrake();
+	if (brkPos > REGEN_BRAKE_POS_THRESH) // brake identified
+	{
+		if ((current_BMS_state == FEB_SM_ST_DRIVE_REGEN))
+		{
+		    // Brake detected, regen allowed
+			// Multiply by -1 to regen (opposite direction)
+			RMSControl.torque = -1 * 10 * brkPos * FEB_CAN_RMS_getFilteredTorque_Regen();
+		}
+		else
+		{
+			// Brake detected, but regen not allowed -> command 0 torque
+			RMSControl.torque = 0;
+		}
+	}
+	else
+	{
+	    if ((current_BMS_state == FEB_SM_ST_DRIVE) ||
+	        (current_BMS_state == FEB_SM_ST_DRIVE_REGEN))
+	    {
+	        // No braking detected, send throttle command
+    		RMSControl.torque = 10 * accPos * FEB_CAN_RMS_getMaxTorque();
+	    }
+	    else
+	    {
+	        // No braking detected, but driving not allowed by BMS state
+	        RMSControl.torque = 0;
+	    }
+	}
 	FEB_CAN_RMS_Transmit_updateTorque();
 }
 
@@ -322,11 +382,3 @@ void FEB_CAN_RMS_Store_Msg(CAN_RxHeaderTypeDef* pHeader, uint8_t *RxData) {
 			break;
 	}
 }
-
-
-
-
-
-
-
-
