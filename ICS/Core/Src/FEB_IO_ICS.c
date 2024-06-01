@@ -29,16 +29,21 @@ void FEB_IO_ICS_Loop(void) {
 	HAL_I2C_Master_Receive(&hi2c1, IOEXP_ADDR, &received_data, 1, HAL_MAX_DELAY);
 
 	IO_state = 0;
+	uint8_t brake_pressure = FEB_CAN_APPS_Get_Brake_Pos();
 
 	// Button 1 - Ready-to-Drive (RTD) button
 	if (!(received_data & (1<<1))) {
-		if ((HAL_GetTick() - rtd_press_start_time) >= BTN_HOLD_TIME) {
-			r2d = 1;
+		if (((HAL_GetTick() - rtd_press_start_time) >= BTN_HOLD_TIME) && brake_pressure >= 4) {
+
+			//Flio ready to drive if pressed again to turn it off
+			r2d = (r2d == 1) ? 0 : 1;
 			IO_state = (uint8_t) set_n_bit(IO_state, 1, 1);
 			set_rtd_buzzer = 0;
 			if (rtd_buzzer_start_time == 0) {
 				rtd_buzzer_start_time = HAL_GetTick();
 			}
+			//Restart the start time so we don't constantly toggle r2d
+			rtd_press_start_time = HAL_GetTick();
 		} else {
 			IO_state = (uint8_t) set_n_bit(IO_state, 1, r2d);
 		}
@@ -71,10 +76,10 @@ void FEB_IO_ICS_Loop(void) {
 	// Switch 1 - Coolant Pump
 	if (!(received_data & (1<<7))) {
 		IO_state = (uint8_t) set_n_bit(IO_state, 7, 1);
-		lv_obj_set_style_bg_color(ui_TextArea2, lv_color_hex(0x019F02), LV_PART_MAIN | LV_STATE_DEFAULT );
+		lv_obj_set_style_bg_color(ui_TextArea4, lv_color_hex(0x019F02), LV_PART_MAIN | LV_STATE_DEFAULT );
 	} else {
 		IO_state = (uint8_t) set_n_bit(IO_state, 7, 0);
-		lv_obj_set_style_bg_color(ui_TextArea2, lv_color_hex(0xFE0000), LV_PART_MAIN | LV_STATE_DEFAULT );
+		lv_obj_set_style_bg_color(ui_TextArea4, lv_color_hex(0xFE0000), LV_PART_MAIN | LV_STATE_DEFAULT );
 	}
 
 	// Switch 2 - Radiator Fans
@@ -89,10 +94,10 @@ void FEB_IO_ICS_Loop(void) {
 	// Switch 3 - Accumulator Fans
 	if (!(received_data & (1<<6))) {
 		IO_state = (uint8_t) set_n_bit(IO_state, 6, 1);
-		lv_obj_set_style_bg_color(ui_TextArea4, lv_color_hex(0x019F02), LV_PART_MAIN | LV_STATE_DEFAULT );
+		lv_obj_set_style_bg_color(ui_TextArea2, lv_color_hex(0x019F02), LV_PART_MAIN | LV_STATE_DEFAULT );
 	} else {
 		IO_state = (uint8_t) set_n_bit(IO_state, 6, 0);
-		lv_obj_set_style_bg_color(ui_TextArea4, lv_color_hex(0xFE0000), LV_PART_MAIN | LV_STATE_DEFAULT );
+		lv_obj_set_style_bg_color(ui_TextArea2, lv_color_hex(0xFE0000), LV_PART_MAIN | LV_STATE_DEFAULT );
 	}
 
 
@@ -104,10 +109,17 @@ void FEB_IO_ICS_Loop(void) {
 
 	if (set_rtd_buzzer == 0) {
 		IO_state = set_n_bit(IO_state, 0, 1);
-		lv_obj_set_style_bg_color(ui_TextArea3, lv_color_hex(0x019F02), LV_PART_MAIN | LV_STATE_DEFAULT );
 	} else {
 		IO_state = set_n_bit(IO_state, 0, 0);
+	}
+
+	//r2d should trigger the color not the buzzer state.
+	if (r2d == 1){
+		lv_obj_set_style_bg_color(ui_TextArea3, lv_color_hex(0x019F02), LV_PART_MAIN | LV_STATE_DEFAULT );
+
+	}else{
 		lv_obj_set_style_bg_color(ui_TextArea3, lv_color_hex(0xFE0000), LV_PART_MAIN | LV_STATE_DEFAULT );
+
 	}
 
 	// transmit RTD
