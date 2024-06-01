@@ -6,10 +6,12 @@ class BmsData:
     def __init__(self):
         self.cell_data = CellData()
         self.state = BmsState()
+        self.ivt = IVTData()
     
     def store_message(self, message: list[str]):
         self.cell_data.store_message(message)
         self.state.store_message(message)
+        self.ivt.store_message(message)
 
 class SerialData:
     def store_message(self, message: str) -> None:
@@ -65,3 +67,17 @@ class ChargeData(SerialData):
             lock.acquire()
             
             lock.release()
+
+class IVTData(SerialData):
+    def __init__(self):
+        self.voltage_1 = 0
+        self.voltage_2 = 0
+        self.voltage_3 = 0
+        self.current = 0
+
+    def store_message(self, message: str) -> None:
+        if message[0] == "IVT":
+            self.voltage_1 = round(int(message[1]) * 1e-3, 3)
+            self.voltage_2 = round(int(message[2]) * 1e-3, 3)
+            self.voltage_3 = round(int(message[3]) * 1e-3, 3)
+            self.current = round(int(message[4]) * 1e-3, 3)

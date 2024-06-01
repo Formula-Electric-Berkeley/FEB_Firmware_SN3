@@ -116,3 +116,8 @@ class GeneralView(ctk.CTkFrame):
         self.__relay_data_cells["bms-shutdown"].configure(text=data.state.relay.get("bms-shutdown", ""))
         self.__relay_data_cells["air-plus"].configure(text=data.state.relay.get("air-plus", ""))
         self.__relay_data_cells["precharge"].configure(text=data.state.relay.get("precharge", ""))
+
+        self.__ivt_data_cells["u1"].configure(text=str(data.ivt.voltage_1))
+        self.__ivt_data_cells["u2"].configure(text=str(data.ivt.voltage_2))
+        self.__ivt_data_cells["u3"].configure(text=str(data.ivt.voltage_3))
+        self.__ivt_data_cells["i"].configure(text=str(data.ivt.current))
