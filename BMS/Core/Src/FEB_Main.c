@@ -2,6 +2,7 @@
 #include "FEB_SM.h"
 #include "FEB_LTC6811.h"
 #include "FEB_CAN_Charger.h"
+#include "FEB_CAN_IVT.h"
 #include "cmsis_os2.h"
 #include "stm32f4xx_hal.h"
 
@@ -23,7 +24,7 @@ void FEB_Main_Task1_VT(void) {
 void FEB_Main_Task2_State(void) {
 	while (1) {
 		FEB_SM_Process();
-		FEB_SM_UART_Transmit();
+//		FEB_SM_UART_Transmit();
 		osDelay(100);
 	}
 }
@@ -44,7 +45,8 @@ void FEB_Main_Task4_Balance(void) {
 
 void FEB_Main_Task5_IVT(void) {
 	while (1) {
-//		FEB_CAN_IVT_Process();
+		FEB_CAN_IVT_Process();
+		FEB_CAN_IVT_UART_Transmit();
 		osDelay(200);
 	}
 }

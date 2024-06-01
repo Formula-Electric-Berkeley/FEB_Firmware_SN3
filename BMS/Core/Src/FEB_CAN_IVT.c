@@ -145,8 +145,7 @@ uint8_t FEB_CAN_IVT_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignme
 		filter_config.FilterFIFOAssignment = FIFO_assignment;
 		filter_config.FilterIdHigh = ids[i] << 5;
 		filter_config.FilterIdLow = 0;
-//		filter_config.FilterMaskIdHigh = 0xFFE0;
-		filter_config.FilterMaskIdHigh = 0x0000;
+		filter_config.FilterMaskIdHigh = 0xFFE0;
 		filter_config.FilterMaskIdLow = 0;
 		filter_config.FilterMode = CAN_FILTERMODE_IDMASK;
 		filter_config.FilterScale = CAN_FILTERSCALE_32BIT;
@@ -166,14 +165,10 @@ extern UART_HandleTypeDef huart2;
 #include "stdio.h"
 
 void FEB_CAN_IVT_Store_Msg(CAN_RxHeaderTypeDef* rx_header, uint8_t rx_data[]) {
-	char UART_Str[64];
-	sprintf(UART_Str, "Recv\n");
-	HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
-
 	switch(rx_header->StdId) {
 	    case FEB_CAN_ID_IVT_CURRENT:
 	    	IVT_message_flag.current = true;
-	    	IVT_message.current_mA = (rx_data[2] << 24) + (rx_data[3] << 16) + (rx_data[4] << 8) + rx_data[5];
+	    	IVT_message.current_mA = ((rx_data[2] << 24) + (rx_data[3] << 16) + (rx_data[4] << 8) + rx_data[5]) * -1;
 			break;
 	    case FEB_CAN_ID_IVT_VOLTAGE_1:
 	    	IVT_message_flag.voltage_1 = true;
@@ -190,22 +185,7 @@ void FEB_CAN_IVT_Store_Msg(CAN_RxHeaderTypeDef* rx_header, uint8_t rx_data[]) {
 	}
 }
 
-
-//
-//void FEB_CAN_IVT_Process(void) {
-//	static char str[64];
-//	sprintf(str, "u1 %f, i %f, state %d\n",
-//			IVT_message.voltage_1_mV * 1e-3, IVT_message.current_mA * 1e-3,
-//			FEB_SM_Get_Current_State());
-//	HAL_UART_Transmit(&huart2, (uint8_t*) str, strlen(str), 100);
-
 void FEB_CAN_IVT_Process(void) {
-		static char str[128];
-		sprintf(str, "u1 %ld, i %ld, state %d\n",
-				IVT_message.voltage_1_mV, IVT_message.current_mA,
-				FEB_SM_Get_Current_State());
-		HAL_UART_Transmit(&huart2, (uint8_t*) str, strlen(str), 100);
-
 //	if (IVT_CAN_flag.current) {
 //		IVT_CAN_flag.current = false;
 //		// TODO: Check current flowing through battery
@@ -230,4 +210,12 @@ void FEB_CAN_IVT_Process(void) {
 //		IVT_CAN_flag.voltage_3 = false;
 //		// ...
 //	}
+}
+
+void FEB_CAN_IVT_UART_Transmit(void) {
+	static char str[64];
+	sprintf(str, "IVT %ld %ld %ld %ld\n",
+			IVT_message.voltage_1_mV, IVT_message.voltage_2_mV, IVT_message.voltage_3_mV,
+			IVT_message.current_mA);
+	HAL_UART_Transmit(&huart2, (uint8_t*) str, strlen(str), 100);
 }
