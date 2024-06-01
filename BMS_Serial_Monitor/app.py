@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import tkinter as tk
 from app_cell_view import CellView
+from app_general_view import GeneralView
 import bms_data
 from bms_data import BmsData
 
@@ -35,10 +36,18 @@ class TabView(ctk.CTkTabview):
         data_frame = ctk.CTkFrame(self.tab("Cell Data"))
         data_frame.pack(fill=tk.BOTH, expand=tk.TRUE)
         self.__cell_view = CellView(data_frame)
-        self.__cell_view.pack(pady=(15, 0))
+        self.__cell_view.pack(pady=(15,0))
+
+        # General view tab
+        self.add("General")
+        data_frame = ctk.CTkFrame(self.tab("General"))
+        data_frame.pack(fill=tk.BOTH, expand=tk.TRUE)
+        self.__general_view = GeneralView(data_frame)
+        self.__general_view.pack(pady=(15,0))
     
-    def update_data(self, data: BmsData):
+    def update_data(self, data: BmsData) -> None:
         self.__cell_view.update_data(data)
+        self.__general_view.update_data(data)
 
 class StatusBar(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -55,7 +64,7 @@ class StatusBar(ctk.CTkFrame):
                                              corner_radius=5, text_color="white")
         self.__bms_state_text.grid(row=0, column=1)
     
-    def update_data(self, data: BmsData):
+    def update_data(self, data: BmsData) -> None:
         bms_data.lock.acquire()
         value = data.state.bms_state
         bms_data.lock.release()

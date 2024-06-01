@@ -23,6 +23,7 @@ void FEB_SM_Process(void);
 CAN Initialization fails
 Under/Over cell voltage
 Under/Over cell temperature
+Under/Over pack current
 */
 
 #endif /* INC_FEB_SM_H_ */

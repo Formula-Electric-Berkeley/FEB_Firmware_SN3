@@ -101,6 +101,11 @@ osMutexId_t FEB_LTC6811_LockHandle;
 const osMutexAttr_t FEB_LTC6811_Lock_attributes = {
   .name = "FEB_LTC6811_Lock"
 };
+/* Definitions for FEB_UART_Lock */
+osMutexId_t FEB_UART_LockHandle;
+const osMutexAttr_t FEB_UART_Lock_attributes = {
+  .name = "FEB_UART_Lock"
+};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -174,6 +179,9 @@ int main(void)
 
   /* creation of FEB_LTC6811_Lock */
   FEB_LTC6811_LockHandle = osMutexNew(&FEB_LTC6811_Lock_attributes);
+
+  /* creation of FEB_UART_Lock */
+  FEB_UART_LockHandle = osMutexNew(&FEB_UART_Lock_attributes);
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -478,6 +486,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PC4 PC5 PC10 PC12 */
+  GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_10|GPIO_PIN_12;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PB4 */
   GPIO_InitStruct.Pin = GPIO_PIN_4;

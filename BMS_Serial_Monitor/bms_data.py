@@ -31,16 +31,37 @@ class CellData(SerialData):
                      "voltage-fault": voltage_fault, "temperature-fault": temperature_fault,
                      "balance": balance}
 
-            lock.acquire()
+            # lock.acquire()
             self.cell[key] = value
-            lock.release()
+            # lock.release()
 
 class BmsState(SerialData):
     def __init__(self):
         self.bms_state = ""
+        self.relay = dict()
+        self.sense = dict()
     
     def store_message(self, message: list[str]) -> None:
         if message[0] == "state":
-            lock.acquire()
+            # lock.acquire()
             self.bms_state = message[1]
+            self.relay["bms-shutdown"] = message[2]
+            self.relay["air-plus"] = message[3]
+            self.relay["precharge"] = message[4]
+            self.sense["air-minus"] = message[5]
+            self.sense["air-plus"] = message[6]
+            self.sense["bms-shutdown"] = message[7]
+            self.sense["imd-shutdown"] = message[8]
+            # lock.release()
+
+class ChargeData(SerialData):
+    def __init__(self):
+        self.charge = dict()
+
+    def store_message(self, message: str) -> None:
+        if message[0] == "charge":
+            
+
+            lock.acquire()
+            
             lock.release()

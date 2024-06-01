@@ -5,45 +5,32 @@
 #include "cmsis_os2.h"
 #include "stm32f4xx_hal.h"
 
-#include "FEB_CAN.h"
-
-#include "FEB_LTC6811.h"
-
 // ******** Functions ********
 
 void FEB_Main_Setup(void) {
 	FEB_SM_Init();
-// 	FEB_LTC6811_Init();
 }
 
 void FEB_Main_Task1_VT(void) {
-//	bool set = false;
 	while (1) {
-		FEB_LTC6811_Poll_Voltage();
-		FEB_LTC6811_Poll_Temperature();
+//		FEB_LTC6811_Poll_Voltage();
+//		FEB_LTC6811_Poll_Temperature();
 //		FEB_LTC6811_UART_Transmit();
 		osDelay(100);
-
-//		if (!set) {
-//			FEB_LTC6811_Init_Balance();
-//			set = true;
-//		}
-
 	}
 }
 
 void FEB_Main_Task2_State(void) {
 	while (1) {
 		FEB_SM_Process();
-//		FEB_CAN_Transmit();
-//		FEB_SM_UART_Transmit();
+		FEB_SM_UART_Transmit();
 		osDelay(100);
 	}
 }
 
 void FEB_Main_Task3_Charge(void) {
 	while (1) {
-		FEB_CAN_Charger_Process();
+//		FEB_CAN_Charger_Process();
 		osDelay(1000);
 	}
 }
@@ -58,7 +45,7 @@ void FEB_Main_Task4_Balance(void) {
 void FEB_Main_Task5_IVT(void) {
 	while (1) {
 //		FEB_CAN_IVT_Process();
-		osDelay(1000);
+		osDelay(200);
 	}
 }
 

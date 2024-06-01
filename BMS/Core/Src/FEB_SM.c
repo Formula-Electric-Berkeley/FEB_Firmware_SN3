@@ -10,30 +10,25 @@
 #include "stdio.h"
 #include "string.h"
 
-extern osMutexId_t FEB_SM_LockHandle;	// Lock used to synchronize state machine
-extern UART_HandleTypeDef huart2;
-
-// Shared variable, requires synchronization
-static FEB_SM_ST_t current_state;
-
 static void startup(void);
-
 static void standby(void);
 static void standby_to_balance(void);
 static void standby_to_charge(void);
 static void standby_to_precharge(void);
-
 static void precharge_to_drive_standby(void);
-
 static void drive_standby_to_drive(void);
-
 static void drive_to_drive_standby(void);
 static void drive_to_drive_regen(void);
-
 static void drive_regen_to_drive(void);
 static void drive_regen_to_drive_standby(void);
-
 static void fault(void);
+
+extern osMutexId_t FEB_SM_LockHandle;
+extern osMutexId_t FEB_UART_LockHandle;
+extern UART_HandleTypeDef huart2;
+
+// Shared variable, requires synchronization
+static FEB_SM_ST_t current_state;
 
 /* ******** State Transitions ******** */
 
@@ -102,17 +97,17 @@ static void startup(void) {
 	current_state = FEB_SM_ST_STARTUP;
 	FEB_Config_Update(current_state);
 
-	FEB_Hw_Shutdown_Relay(FEB_HW_RELAY_CLOSE);
-	FEB_Hw_AIR_Plus_Relay(FEB_HW_RELAY_OPEN);
-	FEB_Hw_Precharge_Relay(FEB_HW_RELAY_OPEN);
+	FEB_Hw_Set_AIR_Plus_Relay(FEB_HW_RELAY_OPEN);
+	FEB_Hw_Set_Precharge_Relay(FEB_HW_RELAY_OPEN);
+	FEB_Hw_Set_BMS_Shutdown_Relay(FEB_HW_RELAY_CLOSE);
 
 	if (!FEB_CAN_Init()) {
 		current_state = FEB_SM_ST_FAULT;
-		FEB_Hw_Shutdown_Relay(FEB_HW_RELAY_OPEN);
+		FEB_Hw_Set_BMS_Shutdown_Relay(FEB_HW_RELAY_OPEN);
 		return;
 	}
-	FEB_LTC6811_Init();
-	FEB_CAN_Charger_Init();
+//	FEB_LTC6811_Init();
+//	FEB_CAN_Charger_Init();
 }
 
 /* Assume SM lock held. */
@@ -132,19 +127,19 @@ static void standby_to_balance(void) {
 
 /* Assume SM lock held. */
 static void standby(void) {
-	FEB_SM_ST_t previous_state = current_state;
+//	FEB_SM_ST_t previous_state = current_state;
 	current_state = FEB_SM_ST_STANDBY;
 	FEB_Config_Update(current_state);
 
-	FEB_Hw_AIR_Plus_Relay(FEB_HW_RELAY_OPEN);
-	FEB_Hw_Precharge_Relay(FEB_HW_RELAY_OPEN);
+	FEB_Hw_Set_AIR_Plus_Relay(FEB_HW_RELAY_OPEN);
+	FEB_Hw_Set_Precharge_Relay(FEB_HW_RELAY_OPEN);
 
 	// Stop Balance
-	if (previous_state == FEB_SM_ST_BALANCE) {
-		osMutexRelease(FEB_SM_LockHandle);
-		FEB_LTC6811_Stop_Balance();
-		while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
-	}
+//	if (previous_state == FEB_SM_ST_BALANCE) {
+//		osMutexRelease(FEB_SM_LockHandle);
+//		FEB_LTC6811_Stop_Balance();
+//		while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
+//	}
 
 	// TODO: Stop Charge
 }
@@ -154,7 +149,7 @@ static void standby_to_charge(void) {
 	current_state = FEB_SM_ST_CHARGE;
 	FEB_Config_Update(current_state);
 
-	FEB_Hw_AIR_Plus_Relay(FEB_HW_RELAY_CLOSE);
+	FEB_Hw_Set_AIR_Plus_Relay(FEB_HW_RELAY_CLOSE);
 }
 
 /* Assume SM lock held. */
@@ -162,8 +157,8 @@ static void standby_to_precharge(void) {
 	current_state = FEB_SM_ST_PRECHARGE;
 	FEB_Config_Update(current_state);
 
-	FEB_Hw_AIR_Plus_Relay(FEB_HW_RELAY_OPEN);
-	FEB_Hw_Precharge_Relay(FEB_HW_RELAY_CLOSE);
+	FEB_Hw_Set_AIR_Plus_Relay(FEB_HW_RELAY_OPEN);
+	FEB_Hw_Set_Precharge_Relay(FEB_HW_RELAY_CLOSE);
 }
 
 /* Assume SM lock held. */
@@ -171,9 +166,9 @@ static void precharge_to_drive_standby(void) {
 	current_state = FEB_SM_ST_DRIVE_STANDBY;
 	FEB_Config_Update(current_state);
 
-	FEB_Hw_AIR_Plus_Relay(FEB_HW_RELAY_CLOSE);
-	osDelay(100);
-	FEB_Hw_Precharge_Relay(FEB_HW_RELAY_OPEN);
+	FEB_Hw_Set_AIR_Plus_Relay(FEB_HW_RELAY_CLOSE);
+	osDelay(50);
+	FEB_Hw_Set_Precharge_Relay(FEB_HW_RELAY_OPEN);
 }
 
 /* Assume SM lock held. */
@@ -212,9 +207,9 @@ static void fault(void) {
 	current_state = FEB_SM_ST_FAULT;
 	FEB_Config_Update(current_state);
 
-	FEB_Hw_Shutdown_Relay(FEB_HW_RELAY_OPEN);
-	FEB_Hw_AIR_Plus_Relay(FEB_HW_RELAY_OPEN);
-	FEB_Hw_Precharge_Relay(FEB_HW_RELAY_OPEN);
+	FEB_Hw_Set_BMS_Shutdown_Relay(FEB_HW_RELAY_OPEN);
+	FEB_Hw_Set_AIR_Plus_Relay(FEB_HW_RELAY_OPEN);
+	FEB_Hw_Set_Precharge_Relay(FEB_HW_RELAY_OPEN);
 
 	if (previous_state == FEB_SM_ST_BALANCE) {
 		osMutexRelease(FEB_SM_LockHandle);
@@ -257,46 +252,42 @@ void FEB_SM_Process(void) {
 			break;
 		case FEB_SM_ST_STANDBY:
 			// TODO: transition to charge, balance, precharge
-			transition(FEB_SM_ST_CHARGE);
+//			transition(FEB_SM_ST_CHARGE);
+			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE && FEB_Hw_AIR_Plus_Sense() == FEB_HW_RELAY_OPEN)
+				transition(FEB_SM_ST_PRECHARGE);
 			break;
 		case FEB_SM_ST_BALANCE:
-			if (FEB_Hw_Read_Shutdown_Circuit() == FEB_HW_RELAY_OPEN)
+			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_OPEN)
 				transition(FEB_SM_ST_STANDBY);
 			break;
 		case FEB_SM_ST_CHARGE:
-			if (FEB_Hw_Read_Shutdown_Circuit() == FEB_HW_RELAY_OPEN)
-				transition(FEB_SM_ST_STANDBY);
+//			if (FEB_Hw_Read_Shutdown_Circuit() == FEB_HW_RELAY_OPEN)
+//				transition(FEB_SM_ST_STANDBY);
 			break;
 		case FEB_SM_ST_PRECHARGE:
-			if (FEB_Hw_Read_Shutdown_Circuit() == FEB_HW_RELAY_OPEN)
+			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_OPEN)
 				transition(FEB_SM_ST_STANDBY);
+//			else if ()
 			break;
 		case FEB_SM_ST_DRIVE_STANDBY:
-			if (FEB_Hw_Read_Shutdown_Circuit() == FEB_HW_RELAY_OPEN)
+			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_OPEN)
 				transition(FEB_SM_ST_STANDBY);
 			break;
 		case FEB_SM_ST_DRIVE:
-			if (FEB_Hw_Read_Shutdown_Circuit() == FEB_HW_RELAY_OPEN)
+			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_OPEN)
 				transition(FEB_SM_ST_STANDBY);
 			break;
 		case FEB_SM_ST_DRIVE_REGEN:
-			if (FEB_Hw_Read_Shutdown_Circuit() == FEB_HW_RELAY_OPEN)
+			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_OPEN)
 				transition(FEB_SM_ST_STANDBY);
 			break;
 		case FEB_SM_ST_FAULT:
 			break;
 	}
 	osMutexRelease(FEB_SM_LockHandle);
-
-	static char str[64];
-	sprintf(str, "state %d, SHD %d, - %d, + %d, cs %d, imd %d\n",
-			current_state,
-			FEB_Hw_Read_Shutdown_Circuit() == FEB_HW_RELAY_CLOSE,
-			HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4), HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_5),
-			HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5), HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10));
-	HAL_UART_Transmit(&huart2, (uint8_t*) str, strlen(str), 100);
 }
 
+/* Output current state, relay state, and GPIO sense. */
 void FEB_SM_UART_Transmit(void) {
 	FEB_SM_ST_t state = FEB_SM_Get_Current_State();
 	char* state_str;
@@ -330,7 +321,23 @@ void FEB_SM_UART_Transmit(void) {
 			break;
 	}
 
-	static char str[32];
-	sprintf(str, "state %s\n", state_str);
+	while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
+	FEB_Hw_Relay_t bms_shutdown_relay = FEB_Hw_Get_BMS_Shutdown_Relay();
+	FEB_Hw_Relay_t air_plus_relay = FEB_Hw_Get_AIR_Plus_Relay();
+	FEB_Hw_Relay_t precharge_relay = FEB_Hw_Get_Precharge_Relay();
+	FEB_Hw_Relay_t air_minus_sense = FEB_Hw_AIR_Minus_Sense();
+	FEB_Hw_Relay_t air_plus_sense = FEB_Hw_AIR_Plus_Sense();
+	FEB_Hw_Relay_t bms_shutdown_sense = FEB_Hw_BMS_Shutdown_Sense();
+	FEB_Hw_Relay_t imd_shutdown_sense = FEB_Hw_IMD_Shutdown_Sense();
+	osMutexRelease(FEB_SM_LockHandle);
+
+	static char str[64];
+	sprintf(str, "state %s %d %d %d %d %d %d %d\n", state_str,
+			bms_shutdown_relay, air_plus_relay, precharge_relay,
+			air_minus_sense, air_plus_sense,
+			bms_shutdown_sense, imd_shutdown_sense);
+
+	while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
 	HAL_UART_Transmit(&huart2, (uint8_t*) str, strlen(str), 100);
+	osMutexRelease(FEB_SM_LockHandle);
 }

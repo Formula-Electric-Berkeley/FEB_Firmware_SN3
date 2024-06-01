@@ -5,8 +5,9 @@ COLOR_STANDARD = "#ececec"
 COLOR_OUT_OF_RANGE = "#ff0000"
 COLOR_BALANCE = "#91a9ff"
 
-def create_cell(master, row: int, col: int, text: str, rs: int = 1, cs: int = 1, wsf: float | int = 1,
-                    bd: int = 1) -> tk.Label:
+def create_cell(master, row: int, col: int, text: str, rs: int = 1, cs: int = 1, 
+                wsf: float | int = 1, bd: int = 1,
+                padx: int | tuple[int, int] = 0, pady: int | tuple[int, int] = 0) -> tk.Label:
     cell = tk.Label(master, text=text, width=int(8*wsf), height=1, relief="solid", bd=bd, background=COLOR_STANDARD)
     cell.grid(row=row, rowspan=rs, column=col, columnspan=cs, sticky="nesw")
     return cell
