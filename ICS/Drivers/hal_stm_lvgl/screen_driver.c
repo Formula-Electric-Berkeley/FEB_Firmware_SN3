@@ -51,11 +51,14 @@ void screen_driver_init(){
 	static lv_disp_draw_buf_t draw_buf;
 	lv_disp_draw_buf_init(&draw_buf, framebuffer_1, framebuffer_2, FRAMEBUFFER_SIZE);
 	lv_disp_drv_init(&lv_display_driver);
-	lv_display_driver.direct_mode = true;
+	lv_display_driver.direct_mode = false;
+	lv_display_driver.full_refresh = false;
 	lv_display_driver.hor_res = NT35510_480X800_HEIGHT;
 	lv_display_driver.ver_res = NT35510_480X800_WIDTH;
 	lv_display_driver.flush_cb = stm32_flush_cb;
 	lv_display_driver.draw_buf = &draw_buf;
+	lv_display_driver.sw_rotate = 1;
+	lv_display_driver.rotated = 2;
 
 	lv_disp_drv_register(&lv_display_driver);
 }
