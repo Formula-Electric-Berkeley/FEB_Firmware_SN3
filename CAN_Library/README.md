@@ -7,10 +7,15 @@
   - [3.1 BMS](#31-bms)
     - [3.1.1 State](#311-state)
   - [3.2 APPS](#32-apps)
+    - [3.2.1 Normalized Brake](#321-normalized-brake)
+    - [3.2.2 RMS Param Msg](#322-rms-param-msg)
+    - [3.2.3 RMS Command Msg](#323-rms-command-msg)
+    - [3.2.4 BSPD](#324-bspd)
+    - [3.2.5 Current](#325-current)
   - [3.3 LVPDB](#33-lvpdb)
   - [3.4 DCU](#34-dcu)
   - [3.5 ICS](#35-ics)
-    - [3.5.1 Buttons & Swtiches](#351-buttons--swtiches)
+    - [3.5.1 Buttons \& Swtiches](#351-buttons--swtiches)
   - [3.6 DART](#36-dart)
     - [3.6.1 Measured Fan Speeds (Both DART1 and DART2)](#361-measured-fan-speeds-both-dart1-and-dart2)
 
@@ -33,6 +38,8 @@ Other files:
 4. <b>GitHub</b>: Push all changes to GitHub to ensure the CAN Library is up to date for everyone.
 
 # 3 CAN Message Documentation
+
+Note: Bytes and bits are 0-indexed.
 
 ## 3.1 BMS
 
