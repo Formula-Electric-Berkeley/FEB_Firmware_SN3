@@ -12,7 +12,7 @@ class SerialConnection:
         self.__bms_data = bms_data
         port = self.__get_port()
         self.__connection = self.__connect(port)
-    
+
     def __get_port(self) -> str:
         while True:
             ports = serial.tools.list_ports.comports()
@@ -32,7 +32,7 @@ class SerialConnection:
                 except:
                     print("Error: invalid port index")
         return ports[port_index][0]
-    
+
     def __connect(self, port: str) -> serial.Serial:
         try:
             serial_connection = serial.Serial(port, SerialConnection.BAUD_RATE, SerialConnection.BYTE_SIZE,
@@ -48,7 +48,9 @@ class SerialConnection:
             try:
                 message = self.__connection.readline().decode("utf-8")
                 message = message.replace("\n", "").split()
-                self.__bms_data.store_message(message)
+                success = self.__bms_data.store_message(message)
+                if not success:
+                    print("Error read;", message)
             except KeyboardInterrupt:
                 sys.exit(1)
             except:

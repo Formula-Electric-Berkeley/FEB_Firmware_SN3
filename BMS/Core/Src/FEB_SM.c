@@ -4,6 +4,7 @@
 #include "FEB_CAN.h"
 #include "FEB_LTC6811.h"
 #include "FEB_CAN_Charger.h"
+#include "FEB_CAN_ICS.h"
 #include "cmsis_os2.h"
 #include <stdint.h>
 #include "stm32f4xx_hal.h"
@@ -26,6 +27,10 @@ static void fault(void);
 extern osMutexId_t FEB_SM_LockHandle;
 extern osMutexId_t FEB_UART_LockHandle;
 extern UART_HandleTypeDef huart2;
+extern CAN_HandleTypeDef hcan1;
+extern uint8_t FEB_CAN_Tx_Data[8];
+extern CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
+extern uint32_t FEB_CAN_Tx_Mailbox;
 
 // Shared variable, requires synchronization
 static FEB_SM_ST_t current_state;
@@ -272,6 +277,8 @@ void FEB_SM_Process(void) {
 		case FEB_SM_ST_DRIVE_STANDBY:
 			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_OPEN)
 				transition(FEB_SM_ST_STANDBY);
+			else if (FEB_CAN_ICS_Ready_To_Drive())
+				transition(FEB_SM_ST_DRIVE);
 			break;
 		case FEB_SM_ST_DRIVE:
 			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_OPEN)
@@ -340,4 +347,24 @@ void FEB_SM_UART_Transmit(void) {
 	while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
 	HAL_UART_Transmit(&huart2, (uint8_t*) str, strlen(str), 100);
 	osMutexRelease(FEB_SM_LockHandle);
+}
+
+void FEB_SM_CAN_Transmit(void) {
+	// Initialize transmission header
+	FEB_CAN_Tx_Header.DLC = 1;
+	FEB_CAN_Tx_Header.StdId = FEB_CAN_ID_BMS_STATE;
+	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
+	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
+	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
+
+	// Copy data to Tx buffer
+	FEB_CAN_Tx_Data[0] = FEB_SM_Get_Current_State();
+
+	// Delay until mailbox available
+	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
+
+	// Add Tx data to mailbox
+	if (HAL_CAN_AddTxMessage(&hcan1, &FEB_CAN_Tx_Header, FEB_CAN_Tx_Data, &FEB_CAN_Tx_Mailbox) != HAL_OK) {
+		// FEB_SM_Set_Current_State(FEB_SM_ST_SHUTDOWN);
+	}
 }
