@@ -34,6 +34,7 @@ extern "C" {
 #include "FEB_CircularBuffer.h"
 #include "FEB_CAN.h"
 #include "FEB_BNO085.h"
+#include "FEB_XBee.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
