@@ -62,7 +62,7 @@ class GeneralView(ctk.CTkFrame):
     def __setup_gpio_view(self, row: int) -> int:
         # Relay data headers
         create_cell(self.__inner_frame, row=row, col=0, text="Relays", rs=2, wsf=2)
-        create_cell(self.__inner_frame, row=row, col=1, text="Shutdown Relay", wsf=2)
+        create_cell(self.__inner_frame, row=row, col=1, text="BMS Shutdown Relay", wsf=2)
         create_cell(self.__inner_frame, row=row, col=2, text="AIR+ Relay", wsf=2)
         create_cell(self.__inner_frame, row=row, col=3, text="Precharge Relay", wsf=2)
         row += 1

@@ -74,43 +74,43 @@ static IVT_message_flag_t IVT_message_flag;			// Flags indicating new IVT messag
 //#include "string.h"
 //#include "stdio.h"
 //
-//void FEB_CAN_IVT_Process(void) {
+void FEB_CAN_IVT_Process(void) {
 //	static char str[64];
 //	sprintf(str, "u1 %f, i %f, state %d\n",
 //			IVT_message.voltage_1_mV * 1e-3, IVT_message.current_mA * 1e-3,
 //			FEB_SM_Get_Current_State());
 //	HAL_UART_Transmit(&huart2, (uint8_t*) str, strlen(str), 100);
-//
-//	if (IVT_message_flag.current) {
-//		IVT_message_flag.current = false;
-//		// TODO: Check current flowing through battery
+
+	if (IVT_message_flag.current) {
+		IVT_message_flag.current = false;
+		// TODO: Check current flowing through battery
 //		 int32_t current_mA = IVT_message.current_mA;
 //		 if (current_mA < FEB_Config_Get_Pack_Min_Current_mA() ||
 //			 current_mA > FEB_Config_Get_Pack_Max_Current_mA())
 //			 FEB_SM_Transition(FEB_SM_ST_FAULT);
-//
-//	}
-//	if (IVT_message_flag.voltage_1) {
-//		IVT_message_flag.voltage_1 = false;
-//		if (FEB_SM_Get_Current_State() == FEB_SM_ST_PRECHARGE) {
-//			// TODO: Check precharge complete
-//			float voltage_V = (float) IVT_message.voltage_1_mV * 1e-3;
-//			float target_voltage_V = 50;
-////			float target_voltage_V = FEB_LTC6811_Get_Total_Voltage() * FEB_CONST_PRECHARGE_PCT;
-//			if (voltage_V >= target_voltage_V) {
-//				FEB_SM_Transition(FEB_SM_ST_DRIVE_STANDBY);
-//			}
-//		}
-//	}
-//	if (IVT_message_flag.voltage_2) {
-//		IVT_message_flag.voltage_2 = false;
-//		// ...
-//	}
-//	if (IVT_message_flag.voltage_3) {
-//		IVT_message_flag.voltage_3 = false;
-//		// ...
-//	}
-//}
+
+	}
+	if (IVT_message_flag.voltage_1) {
+		IVT_message_flag.voltage_1 = false;
+		if (FEB_SM_Get_Current_State() == FEB_SM_ST_PRECHARGE) {
+			// TODO: Check precharge complete
+			float voltage_V = (float) IVT_message.voltage_1_mV * 1e-3;
+			float target_voltage_V = 50;
+//			float target_voltage_V = FEB_LTC6811_Get_Total_Voltage() * FEB_CONST_PRECHARGE_PCT;
+			if (voltage_V >= target_voltage_V) {
+				FEB_SM_Transition(FEB_SM_ST_DRIVE_STANDBY);
+			}
+		}
+	}
+	if (IVT_message_flag.voltage_2) {
+		IVT_message_flag.voltage_2 = false;
+		// ...
+	}
+	if (IVT_message_flag.voltage_3) {
+		IVT_message_flag.voltage_3 = false;
+		// ...
+	}
+}
 
 //// ******************************** Includes & External ********************************
 //
@@ -185,7 +185,7 @@ void FEB_CAN_IVT_Store_Msg(CAN_RxHeaderTypeDef* rx_header, uint8_t rx_data[]) {
 	}
 }
 
-void FEB_CAN_IVT_Process(void) {
+//void FEB_CAN_IVT_Process(void) {
 //	if (IVT_CAN_flag.current) {
 //		IVT_CAN_flag.current = false;
 //		// TODO: Check current flowing through battery
@@ -210,7 +210,7 @@ void FEB_CAN_IVT_Process(void) {
 //		IVT_CAN_flag.voltage_3 = false;
 //		// ...
 //	}
-}
+//}
 
 void FEB_CAN_IVT_UART_Transmit(void) {
 	static char str[64];
