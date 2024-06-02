@@ -111,7 +111,7 @@ static void startup(void) {
 		FEB_Hw_Set_BMS_Shutdown_Relay(FEB_HW_RELAY_OPEN);
 		return;
 	}
-//	FEB_LTC6811_Init();
+	FEB_LTC6811_Init();
 //	FEB_CAN_Charger_Init();
 }
 
@@ -260,10 +260,9 @@ void FEB_SM_Process(void) {
 //			transition(FEB_SM_ST_CHARGE);
 			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE && FEB_Hw_AIR_Plus_Sense() == FEB_HW_RELAY_OPEN)
 				transition(FEB_SM_ST_PRECHARGE);
+//			transition(FEB_SM_ST_BALANCE);
 			break;
 		case FEB_SM_ST_BALANCE:
-			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_OPEN)
-				transition(FEB_SM_ST_STANDBY);
 			break;
 		case FEB_SM_ST_CHARGE:
 //			if (FEB_Hw_Read_Shutdown_Circuit() == FEB_HW_RELAY_OPEN)

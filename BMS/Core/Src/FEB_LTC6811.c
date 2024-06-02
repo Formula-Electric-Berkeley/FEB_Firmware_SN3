@@ -94,6 +94,7 @@ static void store_voltage_values(void);
 // Balance
 static void set_target_voltage(void);
 static void balance_all_cells(void);
+static bool check_balance_complete(void);
 
 // Temperature
 static void set_GPIO_bits(uint8_t channel);
@@ -218,11 +219,11 @@ static void read_voltage_registers(void) {
 }
 
 static void store_voltage_values(void) {
-	FEB_SM_ST_t state = FEB_SM_Get_Current_State();
+//	FEB_SM_ST_t state = FEB_SM_Get_Current_State();
 
 	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 	uint32_t total_voltage_mV = 0;
-	bool balance_complete = true;
+//	bool balance_complete = true;
 
 	for (uint8_t bank = 0; bank < FEB_CONFIG_NUM_BANKS; bank++) {
 		for (uint8_t cell = 0; cell < FEB_CONFIG_NUM_CELLS_PER_BANK; cell++) {
@@ -238,22 +239,22 @@ static void store_voltage_values(void) {
 				voltage_mV < min_voltage_mV || voltage_mV > max_voltage_mV;
 
 			// Check balance voltage
-			if (state == FEB_SM_ST_BALANCE && accumulator.cells[bank][cell].balance &&
-				!accumulator.balance_active && voltage_mV < accumulator.balance_target_voltage_mV) {
-				accumulator.cells[bank][cell].balance = false;
-			}
-			if (accumulator.cells[bank][cell].balance) {
-				balance_complete = false;
-			}
+//			if (state == FEB_SM_ST_BALANCE && accumulator.cells[bank][cell].balance &&
+//				!accumulator.balance_active && voltage_mV < accumulator.balance_target_voltage_mV) {
+//				accumulator.cells[bank][cell].balance = false;
+//			}
+//			if (accumulator.cells[bank][cell].balance) {
+//				balance_complete = false;
+//			}
 		}
 	}
 	accumulator.total_voltage_mV = total_voltage_mV;
 	osMutexRelease(FEB_LTC6811_LockHandle);
 
-	// Stop balance if complete
-	if (balance_complete) {
-		FEB_SM_Transition(FEB_SM_ST_STANDBY);
-	}
+//	// Stop balance if complete
+//	if (balance_complete) {
+//		FEB_SM_Transition(FEB_SM_ST_STANDBY);
+//	}
 }
 
 /* ******** Balance Functions ******** */
@@ -275,7 +276,7 @@ static void set_target_voltage(void) {
 			}
 		}
 	}
-	accumulator.balance_target_voltage_mV = 3200;
+	accumulator.balance_target_voltage_mV = 3300;
 }
 
 static void balance_all_cells(void) {
@@ -292,15 +293,66 @@ void FEB_LTC6811_Balance_Process(void) {
 		accumulator.balance_active = true;
 		osMutexRelease(FEB_LTC6811_LockHandle);
 
-		osDelay(10000);
+		osDelay(30000);
 
 		while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 		accumulator.balance_active = false;
 		osMutexRelease(FEB_LTC6811_LockHandle);
 
-		osDelay(5000);
+		osDelay(4000);
+
+		if (check_balance_complete())
+			FEB_SM_Transition(FEB_SM_ST_STANDBY);
 	}
 }
+
+static bool check_balance_complete(void) {
+	bool complete = true;
+	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
+	for (uint8_t bank = 0; bank < FEB_CONFIG_NUM_BANKS; bank++) {
+		for (uint8_t cell = 0; cell < FEB_CONFIG_NUM_CELLS_PER_BANK; cell++) {
+			if (accumulator.cells[bank][cell].balance)
+				complete = false;
+			if (accumulator.cells[bank][cell].balance &&
+				accumulator.cells[bank][cell].voltage_mV < accumulator.balance_target_voltage_mV) {
+				accumulator.cells[bank][cell].balance = false;
+			}
+		}
+	}
+	osMutexRelease(FEB_LTC6811_LockHandle);
+	return complete;
+}
+
+//
+//
+//	uint32_t total_voltage_mV = 0;
+////	bool balance_complete = true;
+//
+//	for (uint8_t bank = 0; bank < FEB_CONFIG_NUM_BANKS; bank++) {
+//		for (uint8_t cell = 0; cell < FEB_CONFIG_NUM_CELLS_PER_BANK; cell++) {
+//			// Store voltage
+//			uint16_t voltage_mV = IC_config[get_IC(bank, cell)].cells.c_codes[get_IC_cell(cell)] * 1e-1;
+//			accumulator.cells[bank][cell].voltage_mV = voltage_mV;
+//			total_voltage_mV += voltage_mV;
+//
+//			// Check under/over voltage
+//			uint16_t min_voltage_mV = FEB_Config_Get_Cell_Min_Voltage_mV();
+//			uint16_t max_voltage_mV = FEB_Config_Get_Cell_Max_Voltage_mV();
+//			accumulator.cells[bank][cell].voltage_fault =
+//				voltage_mV < min_voltage_mV || voltage_mV > max_voltage_mV;
+//
+//			// Check balance voltage
+////			if (state == FEB_SM_ST_BALANCE && accumulator.cells[bank][cell].balance &&
+////				!accumulator.balance_active && voltage_mV < accumulator.balance_target_voltage_mV) {
+////				accumulator.cells[bank][cell].balance = false;
+////			}
+////			if (accumulator.cells[bank][cell].balance) {
+////				balance_complete = false;
+////			}
+//		}
+//	}
+
+//}
 
 static void configure_DCCBITS_A(uint8_t IC) {
 	FEB_SM_ST_t state = FEB_SM_Get_Current_State();

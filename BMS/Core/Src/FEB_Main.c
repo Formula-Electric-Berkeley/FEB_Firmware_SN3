@@ -14,9 +14,9 @@ void FEB_Main_Setup(void) {
 
 void FEB_Main_Task1_VT(void) {
 	while (1) {
-//		FEB_LTC6811_Poll_Voltage();
-//		FEB_LTC6811_Poll_Temperature();
-//		FEB_LTC6811_UART_Transmit();
+		FEB_LTC6811_Poll_Voltage();
+		FEB_LTC6811_Poll_Temperature();
+		FEB_LTC6811_UART_Transmit();
 		osDelay(100);
 	}
 }
@@ -25,7 +25,7 @@ void FEB_Main_Task2_State(void) {
 	while (1) {
 		FEB_SM_Process();
 		FEB_SM_UART_Transmit();
-		FEB_SM_CAN_Transmit();
+//		FEB_SM_CAN_Transmit();
 		osDelay(100);
 	}
 }

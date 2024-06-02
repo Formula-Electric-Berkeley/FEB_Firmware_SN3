@@ -18,6 +18,8 @@ void FEB_SM_Init(void);
 FEB_SM_ST_t FEB_SM_Get_Current_State(void);
 void FEB_SM_Transition(FEB_SM_ST_t next_state);
 void FEB_SM_Process(void);
+void FEB_SM_UART_Transmit(void);
+void FEB_SM_CAN_Transmit(void);
 
 /* Faults
 CAN Initialization fails
