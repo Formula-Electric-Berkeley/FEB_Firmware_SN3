@@ -7,6 +7,7 @@ extern uint8_t FEB_CAN_Tx_Data[8];
 extern uint32_t FEB_CAN_Tx_Mailbox;
 
 static bool ready_to_drive = 0;
+static uint8_t ics_data = 0;
 
 uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
 	uint16_t ids[] = {FEB_CAN_ID_ICS_BUTTON_STATE};
@@ -38,11 +39,16 @@ uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
 void FEB_CAN_ICS_Store_Msg(CAN_RxHeaderTypeDef *rx_header, uint8_t rx_data[]) {
 	switch(rx_header->StdId) {
 		case FEB_CAN_ID_ICS_BUTTON_STATE:
-			ready_to_drive = rx_data[0] >> 1;
-				break;
+			ics_data = rx_data[0];
+			ready_to_drive = (rx_data[0] | 0b11111101) == 0xFF;
+			break;
 	}
 }
 
 bool FEB_CAN_ICS_Ready_To_Drive(void) {
 	return ready_to_drive;
+}
+
+uint8_t FEB_CAN_ICS_Data(){
+	return ics_data;
 }

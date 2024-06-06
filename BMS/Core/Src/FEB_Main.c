@@ -24,7 +24,7 @@ void FEB_Main_Task1_VT(void) {
 void FEB_Main_Task2_State(void) {
 	while (1) {
 		FEB_SM_Process();
-		FEB_SM_UART_Transmit();
+//		FEB_SM_UART_Transmit();
 //		FEB_SM_CAN_Transmit();
 		osDelay(100);
 	}
@@ -60,7 +60,7 @@ void FEB_Main_Task6_CAN(void) {
 
 //		FEB_LTC6811_CAN_Transmit_Voltage();
 //		FEB_LTC6811_CAN_Transmit_Temperature();
-//		FEB_SM_CAN_Transmit();
+		FEB_SM_CAN_Transmit();
 		// TODO: CAN transmit LTC6811 balance, add bit to indicate currently balancing
 		// TODO: CAN transmit LTC6811 enabled temperature sensors
 		osDelay(1000);

@@ -34,7 +34,7 @@
 //#define FEB_CONST_MAX_CURR_CH 20
 //
 //// Pre-charge percent
-//#define FEB_CONST_PRECHARGE_PCT 0.9
+#define FEB_CONST_PRECHARGE_PCT 0.9
 //
 //// Number of temperature MUX channels
 //#define FEB_CONST_NUM_TEMP_MUX_CH 5

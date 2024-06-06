@@ -258,7 +258,7 @@ void FEB_SM_Process(void) {
 		case FEB_SM_ST_STANDBY:
 			// TODO: transition to charge, balance, precharge
 //			transition(FEB_SM_ST_CHARGE);
-			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE && FEB_Hw_AIR_Plus_Sense() == FEB_HW_RELAY_OPEN)
+			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE)
 				transition(FEB_SM_ST_PRECHARGE);
 //			transition(FEB_SM_ST_BALANCE);
 			break;
@@ -335,13 +335,19 @@ void FEB_SM_UART_Transmit(void) {
 	FEB_Hw_Relay_t air_plus_sense = FEB_Hw_AIR_Plus_Sense();
 	FEB_Hw_Relay_t bms_shutdown_sense = FEB_Hw_BMS_Shutdown_Sense();
 	FEB_Hw_Relay_t imd_shutdown_sense = FEB_Hw_IMD_Shutdown_Sense();
+	bool r2d = FEB_CAN_ICS_Ready_To_Drive();
+	uint8_t ics = FEB_CAN_ICS_Data();
+
 	osMutexRelease(FEB_SM_LockHandle);
 
+
 	static char str[64];
-	sprintf(str, "state %s %d %d %d %d %d %d %d\n", state_str,
+	sprintf(str, "state %s %d %d %d %d %d %d %d\n r2d_state: %d, ics_data:%d\n", state_str,
 			bms_shutdown_relay, air_plus_relay, precharge_relay,
 			air_minus_sense, air_plus_sense,
-			bms_shutdown_sense, imd_shutdown_sense);
+			bms_shutdown_sense, imd_shutdown_sense, r2d, ics);
+
+
 
 	while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
 	HAL_UART_Transmit(&huart2, (uint8_t*) str, strlen(str), 100);

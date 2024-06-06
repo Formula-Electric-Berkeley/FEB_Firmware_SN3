@@ -1,6 +1,7 @@
 #include "FEB_CAN_IVT.h"
 #include "FEB_CAN_ID.h"
 #include "FEB_Config.h"
+#include "FEB_Const.h"
 #include "stdint.h"
 #include "stdbool.h"
 
@@ -95,8 +96,7 @@ void FEB_CAN_IVT_Process(void) {
 		if (FEB_SM_Get_Current_State() == FEB_SM_ST_PRECHARGE) {
 			// TODO: Check precharge complete
 			float voltage_V = (float) IVT_message.voltage_1_mV * 1e-3;
-			float target_voltage_V = 50;
-//			float target_voltage_V = FEB_LTC6811_Get_Total_Voltage() * FEB_CONST_PRECHARGE_PCT;
+			float target_voltage_V = FEB_LTC6811_Get_Total_Voltage() * FEB_CONST_PRECHARGE_PCT;
 			if (voltage_V >= target_voltage_V) {
 				FEB_SM_Transition(FEB_SM_ST_DRIVE_STANDBY);
 			}
