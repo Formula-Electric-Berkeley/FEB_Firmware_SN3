@@ -222,9 +222,6 @@ static void fault(void) {
 		while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
 	}
 
-	// This turns on the Dash BMS indicator in case of a fault
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_SET);
-
 	// TODO: Stop charge
 }
 
@@ -259,17 +256,17 @@ void FEB_SM_Process(void) {
 			transition(FEB_SM_ST_STANDBY);
 			break;
 		case FEB_SM_ST_STANDBY:
-			// TODO: transition to charge, balance, precharge
-//			transition(FEB_SM_ST_CHARGE);
-			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE && FEB_Hw_AIR_Plus_Sense() == FEB_HW_RELAY_OPEN)
+//			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE && FEB_Hw_Charge_Sense() == GPIO_PIN_SET)
+//				transition(FEB_SM_ST_CHARGE);
+			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE && FEB_Hw_AIR_Plus_Sense() == FEB_HW_RELAY_OPEN && FEB_Hw_Charge_Sense() == GPIO_PIN_RESET)
 				transition(FEB_SM_ST_PRECHARGE);
 //			transition(FEB_SM_ST_BALANCE);
 			break;
 		case FEB_SM_ST_BALANCE:
 			break;
 		case FEB_SM_ST_CHARGE:
-//			if (FEB_Hw_Read_Shutdown_Circuit() == FEB_HW_RELAY_OPEN)
-//				transition(FEB_SM_ST_STANDBY);
+			if (FEB_Hw_Read_Shutdown_Circuit() == FEB_HW_RELAY_OPEN)
+				transition(FEB_SM_ST_STANDBY);
 			break;
 		case FEB_SM_ST_PRECHARGE:
 			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_OPEN)
@@ -343,14 +340,11 @@ void FEB_SM_UART_Transmit(void) {
 
 	osMutexRelease(FEB_SM_LockHandle);
 
-
-	static char str[64];
+	static char str[128];
 	sprintf(str, "state %s %d %d %d %d %d %d %d\n r2d_state: %d, ics_data:%d\n", state_str,
 			bms_shutdown_relay, air_plus_relay, precharge_relay,
 			air_minus_sense, air_plus_sense,
 			bms_shutdown_sense, imd_shutdown_sense, r2d, ics);
-
-
 
 	while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
 	HAL_UART_Transmit(&huart2, (uint8_t*) str, strlen(str), 100);

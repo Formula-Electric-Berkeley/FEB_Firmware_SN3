@@ -32,7 +32,7 @@ void FEB_Main_Task2_State(void) {
 
 void FEB_Main_Task3_Charge(void) {
 	while (1) {
-//		FEB_CAN_Charger_Process();
+		FEB_CAN_Charger_Process();
 		osDelay(1000);
 	}
 }

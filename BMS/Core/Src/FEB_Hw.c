@@ -18,10 +18,10 @@ void FEB_Hw_Set_BMS_Shutdown_Relay(FEB_Hw_Relay_t state) {
 	if (state == FEB_HW_RELAY_CLOSE && !close_guard) {
 		close_guard = true;
 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_SET);		// BMS Shutdown Relay
-//		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_RESET);	// Indicator light
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_RESET);	// Indicator light
 	} else if (state == FEB_HW_RELAY_OPEN){
 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET);	// BMS Shutdown Relay
-//		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_SET);		// Indicator light
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_SET);		// Indicator light
 	}
 	relay_state.bms_shutdown = state;
 }
@@ -85,4 +85,8 @@ FEB_Hw_Relay_t FEB_Hw_IMD_Shutdown_Sense(void) {
 	if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10) == GPIO_PIN_SET)
 		return FEB_HW_RELAY_CLOSE;
 	return FEB_HW_RELAY_OPEN;
+}
+
+GPIO_PinState FEB_Hw_Charge_Sense(void) {
+	return HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5);
 }
