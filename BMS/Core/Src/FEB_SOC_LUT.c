@@ -14,7 +14,7 @@ static float soc_volt_lut[21] = {2.499965, 2.985317, 3.154061, 3.288567, 3.38982
 
 int16_t FEB_SOC_LUT_Get_Closest_SOC(uint16_t voltage_mV) {
 	int closest_ind = 0;
-	float voltage_V = (float) voltage_mV / 100;
+	float voltage_V = (float) voltage_mV / 1000;
 	float closest_voltage = soc_volt_lut[0];
 	for (int lut_index = 0; lut_index < 21; lut_index++) {
 		if (DIFF(soc_volt_lut[lut_index], voltage_V) < DIFF(closest_voltage, voltage_V)) {

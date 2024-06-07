@@ -17,9 +17,9 @@ static float soc_volt_lut[21] = {2.499965, 2.985317, 3.154061, 3.288567, 3.38982
 
 // **************** Functions ****************
 
-int16_t FEB_SOC_LUT_Get_Closest_SOC(uint16_t voltage_mV) {
+int16_t FEB_SOC_LUT_Get_Closest_SOC_Test(uint16_t voltage_mV) {
 	int closest_ind = 0;
-	float voltage_V = (float) voltage_mV / 100;
+	float voltage_V = (float) voltage_mV / 1000;
 	float closest_voltage = soc_volt_lut[0];
 	for (int lut_index = 0; lut_index < 21; lut_index++) {
 		if (DIFF(soc_volt_lut[lut_index], voltage_V) < DIFF(closest_voltage, voltage_V)) {
@@ -30,47 +30,48 @@ int16_t FEB_SOC_LUT_Get_Closest_SOC(uint16_t voltage_mV) {
 	return closest_ind * 5;
 }
 
+/* Commenting this out to avoid error
 int main()
 {
-    uint16_t voltage_mV = 240;
-    int16_t soc = FEB_SOC_LUT_Get_Closest_SOC(voltage_mV);
+    uint16_t voltage_mV = 2400;
+    int16_t soc = FEB_SOC_LUT_Get_Closest_SOC_Test(voltage_mV);
     printf("%d\n", soc); //should be 0
 
-    voltage_mV = 300;
-    soc = FEB_SOC_LUT_Get_Closest_SOC(voltage_mV);
+    voltage_mV = 3000;
+    soc = FEB_SOC_LUT_Get_Closest_SOC_Test(voltage_mV);
     printf("%d\n", soc); //should be 5
 
-    voltage_mV = 340;
-    soc = FEB_SOC_LUT_Get_Closest_SOC(voltage_mV);
+    voltage_mV = 3400;
+    soc = FEB_SOC_LUT_Get_Closest_SOC_Test(voltage_mV);
     printf("%d\n", soc); //should be 20
 
-    voltage_mV = 360;
-    soc = FEB_SOC_LUT_Get_Closest_SOC(voltage_mV);
+    voltage_mV = 3600;
+    soc = FEB_SOC_LUT_Get_Closest_SOC_Test(voltage_mV);
     printf("%d\n", soc); //should be 40
 
-    voltage_mV = 380;
-    soc = FEB_SOC_LUT_Get_Closest_SOC(voltage_mV);
+    voltage_mV = 3800;
+    soc = FEB_SOC_LUT_Get_Closest_SOC_Test(voltage_mV);
     printf("%d\n", soc); //should be 60
 
-    voltage_mV = 390;
-    soc = FEB_SOC_LUT_Get_Closest_SOC(voltage_mV);
+    voltage_mV = 3900;
+    soc = FEB_SOC_LUT_Get_Closest_SOC_Test(voltage_mV);
     printf("%d\n", soc); //should be 70
 
-    voltage_mV = 400;
-    soc = FEB_SOC_LUT_Get_Closest_SOC(voltage_mV);
+    voltage_mV = 4000;
+    soc = FEB_SOC_LUT_Get_Closest_SOC_Test(voltage_mV);
     printf("%d\n", soc); //should be 80
 
-    voltage_mV = 410;
-    soc = FEB_SOC_LUT_Get_Closest_SOC(voltage_mV);
+    voltage_mV = 4100;
+    soc = FEB_SOC_LUT_Get_Closest_SOC_Test(voltage_mV);
     printf("%d\n", soc); //should be 95
 
-    voltage_mV = 420;
-    soc = FEB_SOC_LUT_Get_Closest_SOC(voltage_mV);
+    voltage_mV = 4200;
+    soc = FEB_SOC_LUT_Get_Closest_SOC_Test(voltage_mV);
     printf("%d\n", soc); //should be 100
 
-    voltage_mV = 430;
-    soc = FEB_SOC_LUT_Get_Closest_SOC(voltage_mV);
+    voltage_mV = 4300;
+    soc = FEB_SOC_LUT_Get_Closest_SOC_Test(voltage_mV);
     printf("%d\n", soc); //should be 100
     return 0;
-}
+}*/
 
