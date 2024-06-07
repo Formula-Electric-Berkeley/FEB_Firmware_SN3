@@ -10,6 +10,7 @@
 #include "stm32f4xx_hal.h"
 #include "stdio.h"
 #include "string.h"
+#include <stdbool.h>
 
 static void startup(void);
 static void standby(void);
@@ -112,7 +113,7 @@ static void startup(void) {
 		return;
 	}
 	FEB_LTC6811_Init();
-//	FEB_CAN_Charger_Init();
+	FEB_CAN_Charger_Init();
 }
 
 /* Assume SM lock held. */
@@ -256,8 +257,8 @@ void FEB_SM_Process(void) {
 			transition(FEB_SM_ST_STANDBY);
 			break;
 		case FEB_SM_ST_STANDBY:
-//			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE && FEB_Hw_Charge_Sense() == GPIO_PIN_SET)
-//				transition(FEB_SM_ST_CHARGE);
+			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE && FEB_Hw_Charge_Sense() == GPIO_PIN_SET &&  FEB_CAN_Charger_Received())
+				transition(FEB_SM_ST_CHARGE);
 			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE && FEB_Hw_AIR_Plus_Sense() == FEB_HW_RELAY_OPEN && FEB_Hw_Charge_Sense() == GPIO_PIN_RESET)
 				transition(FEB_SM_ST_PRECHARGE);
 //			transition(FEB_SM_ST_BALANCE);
@@ -265,7 +266,7 @@ void FEB_SM_Process(void) {
 		case FEB_SM_ST_BALANCE:
 			break;
 		case FEB_SM_ST_CHARGE:
-			if (FEB_Hw_Read_Shutdown_Circuit() == FEB_HW_RELAY_OPEN)
+			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_OPEN)
 				transition(FEB_SM_ST_STANDBY);
 			break;
 		case FEB_SM_ST_PRECHARGE:
