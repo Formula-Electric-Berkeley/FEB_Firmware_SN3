@@ -37,9 +37,7 @@ extern lv_obj_t *ui_TextArea4;
 extern lv_obj_t *ui_TextArea3;
 extern lv_obj_t *ui_Label12;
 extern lv_obj_t *ui____initial_actions0;
-extern lv_obj_t * img_regen_ready;
-extern lv_draw_label_dsc_t label_dsc1;
-extern lv_obj_t * canvas1;
+extern lv_obj_t * img_regen_status;
 extern lv_obj_t * img_ones_place;
 extern lv_obj_t * img_tens_place;
 extern lv_obj_t * img_percent;
@@ -48,6 +46,8 @@ extern lv_obj_t * img_tens_place1;
 extern lv_obj_t * img_degrees;
 extern lv_obj_t * img_ones_place2;
 extern lv_obj_t * img_tens_place2;
+extern lv_obj_t * img_tsal_status;
+extern lv_obj_t * img_bms_status;
 
 LV_FONT_DECLARE( ui_font_intervar52);
 LV_FONT_DECLARE( ui_font_robotf);
@@ -60,6 +60,9 @@ void ui_init(void);
 void set_soc_value(uint8_t value);
 void set_temp_value(uint8_t value);
 void set_speed_value(uint8_t value);
+void set_tsal_status(uint8_t value);
+void set_bms_status(uint8_t value);
+void set_regen_status(uint8_t value);
 
 #ifdef __cplusplus
 } /*extern "C"*/

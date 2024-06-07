@@ -33,19 +33,20 @@ void FEB_UI_Init(void) {
 void FEB_UI_Update(void) {
 	lv_task_handler();
 
-	FEB_UI_Set_Values();
+//	FEB_UI_Set_Values();
 
-//	ui_init();
-
-//	UI_Demo_Mode();
-	iter++;
+	UI_Demo_Mode();
 }
 
 void FEB_UI_Set_Values(void) {
-	char test_feb_str[20];
-	sprintf(test_feb_str, "%d", iter);
-	screen_info.test_str = test_feb_str;
+	lv_label_set_text(ui_Label10, BMS_STATE_LABELS[ICS_UI_Values.bms_state % 6]);
+	lv_obj_set_style_text_color(ui_Label10, lv_color_hex(BMS_STATE_COLORS[ICS_UI_Values.bms_state % 6]), LV_PART_MAIN | LV_STATE_DEFAULT );
 
+	lv_label_set_text(ui_Label6, HV_STATUS_LABELS[ICS_UI_Values.ivt_voltage > 60.0]);
+	lv_obj_set_style_text_color(ui_Label6, lv_color_hex(HV_STATUS_COLORS[ICS_UI_Values.ivt_voltage > 60.0]), LV_PART_MAIN | LV_STATE_DEFAULT );
+}
+
+void UI_Demo_Mode(void) {
 	set_soc_value(iter);
 	set_temp_value(iter + 7);
 	set_speed_value(iter + 13);
@@ -53,31 +54,17 @@ void FEB_UI_Set_Values(void) {
 	lv_bar_set_value(ui_Bar1, iter, LV_ANIM_OFF);
 	lv_bar_set_value(ui_Bar3, iter + 7, LV_ANIM_OFF);
 
-//	lv_obj_clean(canvas1);
-//	lv_canvas_fill_bg(canvas1, LV_COLOR_CHROMA_KEY, LV_OPA_TRANSP);
-//	set_soc_value(iter);
-}
-//	lv_label_set_text(ui_Label10, BMS_STATE_LABELS[ICS_UI_Values.bms_state % 6]);
-//	lv_obj_set_style_text_color(ui_Label10, lv_color_hex(BMS_STATE_COLORS[ICS_UI_Values.bms_state % 6]), LV_PART_MAIN | LV_STATE_DEFAULT );
-//
-//	lv_label_set_text(ui_Label6, HV_STATUS_LABELS[ICS_UI_Values.ivt_voltage > 60.0]);
-//	lv_obj_set_style_text_color(ui_Label6, lv_color_hex(HV_STATUS_COLORS[ICS_UI_Values.ivt_voltage > 60.0]), LV_PART_MAIN | LV_STATE_DEFAULT );
-//}
+	set_tsal_status(iter % 2);
+	set_bms_status(iter % 6);
+	set_regen_status(iter % 10 > 5);
 
-void UI_Demo_Mode(void) {
-	ICS_UI_Values.bms_state++;
-	ICS_UI_Values.ivt_voltage += 20.0;
-	ICS_UI_Values.acc_temp += 5;
+	if (iter % 10 < 5) {
+		lv_obj_set_style_bg_color(ui_TextArea1, lv_color_hex(0x019F02), LV_PART_MAIN | LV_STATE_DEFAULT );
+		lv_obj_set_style_bg_color(ui_TextArea3, lv_color_hex(0x019F02), LV_PART_MAIN | LV_STATE_DEFAULT );
+	} else {
+		lv_obj_set_style_bg_color(ui_TextArea1, lv_color_hex(0xFE0000), LV_PART_MAIN | LV_STATE_DEFAULT );
+		lv_obj_set_style_bg_color(ui_TextArea3, lv_color_hex(0xFE0000), LV_PART_MAIN | LV_STATE_DEFAULT );
+	}
 
-	lv_bar_set_value(ui_Bar1, abs((100 - (((int) ((ICS_UI_Values.ivt_voltage / 600.0) * 100)) % 600)) % 100), LV_ANIM_OFF);
-    char soc_str[20];
-    sprintf(soc_str, "%d%%", abs((100 - (((int) ((ICS_UI_Values.ivt_voltage / 600.0) * 100)) % 600)) % 100));
-	lv_label_set_text(ui_Label2, soc_str);
-
-	if ((int) ICS_UI_Values.acc_temp % 60 < 30) ICS_UI_Values.acc_temp = 30.0;
-
-	lv_bar_set_value(ui_Bar3, (int) (((((int) ICS_UI_Values.acc_temp) % 65) - 25) / 35.0 * 100.0), LV_ANIM_OFF);
-    char temp_str[20];
-    sprintf(temp_str, "%d°C", ((int) ICS_UI_Values.acc_temp) % 65);
-	lv_label_set_text(ui_Label5, temp_str);
+	iter++;
 }

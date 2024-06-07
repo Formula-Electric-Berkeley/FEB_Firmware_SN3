@@ -17,5 +17,5 @@ void FEB_Main_Loop(void) {
 
 //	FEB_IO_ICS_Loop();
 
-	HAL_Delay(20);
+	HAL_Delay(50);
 }

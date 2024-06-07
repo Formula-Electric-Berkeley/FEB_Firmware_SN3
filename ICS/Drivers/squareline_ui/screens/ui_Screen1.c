@@ -18,11 +18,7 @@ void ui_Screen1_screen_init(void) {
 	lv_obj_set_style_bg_color(ui_Container2, lv_color_hex(0x01FF01), LV_PART_MAIN | LV_STATE_DEFAULT );
 	lv_obj_set_style_bg_opa(ui_Container2, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
 
-	LV_IMG_DECLARE(regen_ready);
-    img_regen_ready = lv_img_create(ui_Screen1);
-    lv_img_set_src(img_regen_ready, &regen_ready);
-    lv_obj_align(img_regen_ready, LV_ALIGN_CENTER, 0, 200);
-    lv_img_set_angle(img_regen_ready, 1800);
+    img_regen_status = lv_img_create(ui_Screen1);
 
 	ui_Bar1 = lv_bar_create(ui_Screen1);
 	lv_bar_set_value(ui_Bar1,50,LV_ANIM_OFF);
@@ -71,17 +67,11 @@ void ui_Screen1_screen_init(void) {
     img_degrees = lv_img_create(ui_Screen1);
 	set_temp_value(00);
 
-    LV_IMG_DECLARE(hvon);
-    lv_obj_t * img_hvoff = lv_img_create(ui_Screen1);
-    lv_img_set_src(img_hvoff, &hvon);
-    lv_obj_align(img_hvoff, LV_ALIGN_CENTER, 250, -15);
-    lv_img_set_angle(img_hvoff, 1800);
+    img_tsal_status = lv_img_create(ui_Screen1);
+    set_tsal_status(0);
 
-    LV_IMG_DECLARE(drive);
-    lv_obj_t * img_drive = lv_img_create(ui_Screen1);
-    lv_img_set_src(img_drive, &drive);
-    lv_obj_align(img_drive, LV_ALIGN_CENTER, -250, -15);
-    lv_img_set_angle(img_drive, 1800);
+    img_bms_status = lv_img_create(ui_Screen1);
+    set_bms_status(0);
 
 	img_ones_place2 = lv_img_create(ui_Screen1);
     img_tens_place2 = lv_img_create(ui_Screen1);
@@ -425,7 +415,6 @@ void set_temp_value(uint8_t value) {
     		break;
     }
 
-
 	lv_obj_set_x( img_ones_place1, x_pos_zero );
 	lv_obj_set_y( img_ones_place1, y_pos_zero );
 	lv_obj_set_x( img_tens_place1, x_pos_one );
@@ -579,4 +568,70 @@ void set_speed_value(uint8_t value) {
 
 	lv_img_set_zoom(img_ones_place2, 300);
 	lv_img_set_zoom(img_tens_place2, 300);
+}
+
+void set_tsal_status(uint8_t value) {
+	if (value == 1) {
+		LV_IMG_DECLARE(hvon);
+		lv_img_set_src(img_tsal_status, &hvon);
+	} else {
+		LV_IMG_DECLARE(hvoff);
+		lv_img_set_src(img_tsal_status, &hvoff);
+	}
+
+	lv_obj_align(img_tsal_status, LV_ALIGN_CENTER, 250, -15);
+	lv_img_set_angle(img_tsal_status, 1800);
+}
+
+void set_bms_status(uint8_t value) {
+	switch (value) {
+		case 1:
+			LV_IMG_DECLARE(precharge);
+			lv_img_set_src(img_bms_status, &precharge);
+			lv_img_set_zoom(img_bms_status, 220);
+			break;
+		case 2:
+			LV_IMG_DECLARE(charge);
+			lv_img_set_src(img_bms_status, &charge);
+			lv_img_set_zoom(img_bms_status, 256);
+			break;
+		case 3:
+			LV_IMG_DECLARE(balance);
+			lv_img_set_src(img_bms_status, &balance);
+			lv_img_set_zoom(img_bms_status, 256);
+			break;
+		case 4:
+			LV_IMG_DECLARE(drive);
+			lv_img_set_src(img_bms_status, &drive);
+			lv_img_set_zoom(img_bms_status, 256);
+			break;
+		case 5:
+			LV_IMG_DECLARE(shutdown);
+			lv_img_set_src(img_bms_status, &shutdown);
+			lv_img_set_zoom(img_bms_status, 220);
+			break;
+		default:
+			LV_IMG_DECLARE(null);
+			lv_img_set_src(img_bms_status, &null);
+			lv_img_set_zoom(img_bms_status, 256);
+			break;
+	}
+
+	lv_obj_align(img_bms_status, LV_ALIGN_CENTER, -250, -15);
+	lv_img_set_angle(img_bms_status, 1800);
+}
+
+void set_regen_status(uint8_t value) {
+	if (value == 1) {
+		LV_IMG_DECLARE(regen_ready);
+		lv_img_set_src(img_regen_status, &regen_ready);
+		lv_obj_set_style_bg_color(ui_Container2, lv_color_hex(0x01FF01), LV_PART_MAIN | LV_STATE_DEFAULT );
+	} else {
+		LV_IMG_DECLARE(regen_off);
+		lv_img_set_src(img_regen_status, &regen_off);
+		lv_obj_set_style_bg_color(ui_Container2, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT );
+	}
+
+	lv_obj_align(img_regen_status, LV_ALIGN_CENTER, 0, 200);
+	lv_img_set_angle(img_regen_status, 1800);
 }

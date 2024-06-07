@@ -116,10 +116,8 @@ void FEB_IO_ICS_Loop(void) {
 	//r2d should trigger the color not the buzzer state.
 	if (r2d == 1){
 		lv_obj_set_style_bg_color(ui_TextArea3, lv_color_hex(0x019F02), LV_PART_MAIN | LV_STATE_DEFAULT );
-
 	}else{
 		lv_obj_set_style_bg_color(ui_TextArea3, lv_color_hex(0xFE0000), LV_PART_MAIN | LV_STATE_DEFAULT );
-
 	}
 
 	// transmit RTD
