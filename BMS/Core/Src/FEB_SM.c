@@ -106,6 +106,8 @@ static void startup(void) {
 	FEB_Hw_Set_AIR_Plus_Relay(FEB_HW_RELAY_OPEN);
 	FEB_Hw_Set_Precharge_Relay(FEB_HW_RELAY_OPEN);
 	FEB_Hw_Set_BMS_Shutdown_Relay(FEB_HW_RELAY_CLOSE);
+	FEB_CAN_Charger_Init();
+
 
 	if (!FEB_CAN_Init()) {
 		current_state = FEB_SM_ST_FAULT;
@@ -113,7 +115,6 @@ static void startup(void) {
 		return;
 	}
 	FEB_LTC6811_Init();
-	FEB_CAN_Charger_Init();
 }
 
 /* Assume SM lock held. */

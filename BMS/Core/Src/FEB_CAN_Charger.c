@@ -13,12 +13,12 @@ typedef struct {
 	uint16_t max_voltage_dV;		// Deci-volts
 	uint16_t max_current_dA;		// Deci-amps
 	uint8_t control;				// 0 (start charge), 1 (stop charge)
-	bool received;
 } BMS_message_t;
 typedef struct {
 	uint16_t op_voltage_dV;			// Operating voltage
 	uint16_t op_current_dA;			// Ooperating current
 	uint8_t status;
+	bool received;
 } CCS_message_t;
 static BMS_message_t BMS_message;
 static CCS_message_t CCS_message;
@@ -56,7 +56,7 @@ void FEB_CAN_Charger_Store_Msg(CAN_RxHeaderTypeDef* pHeader, uint8_t RxData[]) {
 	    	CCS_message.op_voltage_dV = (uint16_t) (RxData[0] << 8) + RxData[1];
 	    	CCS_message.op_current_dA = (uint16_t) (RxData[2] << 8) + RxData[3];
 	    	CCS_message.status = RxData[4];
-	    	received_msg = true;
+	    	CCS_message.received = true;
 			break;
 	}
 }
@@ -93,7 +93,7 @@ static void charger_CAN_transmit(void) {
 void FEB_CAN_Charger_Init(void) {
 	BMS_message.max_voltage_dV = FEB_CONFIG_NUM_BANKS * FEB_CONFIG_NUM_CELLS_PER_BANK * (FEB_CONFIG_CELL_MAX_VOLTAGE_mV * 1e-2);
 	BMS_message.max_current_dA = 50;
-	BMS_message.received = false;
+	CCS_message.received = false;
 }
 
 void FEB_CAN_Charger_Process(void) {
@@ -111,7 +111,7 @@ void FEB_CAN_Charger_Stop_Charge(void) {
 }
 
 bool FEB_CAN_Charger_Received(){
-	return BMS_message.received;
+	return CCS_message.received;
 }
 
 
