@@ -24,8 +24,8 @@ void FEB_Main_Task1_VT(void) {
 void FEB_Main_Task2_State(void) {
 	while (1) {
 		FEB_SM_Process();
-//		FEB_SM_UART_Transmit();
-//		FEB_SM_CAN_Transmit();
+		FEB_SM_UART_Transmit();
+		FEB_SM_CAN_Transmit();
 		osDelay(100);
 	}
 }

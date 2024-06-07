@@ -153,7 +153,7 @@ static void standby(void) {
 static void standby_to_charge(void) {
 	current_state = FEB_SM_ST_CHARGE;
 	FEB_Config_Update(current_state);
-
+	osDelay(100);
 	FEB_Hw_Set_AIR_Plus_Relay(FEB_HW_RELAY_CLOSE);
 }
 
@@ -172,7 +172,7 @@ static void precharge_to_drive_standby(void) {
 	FEB_Config_Update(current_state);
 
 	FEB_Hw_Set_AIR_Plus_Relay(FEB_HW_RELAY_CLOSE);
-	osDelay(50);
+	osDelay(100);
 	FEB_Hw_Set_Precharge_Relay(FEB_HW_RELAY_OPEN);
 }
 
@@ -222,6 +222,9 @@ static void fault(void) {
 		while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
 	}
 
+	// This turns on the Dash BMS indicator in case of a fault
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_SET);
+
 	// TODO: Stop charge
 }
 
@@ -258,7 +261,7 @@ void FEB_SM_Process(void) {
 		case FEB_SM_ST_STANDBY:
 			// TODO: transition to charge, balance, precharge
 //			transition(FEB_SM_ST_CHARGE);
-			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE)
+			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE && FEB_Hw_AIR_Plus_Sense() == FEB_HW_RELAY_OPEN)
 				transition(FEB_SM_ST_PRECHARGE);
 //			transition(FEB_SM_ST_BALANCE);
 			break;
