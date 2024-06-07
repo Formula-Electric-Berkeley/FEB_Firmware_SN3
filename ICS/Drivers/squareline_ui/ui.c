@@ -32,6 +32,17 @@ lv_obj_t *ui_TextArea4;
 lv_obj_t *ui_TextArea3;
 lv_obj_t *ui_Label12;
 lv_obj_t *ui____initial_actions0;
+lv_obj_t * img_regen_ready;
+lv_draw_label_dsc_t label_dsc1;
+lv_obj_t * canvas1;
+lv_obj_t * img_ones_place;
+lv_obj_t * img_tens_place;
+lv_obj_t * img_percent;
+lv_obj_t * img_ones_place1;
+lv_obj_t * img_tens_place1;
+lv_obj_t * img_degrees;
+lv_obj_t * img_ones_place2;
+lv_obj_t * img_tens_place2;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
 #if LV_COLOR_DEPTH != 16

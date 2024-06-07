@@ -33,11 +33,14 @@ lv_disp_drv_t lv_display_driver;
 __attribute__ ( (section(".framebuffer"))) lv_color_t framebuffer_1[FRAMEBUFFER_SIZE];
 __attribute__ ( (section(".framebuffer"))) lv_color_t framebuffer_2[FRAMEBUFFER_SIZE];
 
+#define FRAMEBUFFER_ADDR ((uint32_t)0xC0000000)
+
 /*
  * Private functions prototypes
  */
 void stm32_flush_cb(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p);
 void dma2d_copy_area(lv_area_t area, uint32_t src_buffer, uint32_t dst_buffer);
+void my_stm32_flush_cb(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p);
 
 /*
  * Public functions definitions
@@ -51,16 +54,28 @@ void screen_driver_init(){
 	static lv_disp_draw_buf_t draw_buf;
 	lv_disp_draw_buf_init(&draw_buf, framebuffer_1, framebuffer_2, FRAMEBUFFER_SIZE);
 	lv_disp_drv_init(&lv_display_driver);
-	lv_display_driver.direct_mode = false;
-	lv_display_driver.full_refresh = false;
+	lv_display_driver.direct_mode = true;
+//	lv_display_driver.full_refresh = true;
 	lv_display_driver.hor_res = NT35510_480X800_HEIGHT;
 	lv_display_driver.ver_res = NT35510_480X800_WIDTH;
 	lv_display_driver.flush_cb = stm32_flush_cb;
+//	lv_display_driver.flush_cb = my_stm32_flush_cb;
 	lv_display_driver.draw_buf = &draw_buf;
-	lv_display_driver.sw_rotate = 1;
-	lv_display_driver.rotated = 2;
+//	lv_display_driver.sw_rotate = 1;
+//	lv_display_driver.rotated = 2;
 
 	lv_disp_drv_register(&lv_display_driver);
+}
+
+void my_stm32_flush_cb(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p) {
+    uint16_t *framebuffer = (uint16_t *)FRAMEBUFFER_ADDR;
+    for (int y = area->y1; y <= area->y2; y++) {
+        for (int x = area->x1; x <= area->x2; x++) {
+            framebuffer[y * 480 + x] = color_p->full;
+            color_p++;
+        }
+    }
+    lv_disp_flush_ready(disp_drv);
 }
 
 /*

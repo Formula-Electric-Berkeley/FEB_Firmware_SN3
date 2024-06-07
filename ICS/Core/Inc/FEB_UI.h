@@ -15,6 +15,10 @@
 
 #include "stm32f4xx_hal.h"
 
+typedef struct {
+	char * test_str;
+} Screen_Info_t;
+
 // **************************************** Functions ****************************************
 
 void FEB_UI_Init(void);
