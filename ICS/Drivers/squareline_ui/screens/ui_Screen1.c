@@ -19,6 +19,7 @@ void ui_Screen1_screen_init(void) {
 	lv_obj_set_style_bg_opa(ui_Container2, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
 
     img_regen_status = lv_img_create(ui_Screen1);
+    set_regen_status(0);
 
 	ui_Bar1 = lv_bar_create(ui_Screen1);
 	lv_bar_set_value(ui_Bar1,50,LV_ANIM_OFF);
