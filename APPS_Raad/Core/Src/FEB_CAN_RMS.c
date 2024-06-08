@@ -145,7 +145,7 @@ float FEB_CAN_RMS_getMaxTorque(void){
 	if (motor_speed < 15) {
 		return MAX_TORQUE;
 	}
-	float maxTorque = min(MAX_TORQUE, (accumulator_voltage * PEAK_CURRENT) / motor_speed);
+	float maxTorque = MAX_TORQUE; //min(MAX_TORQUE, (accumulator_voltage * PEAK_CURRENT) / motor_speed);
 	return maxTorque;
 }
 
