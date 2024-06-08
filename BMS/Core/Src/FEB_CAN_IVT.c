@@ -57,12 +57,10 @@ uint8_t FEB_CAN_IVT_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignme
 void FEB_CAN_IVT_Process(void) {
 	if (IVT_message_flag.current) {
 		IVT_message_flag.current = false;
-		// TODO: Check current flowing through battery
-//		 int32_t current_mA = IVT_message.current_mA;
-//		 if (current_mA < FEB_Config_Get_Pack_Min_Current_mA() ||
-//			 current_mA > FEB_Config_Get_Pack_Max_Current_mA())
-//			 FEB_SM_Transition(FEB_SM_ST_FAULT);
-
+		 int32_t current_mA = IVT_message.current_mA;
+		 if (current_mA < FEB_Config_Get_Pack_Min_Current_mA() ||
+			 current_mA > FEB_Config_Get_Pack_Max_Current_mA())
+			 FEB_SM_Transition(FEB_SM_ST_FAULT);
 	}
 	if (IVT_message_flag.voltage_1) {
 		IVT_message_flag.voltage_1 = false;
