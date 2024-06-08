@@ -22,7 +22,7 @@ uint16_t FEB_CAN_BMS_getTemp(){
 // ***** CAN FUNCTIONS ****
 
 uint8_t FEB_CAN_BMS_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
-	uint16_t ids[] = {FEB_CAN_ID_BMS_TEMPERATURE};
+	uint16_t ids[] = {FEB_CAN_ID_BMS_STATE,FEB_CAN_ID_BMS_TEMPERATURE};
 
 	for (uint8_t i = 0; i < 1; i++) {
 		CAN_FilterTypeDef filter_config;

@@ -30,6 +30,7 @@ void FEB_CAN_Filter_Config(void) {
 	uint8_t filter_bank = 0;
     filter_bank = FEB_CAN_ICS_Filter(&hcan1, CAN_RX_FIFO0, filter_bank);
     filter_bank = FEB_CAN_BMS_Filter_Config(&hcan1, CAN_RX_FIFO0,  filter_bank);
+    filter_bank = FEB_CAN_RMS_Filter_Config(&hcan1, CAN_RX_FIFO0, filter_bank);
 
 	// Assign Filter
     // filter_bank = Function(&hcan1, CAN_RX_FIFO0, filter_bank);

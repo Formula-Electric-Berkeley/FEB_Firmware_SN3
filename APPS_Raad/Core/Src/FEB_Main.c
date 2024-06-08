@@ -32,8 +32,9 @@ void FEB_Main_While(void){
 		FEB_CAN_RMS_Disable();
 	}
 	FEB_HECS_update();
-	FEB_CAN_RMS_Torque();
 	FEB_Normalized_update_Brake();
+
+	FEB_CAN_RMS_Torque();
 	FEB_Normalized_CAN_sendBrake();
 
 	HAL_Delay(10);
