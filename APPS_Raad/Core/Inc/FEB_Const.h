@@ -29,19 +29,19 @@
 #define PRESSURE_END 1025.0
 
 // TORQUE COMMAND PARAMS
-#define INIT_VOLTAGE            580     // initial voltage of accumulator (used for capping torque commands) (consider sampling when BMS samples)
-#define PEAK_CURRENT            95      // max DC current (in amps) we want to pull from accumulator
-#define PEAK_CURRENT_REGEN      20      // max DC current (in amps) we want to charge the accumulator
+#define INIT_VOLTAGE            450     // initial voltage of accumulator (used for capping torque commands) (consider sampling when BMS samples)
+#define PEAK_CURRENT            55      // max DC current (in amps) we want to pull from accumulator
+#define PEAK_CURRENT_REGEN      18      // max DC current (in amps) we want to charge the accumulator
 #define MAX_TORQUE              230     // New emrax datasheet says this should be 220???
 #define MAX_TORQUE_REGEN        130     // User defined constant (equivalent to continuous torque) -- tune to MechE, nominally this doesn't seem to go above 50
 #define RPM_TO_RAD_S            0.10472 // 2 pi / 60
 #define FADE_SPEED_RPM          200.0   // About 3.5mph, don't do regen below here (rely on EEPROM/inverter control loop to properly fade)
-#define BRAKE_POSITION_THRESH   0.20    // Minimum brake position (as %) before we stop accelerating / start regen
+#define BRAKE_POSITION_THRESH   0.15    // Minimum brake position (as %) before we stop accelerating / start regen
 #define START_REGEN_SOC         0.95    // State of charge at which regen starts
 #define MAX_REGEN_SOC           0.8     // State of charge at which full regen is enabled
 #define MAX_CELL_TEMP           45.0    // Cell temp at which we are to stop regen (consider reading this from BMS for single source of truth)
 #define TEMP_FILTER_SHARPNESS   1.0     // Make notion page
-#define USER_REGEN_FILTER       1.0     // Manually tune how much of our calculated regen we want
+#define USER_REGEN_FILTER       0.0     // Manually tune how much of our calculated regen we want
 
 #define HECS_CURRENT 3025.0 //check if current is too high for BSPD
 

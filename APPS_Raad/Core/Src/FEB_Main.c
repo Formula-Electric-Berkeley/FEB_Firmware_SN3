@@ -29,30 +29,8 @@ void FEB_Main_While(void){
 		FEB_CAN_RMS_Disable();
 	}
 	FEB_HECS_update();
-//	FEB_CAN_RMS_Torque();
 	FEB_Normalized_update_Brake();
 	FEB_Normalized_CAN_sendBrake();
-//	FEB_CAN_BSPD_Transmit();
-
-//	FEB_TPS2482_sendReadings(); //TODO: create transmit function for TPS2482
-//	FEB_CAN_RMS_torqueTransmit(); //UART for debugging
-//	FEB_CAN_RMS_Transmit_updateTorque();
-//	FEB_Normalized_updateAcc();
-//	FEB_CAN_RMS_Torque();
-//	FEB_Normalized_Brake_Pedals();
-
-//	FEB_Read_Accel_Pedal1();
-//	FEB_Read_Accel_Pedal2();
-//	FEB_Normalized_Acc_Pedals();
-
-//	FEB_Read_Brake_Pedal();
-//	FEB_Normalized_updateAcc();
-//	FEB_Normalized_updateAcc();
-//	FEB_CAN_RMS_Process();
-//	FEB_Read_Accel_Pedal1();
-//	FEB_CAN_RMS_Torque();
-//	FEB_Normalized_update_Brake();
-//	FEB_Normalized_CAN_sendBrake();
 
 	HAL_Delay(10);
 }

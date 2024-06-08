@@ -85,7 +85,7 @@ float FEB_regen_filter_Speed(float unfiltered_regen_torque){
 // Saturated linear function between
 // (START_REGEN_SOC, 0) and (MAX_REGEN_SOC, 1)
 float FEB_regen_filter_SOC(float unfiltered_regen_torque){
-	float state_of_charge = FEB_BMS_getSOC(); // TODO 
+	float state_of_charge = 1 // FEB_BMS_getSOC(); // TODO for Evan, uncomment and use SOC
 
 	// m = (y_1 - y_0) / (x_1 - x_0)
 	float slope = (1 - 0) / (MAX_REGEN_SOC - START_REGEN_SOC);
@@ -138,7 +138,6 @@ float FEB_CAN_RMS_getFilteredTorque_Regen(void){
 
 
 float FEB_CAN_RMS_getMaxTorque(void){
- 	return 20; // what the
 	float accumulator_voltage = min(INIT_VOLTAGE, (RMS_MESSAGE.HV_Bus_Voltage-50) / 10); // TODO: consider reading from IVT
 	float motor_speed = RMS_MESSAGE.Motor_Speed * RPM_TO_RAD_S;
  	// If speed is less than 15, we should command max torque
@@ -151,7 +150,7 @@ float FEB_CAN_RMS_getMaxTorque(void){
 }
 
 void FEB_CAN_RMS_Torque(void){
-	FEB_SM_ST_t current_BMS_state = FEB_SM_Get_Current_State();
+	FEB_SM_ST_t current_BMS_state = FEB_SM_Get_Current_State(); // TODO: FOR ALEX
 	float accPos = FEB_Normalized_getAcc();
 	float brkPos = FEB_Normalized_getBrake();
 	if (brkPos > REGEN_BRAKE_POS_THRESH) // brake identified
