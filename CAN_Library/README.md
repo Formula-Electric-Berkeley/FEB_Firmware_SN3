@@ -6,6 +6,7 @@
 - [3 CAN Message Documentation](#3-can-message-documentation)
   - [3.1 BMS](#31-bms)
     - [3.1.1 State](#311-state)
+    - [3.1.2 Cell Data](#312-cell-data)
   - [3.2 APPS](#32-apps)
     - [3.2.1 Normalized Brake](#321-normalized-brake)
     - [3.2.2 RMS Param Msg](#322-rms-param-msg)
@@ -39,7 +40,7 @@ Other files:
 
 # 3 CAN Message Documentation
 
-Note: Bytes and bits are 0-indexed.
+Note: Bytes and bits are 0-indexed. Multi-byte data is stored in Big-Endian format.
 
 ## 3.1 BMS
 
@@ -98,6 +99,70 @@ Note: Bytes and bits are 0-indexed.
     <td>8</td>
     <td>Fault</td>
   </tr>
+</table>
+
+### 3.1.2 Cell Data
+<table>
+  <tr>
+    <th>Data</th>
+    <th>Byte</th>
+    <th>Unit</th>
+    <th>Datatype</th>
+  </tr>
+  <tr>
+    <td>Bank (Bit 7-5)</td>
+    <td>0</td>
+    <td>-</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>Cell (Bit 4-0)</td>
+    <td>0</td>
+    <td>-</td>
+    <td>uint8_t</td>
+  </tr>
+  <tr>
+    <td>Voltage</td>
+    <td>1-2</td>
+    <td>mV</td>
+    <td>uint16_t</td>
+  </tr>
+  <tr>
+    <td>Temperature</td>
+    <td>3-4</td>
+    <td>dC</td>
+    <td>int16_t</td>
+  </tr>
+  <tr>
+    <td>Flags</td>
+    <td>5</td>
+    <td>-</td>
+    <td>-</td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>Flags</th>
+    <th>Bit</th>
+  </tr>
+  <tr>
+    <td>Under/Over Voltage</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td>Under/Over Temperature</td>
+    <td>1</td>
+  </tr>
+  <tr>
+    <td>Balance</td>
+    <td>2</td>
+  </tr>
+  <tr>
+    <td>Disabled Temperature</td>
+    <td>3</td>
+  </tr>
+
 </table>
 
 ## 3.2 APPS
