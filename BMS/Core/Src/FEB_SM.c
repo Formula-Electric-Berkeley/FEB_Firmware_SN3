@@ -255,9 +255,9 @@ void FEB_SM_Process(void) {
 			transition(FEB_SM_ST_STANDBY);
 			break;
 		case FEB_SM_ST_STANDBY:
-			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE && FEB_Hw_Charge_Sense() == GPIO_PIN_SET &&  FEB_CAN_Charger_Received())
+			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE && FEB_Hw_Charge_Sense() == FEB_HW_RELAY_CLOSE &&  FEB_CAN_Charger_Received())
 				transition(FEB_SM_ST_CHARGE);
-			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE && FEB_Hw_AIR_Plus_Sense() == FEB_HW_RELAY_OPEN && FEB_Hw_Charge_Sense() == GPIO_PIN_RESET)
+			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE && FEB_Hw_AIR_Plus_Sense() == FEB_HW_RELAY_OPEN && FEB_Hw_Charge_Sense() == FEB_HW_RELAY_OPEN)
 				transition(FEB_SM_ST_PRECHARGE);
 //			transition(FEB_SM_ST_BALANCE);
 			break;
@@ -281,10 +281,14 @@ void FEB_SM_Process(void) {
 		case FEB_SM_ST_DRIVE:
 			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_OPEN)
 				transition(FEB_SM_ST_STANDBY);
+			else if (!FEB_CAN_ICS_Ready_To_Drive())
+				transition(FEB_SM_ST_DRIVE_STANDBY);
 			break;
 		case FEB_SM_ST_DRIVE_REGEN:
 			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_OPEN)
 				transition(FEB_SM_ST_STANDBY);
+			else if (!FEB_CAN_ICS_Ready_To_Drive())
+				transition(FEB_SM_ST_DRIVE_STANDBY);
 			break;
 		case FEB_SM_ST_FAULT:
 			break;
@@ -354,14 +358,19 @@ void FEB_SM_UART_Transmit(void) {
 
 void FEB_SM_CAN_Transmit(void) {
 	// Initialize transmission header
-	FEB_CAN_Tx_Header.DLC = 1;
+	FEB_CAN_Tx_Header.DLC = 3;
 	FEB_CAN_Tx_Header.StdId = FEB_CAN_ID_BMS_STATE;
 	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
 	FEB_CAN_Tx_Header.TransmitGlobalTime = DISABLE;
 
+	// Get data
+	uint16_t cell_min_voltage = FEB_LTC6811_Get_Min_Voltage();
+
 	// Copy data to Tx buffer
 	FEB_CAN_Tx_Data[0] = FEB_SM_Get_Current_State();
+	FEB_CAN_Tx_Data[1] = cell_min_voltage && 0xFF;
+	FEB_CAN_Tx_Data[2] = cell_min_voltage >> 8;
 
 	// Delay until mailbox available
 	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}

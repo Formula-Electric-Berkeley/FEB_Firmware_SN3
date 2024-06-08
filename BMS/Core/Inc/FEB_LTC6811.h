@@ -16,6 +16,7 @@ void FEB_LTC6811_Balance_Process(void);
 void FEB_LTC6811_Stop_Balance(void);
 void FEB_LTC6811_Poll_Temperature(void);
 uint32_t FEB_LTC6811_Get_Total_Voltage(void);
+uint16_t FEB_LTC6811_Get_Min_Voltage(void);
 void FEB_LTC6811_UART_Transmit(void);
 
 // ******************************** Functions ********************************

@@ -186,6 +186,20 @@ uint32_t FEB_LTC6811_Get_Total_Voltage(void) {
 	return total_voltage_mV;
 }
 
+uint16_t FEB_LTC6811_Get_Min_Voltage(void) {
+	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
+	uint16_t min_voltage_mV = FEB_CONFIG_CELL_MAX_VOLTAGE_mV;
+	for (uint8_t bank = 0; bank < FEB_CONFIG_NUM_BANKS; bank++) {
+		for (uint8_t cell = 0; cell < FEB_CONFIG_NUM_CELLS_PER_BANK; cell++) {
+			uint16_t cell_voltage_mV = accumulator.cells[bank][cell].voltage_mV;
+			if (cell_voltage_mV < min_voltage_mV)
+				min_voltage_mV = cell_voltage_mV;
+		}
+	}
+	osMutexRelease(FEB_LTC6811_LockHandle);
+	return min_voltage_mV;
+}
+
 void FEB_LTC6811_UART_Transmit(void) {
 	if (!FEB_SM_ST_DEBUG)
 		return;
