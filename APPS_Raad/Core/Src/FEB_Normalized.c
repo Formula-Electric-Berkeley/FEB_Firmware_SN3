@@ -252,11 +252,6 @@ void FEB_Normalized_CAN_sendBrake() {
 		uint8_t buf_len;
 		buf_len = sprintf(buf, "CAN MESSAGE FAIL TO SEND: %f\n", normalized_brake);
 		HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
-	}else{
-		char buf[128];
-		uint8_t buf_len;
-		buf_len = sprintf(buf, "BRAKE CAN SENT \n");
-		HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 	}
 
 }

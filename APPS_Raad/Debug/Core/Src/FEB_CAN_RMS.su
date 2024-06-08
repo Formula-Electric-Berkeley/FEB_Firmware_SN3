@@ -1,5 +1,5 @@
 ../Core/Src/FEB_CAN_RMS.c:32:6:FEB_CAN_RMS_Setup	4	static
-../Core/Src/FEB_CAN_RMS.c:37:6:FEB_CAN_RMS_Process	8	static
+../Core/Src/FEB_CAN_RMS.c:37:6:FEB_CAN_RMS_Process	4	static
 ../Core/Src/FEB_CAN_RMS.c:44:6:FEB_CAN_RMS_Disable	4	static
 ../Core/Src/FEB_CAN_RMS.c:63:7:FEB_getElecMaxRegenTorque	24	static
 ../Core/Src/FEB_CAN_RMS.c:72:7:FEB_regen_filter_Speed	24	static
@@ -9,10 +9,10 @@
 ../Core/Src/FEB_CAN_RMS.c:134:7:FEB_CAN_RMS_getFilteredTorque_Regen	16	static
 ../Core/Src/FEB_CAN_RMS.c:140:7:FEB_CAN_RMS_getMaxTorque	24	static
 ../Core/Src/FEB_CAN_RMS.c:152:6:FEB_CAN_RMS_Torque	32	static
-../Core/Src/FEB_CAN_RMS.c:188:6:FEB_CAN_RMS_Init	16	static
-../Core/Src/FEB_CAN_RMS.c:201:6:FEB_CAN_RMS_Transmit_updateTorque	8	static
-../Core/Src/FEB_CAN_RMS.c:231:9:FEB_CAN_RMS_Filter_Config	64	static
-../Core/Src/FEB_CAN_RMS.c:260:6:FEB_CAN_RMS_Transmit_paramSafety	16	static
-../Core/Src/FEB_CAN_RMS.c:299:6:FEB_CAN_RMS_Transmit_commDisable	8	static
-../Core/Src/FEB_CAN_RMS.c:338:6:FEB_CAN_RMS_Transmit_paramBroadcast	16	static
-../Core/Src/FEB_CAN_RMS.c:374:6:FEB_CAN_RMS_Store_Msg	16	static
+../Core/Src/FEB_CAN_RMS.c:194:6:FEB_CAN_RMS_Init	16	static
+../Core/Src/FEB_CAN_RMS.c:207:6:FEB_CAN_RMS_Transmit_updateTorque	8	static
+../Core/Src/FEB_CAN_RMS.c:237:9:FEB_CAN_RMS_Filter_Config	64	static
+../Core/Src/FEB_CAN_RMS.c:266:6:FEB_CAN_RMS_Transmit_paramSafety	16	static
+../Core/Src/FEB_CAN_RMS.c:305:6:FEB_CAN_RMS_Transmit_commDisable	8	static
+../Core/Src/FEB_CAN_RMS.c:344:6:FEB_CAN_RMS_Transmit_paramBroadcast	16	static
+../Core/Src/FEB_CAN_RMS.c:380:6:FEB_CAN_RMS_Store_Msg	16	static
