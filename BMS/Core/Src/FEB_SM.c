@@ -10,7 +10,6 @@
 #include "stm32f4xx_hal.h"
 #include "stdio.h"
 #include "string.h"
-#include <stdbool.h>
 
 static void startup(void);
 static void standby(void);
@@ -134,7 +133,7 @@ static void standby_to_balance(void) {
 
 /* Assume SM lock held. */
 static void standby(void) {
-//	FEB_SM_ST_t previous_state = current_state;
+	FEB_SM_ST_t previous_state = current_state;
 	current_state = FEB_SM_ST_STANDBY;
 	FEB_Config_Update(current_state);
 
@@ -142,11 +141,11 @@ static void standby(void) {
 	FEB_Hw_Set_Precharge_Relay(FEB_HW_RELAY_OPEN);
 
 	// Stop Balance
-//	if (previous_state == FEB_SM_ST_BALANCE) {
-//		osMutexRelease(FEB_SM_LockHandle);
-//		FEB_LTC6811_Stop_Balance();
-//		while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
-//	}
+	if (previous_state == FEB_SM_ST_BALANCE) {
+		osMutexRelease(FEB_SM_LockHandle);
+		FEB_LTC6811_Stop_Balance();
+		while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
+	}
 
 	// TODO: Stop Charge
 }
@@ -297,6 +296,9 @@ void FEB_SM_Process(void) {
 
 /* Output current state, relay state, and GPIO sense. */
 void FEB_SM_UART_Transmit(void) {
+	if (!FEB_SM_ST_DEBUG)
+		return;
+
 	FEB_SM_ST_t state = FEB_SM_Get_Current_State();
 	char* state_str;
 	switch(state) {
@@ -339,7 +341,6 @@ void FEB_SM_UART_Transmit(void) {
 	FEB_Hw_Relay_t imd_shutdown_sense = FEB_Hw_IMD_Shutdown_Sense();
 	bool r2d = FEB_CAN_ICS_Ready_To_Drive();
 	uint8_t ics = FEB_CAN_ICS_Data();
-
 	osMutexRelease(FEB_SM_LockHandle);
 
 	static char str[128];
@@ -348,9 +349,9 @@ void FEB_SM_UART_Transmit(void) {
 			air_minus_sense, air_plus_sense,
 			bms_shutdown_sense, imd_shutdown_sense, r2d, ics);
 
-	while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
+	while (osMutexAcquire(FEB_UART_LockHandle, UINT32_MAX) != osOK);
 	HAL_UART_Transmit(&huart2, (uint8_t*) str, strlen(str), 100);
-	osMutexRelease(FEB_SM_LockHandle);
+	osMutexRelease(FEB_UART_LockHandle);
 }
 
 void FEB_SM_CAN_Transmit(void) {

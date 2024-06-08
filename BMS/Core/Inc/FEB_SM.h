@@ -1,6 +1,10 @@
 #ifndef INC_FEB_SM_H_
 #define INC_FEB_SM_H_
 
+#include "stdbool.h"
+
+#define FEB_SM_ST_DEBUG true
+
 // States
 typedef enum {
 	FEB_SM_ST_STARTUP,

@@ -1,6 +1,5 @@
 #include "FEB_Hw.h"
-
-#include <stdbool.h>
+#include "stdbool.h"
 #include "stm32f4xx_hal.h"
 
 typedef struct {
@@ -75,18 +74,23 @@ FEB_Hw_Relay_t FEB_Hw_AIR_Plus_Sense(void) {
 	return FEB_HW_RELAY_OPEN;
 }
 
+/* Read BMS shutdown sense, assum SM lock held. */
 FEB_Hw_Relay_t FEB_Hw_BMS_Shutdown_Sense(void) {
 	if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12) == GPIO_PIN_SET)
 		return FEB_HW_RELAY_CLOSE;
 	return FEB_HW_RELAY_OPEN;
 }
 
+/* Read IMD shutdown sense, assume SM lock held. */
 FEB_Hw_Relay_t FEB_Hw_IMD_Shutdown_Sense(void) {
 	if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10) == GPIO_PIN_SET)
 		return FEB_HW_RELAY_CLOSE;
 	return FEB_HW_RELAY_OPEN;
 }
 
-GPIO_PinState FEB_Hw_Charge_Sense(void) {
-	return HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5);
+/* Read charge sense, assume SM lock held. */
+FEB_Hw_Relay_t FEB_Hw_Charge_Sense(void) {
+	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == GPIO_PIN_SET)
+		return FEB_HW_RELAY_CLOSE;
+	return FEB_HW_RELAY_OPEN;
 }

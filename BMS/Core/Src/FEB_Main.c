@@ -39,7 +39,7 @@ void FEB_Main_Task3_Charge(void) {
 
 void FEB_Main_Task4_Balance(void) {
 	while (1) {
-//		FEB_LTC6811_Balance_Process();
+		FEB_LTC6811_Balance_Process();
 		osDelay(1000);
 	}
 }
@@ -52,17 +52,8 @@ void FEB_Main_Task5_IVT(void) {
 	}
 }
 
-void FEB_Main_Task6_CAN(void) {
+void FEB_Main_Task6_CAN(void) { // TODO: Remove Function
 	while (1) {
-//		char UART_Str[64];
-//		sprintf(UART_Str, "CAN Monitor\n");
-//		HAL_UART_Transmit(&huart2, (uint8_t*) UART_Str, strlen(UART_Str), 100);
-
-//		FEB_LTC6811_CAN_Transmit_Voltage();
-//		FEB_LTC6811_CAN_Transmit_Temperature();
-		FEB_SM_CAN_Transmit();
-		// TODO: CAN transmit LTC6811 balance, add bit to indicate currently balancing
-		// TODO: CAN transmit LTC6811 enabled temperature sensors
 		osDelay(1000);
 	}
 }
