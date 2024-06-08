@@ -36,7 +36,7 @@ void FEB_CAN_RMS_Setup(void){
 
 void FEB_CAN_RMS_Process(void){
 	if (!RMSControl.enabled){
-		FEB_CAN_RMS_Init();
+//		FEB_CAN_RMS_Init();
 		RMSControl.enabled = 1;
 	}
 }
@@ -181,6 +181,12 @@ void FEB_CAN_RMS_Torque(void){
 	        RMSControl.torque = 0;
 	    }
 	}
+//	int16_t max_torque = 10 * accPos * FEB_CAN_RMS_getMaxTorque();
+//
+//	char buf[100];
+//	sprintf(buf, "Torque: %d\n", max_torque);
+//	HAL_UART_Transmit(&huart2, buf, strlen(buf), 100);
+
 	FEB_CAN_RMS_Transmit_updateTorque();
 }
 
