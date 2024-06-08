@@ -85,7 +85,7 @@ float FEB_regen_filter_Speed(float unfiltered_regen_torque){
 // Saturated linear function between
 // (START_REGEN_SOC, 0) and (MAX_REGEN_SOC, 1)
 float FEB_regen_filter_SOC(float unfiltered_regen_torque){
-	float state_of_charge = 1 // FEB_BMS_getSOC(); // TODO for Evan, uncomment and use SOC
+	float state_of_charge = 1; // FEB_BMS_getSOC(); // TODO for Evan, uncomment and use SOC
 
 	// m = (y_1 - y_0) / (x_1 - x_0)
 	float slope = (1 - 0) / (MAX_REGEN_SOC - START_REGEN_SOC);
@@ -108,7 +108,7 @@ float FEB_regen_filter_SOC(float unfiltered_regen_torque){
 // This will depend on how fast cells heat up
 // Function with a vertical asymptote at 45 deg C
 float FEB_regen_filter_Temp(float unfiltered_regen_torque){
-	float hottest_cell_temp_C = FEB_BMS_getHottestCellTemp(); // TODO
+	float hottest_cell_temp_C = 25; //(); // TODO
 	float e = 2.71828;
 	float exponent = TEMP_FILTER_SHARPNESS * (hottest_cell_temp_C - MAX_CELL_TEMP);
 	float k_temp = 1 - pow(e, exponent);
@@ -150,10 +150,10 @@ float FEB_CAN_RMS_getMaxTorque(void){
 }
 
 void FEB_CAN_RMS_Torque(void){
-	FEB_SM_ST_t current_BMS_state = FEB_SM_Get_Current_State(); // TODO: FOR ALEX
+	FEB_SM_ST_t current_BMS_state = FEB_CAN_BMS_getState(); // TODO: FOR ALEX
 	float accPos = FEB_Normalized_getAcc();
 	float brkPos = FEB_Normalized_getBrake();
-	if (brkPos > REGEN_BRAKE_POS_THRESH) // brake identified
+	if (brkPos > BRAKE_POSITION_THRESH) // brake identified
 	{
 		if ((current_BMS_state == FEB_SM_ST_DRIVE_REGEN))
 		{

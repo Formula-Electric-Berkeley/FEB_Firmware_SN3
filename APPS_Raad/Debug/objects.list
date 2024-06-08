@@ -3,6 +3,7 @@
 "./Core/Src/FEB_CAN_BSPD.o"
 "./Core/Src/FEB_CAN_ICS.o"
 "./Core/Src/FEB_CAN_RMS.o"
+"./Core/Src/FEB_CAN_RMS_UNIT_TEST.o"
 "./Core/Src/FEB_HECS.o"
 "./Core/Src/FEB_Main.o"
 "./Core/Src/FEB_Normalized.o"

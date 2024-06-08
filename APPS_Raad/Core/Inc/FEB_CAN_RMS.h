@@ -19,7 +19,7 @@
 void FEB_CAN_RMS_Setup(void);
 void FEB_CAN_RMS_Process(void);
 void FEB_CAN_RMS_Disable(void);
-uint16_t FEB_CAN_RMS_getMaxTorque(void);
+float FEB_CAN_RMS_getMaxTorque(void);
 void FEB_CAN_RMS_Torque(void);
 void FEB_CAN_RMS_Transmit_updateTorque(void);
 void FEB_CAN_RMS_torqueTransmit(void);
