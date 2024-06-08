@@ -29,7 +29,7 @@
 #define PRESSURE_END 1025.0
 
 // TORQUE COMMAND PARAMS
-#define INIT_VOLTAGE            450     // initial voltage of accumulator (used for capping torque commands) (consider sampling when BMS samples)
+#define INIT_VOLTAGE            550     // initial voltage of accumulator (used for capping torque commands) (consider sampling when BMS samples)
 #define PEAK_CURRENT            55      // max DC current (in amps) we want to pull from accumulator
 #define PEAK_CURRENT_REGEN      18      // max DC current (in amps) we want to charge the accumulator
 #define MAX_TORQUE              230     // New emrax datasheet says this should be 220???
