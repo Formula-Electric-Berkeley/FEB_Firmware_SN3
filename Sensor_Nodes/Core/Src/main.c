@@ -20,7 +20,6 @@
 #include "main.h"
 #include "adc.h"
 #include "can.h"
-#include "dac.h"
 #include "i2c.h"
 #include "spi.h"
 #include "tim.h"
@@ -41,7 +40,7 @@
 /* USER CODE BEGIN PD */
 
 // WSS DEFS
-#define TIMER_ELAPSED_HZ 10  // Adjust this based on your timer configuration
+#define TIMER_ELAPSED_HZ 5 // Adjust this based on your timer configuration
 #define NUM_SAMPLES 128
 
 /* USER CODE END PD */
@@ -73,6 +72,9 @@ uint8_t tm_state = 0;
 uint8_t tm0 = 0;
 uint8_t tm1 = 0;
 
+uint8_t ds0 = 0;
+uint8_t ds1 = 1;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -97,7 +99,7 @@ void CAN_Transmit()
   TxHeader.DLC = 8; // Data length
   TxHeader.IDE = CAN_ID_STD; // Standard ID
   TxHeader.RTR = CAN_RTR_DATA; // Data frame
-  TxHeader.StdId = 0x1; // CAN ID
+  TxHeader.StdId = 0x545; // CAN ID
   TxHeader.ExtId = 0; // Not used with standard ID
 
   // Fill the data
@@ -105,6 +107,10 @@ void CAN_Transmit()
   TxData[1] = wss1;
   TxData[2] = tm0;
   TxData[3] = tm1;
+  TxData[4] = ds0;
+  TxData[5] = ds1;
+  TxData[6] = 0;
+  TxData[7] = 0;
 
   while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
 
@@ -118,7 +124,24 @@ void CAN_Transmit()
   }
 
   // Wait until the message is transmitted
-  while (HAL_CAN_IsTxMessagePending(&hcan1, TxMailbox)) {}
+   // while (HAL_CAN_IsTxMessagePending(&hcan1, TxMailbox)) {}
+}
+
+uint16_t FEB_Read_ADC(uint32_t channel){
+	ADC_ChannelConfTypeDef sConfig={0};
+	sConfig.Channel = channel;
+	sConfig.Rank = 1;
+	sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
+
+	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+	{
+//	   Error_Handler();
+	}
+
+	HAL_ADC_Start(&hadc1);
+	HAL_ADC_PollForConversion(&hadc1, 100);
+	return (uint16_t)HAL_ADC_GetValue(&hadc1);
+
 }
 
 // WSS transmit data
@@ -126,25 +149,59 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if (htim->Instance == TIM1)  // verify if the interrupt comes from TIM1
     {
-		wss0 = (float) (ticks0 * TIMER_ELAPSED_HZ) / 84.0 * 60.0;
-		wss1 = (float) (ticks1 * TIMER_ELAPSED_HZ) / 84.0 * 60.0;
+		wss0 = (uint8_t) ((float) ticks0 * TIMER_ELAPSED_HZ / 84.0 * 60.0);
+		wss1 = (uint8_t) ((float) ticks1 * TIMER_ELAPSED_HZ / 84.0 * 60.0);
 
-		// char msg[50];
-		// sprintf(msg, "%d RPM, %d RPM \r\n", ts0, ts1);
+		//char msg[50];
+		//sprintf(msg, "%d RPM, %d RPM \r\n", wss0, wss1);
 
-		// transmit_uart(msg);
+		//transmit_uart(msg);
 		// add can TX
 		ticks0 = 0;
 		ticks1 = 0;
-		CAN_Transmit();
+
+//		 if (HAL_ADC_Start(&hadc1) != HAL_OK) {
+//			  // Start Error
+//			  return 0;
+//
+//		 }
+//		// do displacement reading
+//	    if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK) {
+//	        // Get the converted values
+//	        ds0 = HAL_ADC_GetValue(&hadc1);  // First channel (ADC_IN0)
+//	        //ds1 = HAL_ADC_GetValue(&hadc1);  // Second channel (ADC_IN4)
+//
+//	    }
+//
+//	    if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK) {
+//		        // Get the converted values
+//		        //ds0 = HAL_ADC_GetValue(&hadc1);  // First channel (ADC_IN0)
+//		     xds1 = HAL_ADC_GetValue(&hadc1);  // Second channel (ADC_IN4)
+//
+//		}
+//
+//	    HAL_ADC_Stop(&hadc1);
+		ds0 = FEB_Read_ADC(ADC_CHANNEL_0);
+		ds1 = FEB_Read_ADC(ADC_CHANNEL_4);
+
+		char msg[50];
+		sprintf(msg, "%d adc, %d adc \r\n", ds0, ds1);
+
+		transmit_uart(msg);
+
     }
+
+	// CAN sensor report generation
+	if (htim->Instance == TIM2) {
+		CAN_Transmit();
+	}
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	char msg[50];
 	sprintf(msg, "pin: %i", GPIO_Pin);
-    transmit_uart(msg);
+    //transmit_uart(msg);
 
 	// WSS COS (or sensor 1)
     if(GPIO_Pin == GPIO_PIN_10)
@@ -207,7 +264,7 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi) {
 
 		    }
 
-			transmit_uart(msg);
+			//transmit_uart(msg);
 
 			if (tm_state == 0) {
 				// disable TC0S (PB6) and enable TC1S (PB8) (active low)
@@ -268,11 +325,11 @@ int main(void)
   MX_GPIO_Init();
   MX_ADC1_Init();
   MX_CAN1_Init();
-  MX_DAC_Init();
   MX_I2C1_Init();
   MX_SPI2_Init();
   MX_USART2_UART_Init();
   MX_TIM1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 	transmit_uart("FEB Sensor Node peripherals initialized\r\n");
 	if (HAL_TIM_Base_Start_IT(&htim1) != HAL_OK) {
@@ -280,6 +337,17 @@ int main(void)
 		char msg[50];
 		sprintf(msg, "TIM1 fault");
 		transmit_uart(msg);
+	}
+
+	if (HAL_TIM_Base_Start_IT(&htim2) != HAL_OK) {
+		// Handling of potential error
+		char msg[50];
+		sprintf(msg, "TIM2 fault");
+		transmit_uart(msg);
+	}
+
+	if (HAL_CAN_Start(&hcan1) != HAL_OK) {
+        // Code Error - Shutdown
 	}
 
 	// FEB_CAN_Init(&hcan1, 0);
@@ -318,7 +386,7 @@ void SystemClock_Config(void)
   /** Configure the main internal regulator output voltage
   */
   __HAL_RCC_PWR_CLK_ENABLE();
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
@@ -326,7 +394,13 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = 8;
+  RCC_OscInitStruct.PLL.PLLN = 160;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 2;
+  RCC_OscInitStruct.PLL.PLLR = 2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -336,12 +410,12 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
   {
     Error_Handler();
   }
