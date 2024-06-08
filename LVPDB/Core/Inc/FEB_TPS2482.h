@@ -36,7 +36,18 @@ void FEB_TPS2482_pullLowIfOutOfBounds(I2C_HandleTypeDef * hi2c, uint8_t DEV_ADDR
 		uint8_t REG);
 
 float FEB_TPS2482_PollBusCurrent(I2C_HandleTypeDef * hi2c, uint8_t DEV_ADDR);
+float FEB_TPS2482_PollBusVoltage(I2C_HandleTypeDef * hi2c, uint8_t DEV_ADDR);
 
 void FEB_TPS2482_Poll_Currents();
+
+
+
+float FEB_TPS2482_Bus_Current();
+
+float FEB_TPS2482_RF_Current();
+
+float FEB_TPS2482_CP_Current();
+
+float FEB_TPS2482_AF_Current();
 
 #endif /* INC_FEB_TPS2482_H_ */

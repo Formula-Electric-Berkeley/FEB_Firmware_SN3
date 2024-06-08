@@ -51,7 +51,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan) {
 
 void FEB_CAN_Transmit(CAN_HandleTypeDef* hcan, uint32_t ID, float* current_reading){
 	// Initialize Transmission Header
-	FEB_CAN_Tx_Header.StdId = LVPDB_CAN_ID;
+	FEB_CAN_Tx_Header.StdId = 0x321;
 	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
 	FEB_CAN_Tx_Header.DLC = 4;

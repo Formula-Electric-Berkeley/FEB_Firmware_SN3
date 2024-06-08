@@ -45,7 +45,7 @@ void FEB_Main_Setup(void) {
 	uint8_t EX_LIMIT[2] = {0b00000000, 0b10010000}; // = 144, 6 * 24
 
 	buf_len = sprintf((char*) buf, "pre can init\n");
-	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+//	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 	FEB_CAN_Init();
 
 	//hi2c1p = &hi2c1;
@@ -60,33 +60,33 @@ void FEB_Main_Setup(void) {
 
 	// Testing i2c set up successful, serial monitor baud rate 115200
 	buf_len = sprintf((char*) buf, "pre tps setup\n");
-	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+//	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 
 	FEB_SETUP_TPS2482(&hi2c1, LV_ADDR, CONFIG, MAIN_CAL, UNDERV, LV_LIMIT);
 	buf_len = sprintf((char*) buf, "post lv setup\n");
-	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+//	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 
 	FEB_SETUP_TPS2482(&hi2c1, CP_ADDR, CONFIG, CP_CAL, OVERPWR, CP_LIMIT);
 	buf_len = sprintf((char*) buf, "post cp setup\n");
-	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+//	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 
 	FEB_SETUP_TPS2482(&hi2c1, AF_ADDR, CONFIG, AF_CAL, OVERPWR, AF_LIMIT);
 	buf_len = sprintf((char*) buf, "post af setup\n");
-	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+//	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 
 	FEB_SETUP_TPS2482(&hi2c1, EX_ADDR, CONFIG, EX_CAL, OVERPWR, EX_LIMIT);
 	buf_len = sprintf((char*) buf, "post ex setup\n");
-	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+//	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 
 	FEB_SETUP_TPS2482(&hi2c1, SH_ADDR, CONFIG, EX_CAL, OVERPWR, EX_LIMIT);
 	buf_len = sprintf((char*) buf, "post sh and tps setup\n");
-	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+//	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 
 	// initialize brake light to be off
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
 
-	//Not sure if enable seperately from ready to drive
-		Enable_Shutdown_Source();
+	//Enable shutdown pin
+	Enable_Shutdown_Source();
 
 }
 
@@ -97,16 +97,33 @@ void FEB_Main_Loop(void) {
 
 	FEB_TPS2482_Poll_Currents();
 
-//  FEB_CAN_Transmit(&hcan1, LVPDB_LV_CURRENT, &current_reading);
+
+	char buf[100];
+	sprintf(buf, "BUS_CURR: %f \n",FEB_TPS2482_Bus_Current());
+//	HAL_UART_Transmit(&huart2, (uint8_t*)buf, strlen(buf), 100);
+
+	sprintf(buf, "BUS_VOLT: %f\n",FEB_TPS2482_PollBusVoltage(&hi2c1, LV_ADDR+1));
+//	HAL_UART_Transmit(&huart2, (uint8_t*)buf, strlen(buf), 100);
+
+	sprintf(buf, "SHUT_VOLT: %f \n", FEB_TPS2482_PollBusVoltage(&hi2c1, SH_ADDR));
+//	HAL_UART_Transmit(&huart2, (uint8_t*)buf, strlen(buf), 100);
+
+
+
+
+
+	FEB_CAN_Transmit(&hcan2, 0x1, &current_reading);
 //  FEB_CAN_Transmit(&hcan1, LVPDB_EX_CURRENT, &ex_current_reading);
 //  FEB_CAN_Transmit(&hcan1, LVPDB_CP_CURRENT, &cp_current_reading);
-	apps_current_reading = FEB_CAN_APPS_Message.current;
+
+	//TODO: APPS is not currently transmitting its current
+//	apps_current_reading = FEB_CAN_APPS_Message.current;
 
 //	buf_len = sprintf((char*) buf, "Current Draw (LV, EX, CP, APPS): %.3f, %.3f, %.3f, %.3f\r\n", current_reading, ex_current_reading, cp_current_reading, apps_current_reading);
 //	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 
 	buf_len= sprintf((char*)buf, "Ready to Drive: %d , CP Status: %d , Accum Status: %d\n", FEB_Ready_To_Drive_Status(), FEB_Coolant_Pump_Control(), FEB_Accum_Fan_Control());
-	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
+//	HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, HAL_MAX_DELAY);
 
 	//Print the brake pedal position for debugging purposes
 

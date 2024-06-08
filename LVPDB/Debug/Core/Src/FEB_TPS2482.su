@@ -1,5 +1,10 @@
-../Core/Src/FEB_TPS2482.c:20:6:FEB_SETUP_TPS2482	48	static
-../Core/Src/FEB_TPS2482.c:52:6:FEB_TPS2482_shutdownIfError	56	static
-../Core/Src/FEB_TPS2482.c:77:6:FEB_TPS2482_pullLowIfOutOfBounds	64	static
-../Core/Src/FEB_TPS2482.c:104:7:FEB_TPS2482_PollBusCurrent	48	static
-../Core/Src/FEB_TPS2482.c:125:6:FEB_TPS2482_Poll_Currents	8	static
+../Core/Src/FEB_TPS2482.c:22:6:FEB_SETUP_TPS2482	48	static
+../Core/Src/FEB_TPS2482.c:54:6:FEB_TPS2482_shutdownIfError	56	static
+../Core/Src/FEB_TPS2482.c:79:6:FEB_TPS2482_pullLowIfOutOfBounds	64	static
+../Core/Src/FEB_TPS2482.c:106:7:FEB_TPS2482_PollBusCurrent	48	static
+../Core/Src/FEB_TPS2482.c:127:7:FEB_TPS2482_PollBusVoltage	48	static
+../Core/Src/FEB_TPS2482.c:150:6:FEB_TPS2482_Poll_Currents	8	static
+../Core/Src/FEB_TPS2482.c:160:7:FEB_TPS2482_Bus_Current	4	static
+../Core/Src/FEB_TPS2482.c:164:7:FEB_TPS2482_RF_Current	4	static
+../Core/Src/FEB_TPS2482.c:168:7:FEB_TPS2482_CP_Current	4	static
+../Core/Src/FEB_TPS2482.c:172:7:FEB_TPS2482_AF_Current	4	static

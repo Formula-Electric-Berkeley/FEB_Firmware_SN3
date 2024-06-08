@@ -11,9 +11,11 @@
 
 
 
-float current_reading;
-float ex_current_reading;
-float cp_current_reading;
+float current_reading; //Should store current of main bus
+float ex_current_reading; //Should store current of radiator fan
+float cp_current_reading; //Should store current of coolant pumps
+float af_current_reading; // Should store current of accumulator fans
+
 
 extern I2C_HandleTypeDef hi2c1;
 
@@ -122,12 +124,54 @@ float FEB_TPS2482_PollBusCurrent(I2C_HandleTypeDef * hi2c, uint8_t DEV_ADDR){
 	return returnVal;
 }
 
-void FEB_TPS2482_Poll_Currents(){
-	current_reading = FEB_TPS2482_PollBusCurrent(&hi2c1,LV_ADDR+1);
-	ex_current_reading = FEB_TPS2482_PollBusCurrent(&hi2c1,EX_ADDR+1);
-	cp_current_reading = FEB_TPS2482_PollBusCurrent(&hi2c1,CP_ADDR+1);
+float FEB_TPS2482_PollBusVoltage(I2C_HandleTypeDef * hi2c, uint8_t DEV_ADDR){
+
+	//Buffer to store data;
+	uint8_t buf[12];
+	buf[0] = 2; //2 is the register that stores the bus voltage value
+	float returnVal = -1; //Set return val default to -1 as an "error". Not that great since we can actually have negative current
+	HAL_StatusTypeDef ret = HAL_I2C_Master_Transmit(hi2c, DEV_ADDR, buf, 1, 100);
+	if(ret == HAL_OK){
+		ret = HAL_I2C_Master_Receive(hi2c, DEV_ADDR, buf, 2,100);
+		if(ret == HAL_OK){
+			int16_t val = (buf[0]<<8) | buf[1]; //Not sure if little endian or not, needs testing!
+			returnVal = val * 0.00125; // LSB-weight = 2mA/bit
+		}
+	}
+//	HAL_I2C_IsDeviceReady(hi2c, DEV_ADDR, 1, 100);
+	if(ret == HAL_ERROR) return -2.0;
+	if(ret == HAL_BUSY) return -3.0;
+	if(ret == HAL_TIMEOUT) return -4.0;
+
+	return returnVal;
+
 }
 
+void FEB_TPS2482_Poll_Currents(){
+	current_reading = FEB_TPS2482_PollBusCurrent(&hi2c1,LV_ADDR+1);
+//	af_current_reading = FEB_TPS2482_PollBusCurrent(&hi2c1,AF_ADDR+1);
+//	float test_reading = FEB_TPS2482_PollBusCurrent(&hi2c1,AF_ADDR);
+//
+//	char buf[100];
+//	sprintf(buf, "AF_REG_ADD_P_1:%f , AF_REG_ADD: %f\n", af_current_reading, test_reading);
+//	HAL_UART_Transmit(&huart2, buf, strlen(buf), 100);
+}
+
+float FEB_TPS2482_Bus_Current(){
+	return current_reading;
+}
+
+float FEB_TPS2482_RF_Current(){
+	return ex_current_reading;
+}
+
+float FEB_TPS2482_CP_Current(){
+	return cp_current_reading;
+}
+
+float FEB_TPS2482_AF_Current(){
+	return af_current_reading;
+}
 
 
 
