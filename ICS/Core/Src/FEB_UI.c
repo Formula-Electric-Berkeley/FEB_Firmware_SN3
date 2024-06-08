@@ -25,7 +25,7 @@ void FEB_UI_Init(void) {
 	screen_driver_init();
 //	touch_sensor_driver_init();
 
-	ICS_UI_Values.bms_state = 6;
+	ICS_UI_Values.bms_state = 0;
 
 	ui_init();
 }
@@ -39,7 +39,7 @@ void FEB_UI_Update(void) {
 }
 
 void FEB_UI_Set_Values(void) {
-	set_bms_status(ICS_UI_Values.bms_state % 6);
+	set_bms_status(ICS_UI_Values.bms_state);
 	set_tsal_status(HV_STATUS_COLORS[ICS_UI_Values.ivt_voltage > 60.0]);
 
 	uint8_t soc_value = abs((100 - (((int) ((ICS_UI_Values.ivt_voltage / 600.0) * 100)) % 600)) % 100);

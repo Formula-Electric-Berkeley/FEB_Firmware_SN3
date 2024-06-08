@@ -10,9 +10,9 @@ extern uint32_t FEB_CAN_Tx_Mailbox;
 uint8_t FEB_CAN_APPS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
     // For multiple filters, create array of filter IDs and loop over IDs.
 
-	uint16_t ids[] = {FEB_CAN_ID_APPS_BRAKE_PEDAL};
+	uint16_t ids[] = {FEB_CAN_ID_APPS_BRAKE_PEDAL,FEB_CAN_ID_RMS_COMMAND};
 
-	for(uint8_t i = 0; i < 1; i ++){
+	for(uint8_t i = 0; i < 2; i ++){
 
 		CAN_FilterTypeDef filter_config;
 
@@ -82,6 +82,9 @@ void FEB_CAN_APPS_Str_Msg(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_CA
 			data_current = (data_current << 8) | FEB_CAN_Rx_Data[3]; // LSB
 			memcpy(&(FEB_CAN_APPS_Message.current), &(data_current), 4);
 	    	break;
+	    case FEB_CAN_ID_RMS_COMMAND:
+	    	FEB_CAN_APPS_Message.enabled = FEB_CAN_Rx_Data[5];
+	    	break;
 	}
 }
 
@@ -89,3 +92,7 @@ uint8_t FEB_CAN_APPS_Get_Brake_Pos(){
 	return FEB_CAN_APPS_Message.brake_pedal;
 }
 
+
+uint8_t FEB_CAN_APPS_Get_Enabled(){
+	return FEB_CAN_APPS_Message.enabled;
+}

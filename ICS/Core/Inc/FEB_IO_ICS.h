@@ -4,6 +4,7 @@
 // **************************************** Includes ****************************************
 
 #include "FEB_UI.h"
+#include "FEB_CAN_BMS.h"
 
 #include "stm32f4xx_hal.h"
 

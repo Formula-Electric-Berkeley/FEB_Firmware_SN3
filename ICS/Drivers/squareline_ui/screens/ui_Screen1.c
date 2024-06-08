@@ -586,31 +586,52 @@ void set_tsal_status(uint8_t value) {
 
 void set_bms_status(uint8_t value) {
 	switch (value) {
-		case 1:
-			LV_IMG_DECLARE(precharge);
-			lv_img_set_src(img_bms_status, &precharge);
+		case 0:
+			LV_IMG_DECLARE(STRTUP);
+			lv_img_set_src(img_bms_status, &STRTUP);
 			lv_img_set_zoom(img_bms_status, 220);
 			break;
-		case 2:
-			LV_IMG_DECLARE(charge);
-			lv_img_set_src(img_bms_status, &charge);
+		case 1:
+			LV_IMG_DECLARE(STDBY);
+			lv_img_set_src(img_bms_status, &STDBY);
 			lv_img_set_zoom(img_bms_status, 256);
 			break;
-		case 3:
+		case 2:
 			LV_IMG_DECLARE(balance);
 			lv_img_set_src(img_bms_status, &balance);
 			lv_img_set_zoom(img_bms_status, 256);
 			break;
-		case 4:
-			LV_IMG_DECLARE(drive);
-			lv_img_set_src(img_bms_status, &drive);
+		case 3:
+			LV_IMG_DECLARE(charge);
+			lv_img_set_src(img_bms_status, &charge);
 			lv_img_set_zoom(img_bms_status, 256);
 			break;
-		case 5:
-			LV_IMG_DECLARE(shutdown);
-			lv_img_set_src(img_bms_status, &shutdown);
+		case 4:
+			LV_IMG_DECLARE(precharge);
+			lv_img_set_src(img_bms_status, &precharge);
 			lv_img_set_zoom(img_bms_status, 220);
 			break;
+		case 5:
+			LV_IMG_DECLARE(DR_STDBY);
+			lv_img_set_src(img_bms_status, &DR_STDBY);
+			lv_img_set_zoom(img_bms_status, 220);
+			break;
+		case 6:
+			LV_IMG_DECLARE(drive);
+			lv_img_set_src(img_bms_status, &drive);
+			lv_img_set_zoom(img_bms_status, 220);
+			break;
+		case 7:
+			LV_IMG_DECLARE(DR_REGEN);
+			lv_img_set_src(img_bms_status, &DR_REGEN);
+			lv_img_set_zoom(img_bms_status, 220);
+			break;
+		case 8:
+			LV_IMG_DECLARE(FAULT);
+			lv_img_set_src(img_bms_status, &FAULT);
+			lv_img_set_zoom(img_bms_status, 220);
+			break;
+
 		default:
 			LV_IMG_DECLARE(null);
 			lv_img_set_src(img_bms_status, &null);
