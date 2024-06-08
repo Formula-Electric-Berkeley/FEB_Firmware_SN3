@@ -13,7 +13,7 @@ static int32_t pack_max_current_mA = 0;
 
 /* Assume serial access (SM lock held). */
 void FEB_Config_Update(FEB_SM_ST_t current_state) {
-	int32_t current_resolution_mA = 5;
+	int32_t current_resolution_mA = 50;
 	switch (current_state) {
 		case FEB_SM_ST_STARTUP:
 			cell_min_voltage_mV = 2500;

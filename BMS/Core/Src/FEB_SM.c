@@ -222,8 +222,6 @@ static void fault(void) {
 		FEB_LTC6811_Stop_Balance();
 		while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
 	}
-
-	// TODO: Stop charge
 }
 
 /* ******** Interface ******** */
