@@ -5,6 +5,7 @@
 #include "FEB_LTC6811.h"
 #include "FEB_CAN_Charger.h"
 #include "FEB_CAN_ICS.h"
+#include "FEB_CAN_Library/FEB_CAN_ID.h"
 #include "cmsis_os2.h"
 #include <stdint.h>
 #include "stm32f4xx_hal.h"

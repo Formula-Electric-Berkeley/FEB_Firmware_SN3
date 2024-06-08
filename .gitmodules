@@ -1,0 +1,4 @@
+[submodule "BMS/Core/Inc/FEB_CAN_Library"]
+	path = BMS/Core/Inc/FEB_CAN_Library
+	url = git@github.com:Formula-Electric-Berkeley/FEB_CAN_Library_SN3.git
+	branch = stm32
