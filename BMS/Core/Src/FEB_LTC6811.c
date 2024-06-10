@@ -2,6 +2,7 @@
 #include "FEB_Config.h"
 #include "FEB_Temp_LUT.h"
 #include "FEB_SM.h"
+#include "FEB_CAN_Library/FEB_CAN_ID.h"
 #include "LTC6811.h"
 #include "LTC681x.h"
 #include "stm32f4xx_hal.h"
@@ -12,6 +13,8 @@
 extern osMutexId_t FEB_LTC6811_LockHandle;
 extern osMutexId_t FEB_UART_LockHandle;
 extern UART_HandleTypeDef huart2;
+extern CAN_HandleTypeDef hcan1;
+extern uint32_t FEB_CAN_Tx_Mailbox;
 
 /* ******** Accumulator Mapping ******** */
 
@@ -237,6 +240,47 @@ void FEB_LTC6811_UART_Transmit(void) {
 	while (osMutexAcquire(FEB_UART_LockHandle, UINT32_MAX) != osOK);
 	HAL_UART_Transmit(&huart2, (uint8_t*) str, strlen(str), 100);
 	osMutexRelease(FEB_UART_LockHandle);
+}
+
+void FEB_LTC6811_Cell_Data_CAN_Transmit(void) {
+	static CAN_TxHeaderTypeDef tx_header;
+	static uint8_t tx_data[8];
+
+	// Initialize transmission header
+	tx_header.DLC = 6;
+	tx_header.StdId = FEB_CAN_ID_BMS_CELL_DATA;
+	tx_header.IDE = CAN_ID_STD;
+	tx_header.RTR = CAN_RTR_DATA;
+	tx_header.TransmitGlobalTime = DISABLE;
+
+	for (uint8_t bank = 0; bank < FEB_CONFIG_NUM_BANKS; bank++) {
+		for (uint8_t cell = 0; cell < FEB_CONFIG_NUM_CELLS_PER_BANK; cell++) {
+			// Get data
+			while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
+			uint16_t voltage_mV = accumulator.cells[bank][cell].voltage_mV;
+			int16_t temperature_dC = accumulator.cells[bank][cell].temperature_dC;
+			bool voltage_fault = accumulator.cells[bank][cell].voltage_fault;
+			bool temperature_fault = accumulator.cells[bank][cell].temperature_fault;
+			bool balance = accumulator.cells[bank][cell].balance && accumulator.balance_active;
+			osMutexRelease(FEB_LTC6811_LockHandle);
+
+			tx_data[0] = (((bank + 1) & 0x7) << 5) + (cell & 0x1F);
+			tx_data[1] = voltage_mV & 0xFF;
+			tx_data[2] = (voltage_mV >> 8) & 0xFF;
+			tx_data[3] = temperature_dC & 0xFF;
+			tx_data[4] = (temperature_dC >> 8) & 0xFF;
+			tx_data[5] = voltage_fault + (temperature_fault >> 1) + (balance >> 2);
+
+			// Delay until mailbox available
+			while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
+
+			// Add Tx data to mailbox
+			if (HAL_CAN_AddTxMessage(&hcan1, &tx_header, tx_data, &FEB_CAN_Tx_Mailbox) != HAL_OK) {
+				// FEB_SM_Set_Current_State(FEB_SM_ST_SHUTDOWN);
+			}
+		}
+	}
+
 }
 
 /* ******** Voltage Functions ******** */
