@@ -78,16 +78,25 @@ typedef struct {
 	int16_t temperature_dC;				// Deci-celsius
 	bool voltage_fault;					// Under/over voltage
 	bool temperature_fault;				// Under/over temperature
+	bool temperature_disabled;			// Disabled temperature sensors
 	bool balance;						// Cell balance
 	uint32_t voltage_error_count;		// Reset on valid voltage readings
 	uint32_t temperature_error_count;	// Reset on valid temperature readings
 } cell_t;
 typedef struct {
 	cell_t cells[FEB_CONFIG_NUM_BANKS][FEB_CONFIG_NUM_CELLS_PER_BANK];
-	uint32_t total_voltage_mV;				// Mili-volts
-	uint16_t cell_min_voltage_mV;			// Mili-volts
-	uint16_t cell_max_voltage_mV;			// Mili-volts
-	uint16_t balance_target_voltage_mV;		// Mili-volts
+
+	// Voltage summary
+	uint32_t total_voltage_mV;
+	uint16_t cell_min_voltage_mV;
+	uint16_t cell_max_voltage_mV;
+
+	// Temperature summary
+	int16_t cell_min_temperature_dC;
+	int16_t cell_max_temperature_dC;
+	int16_t cell_avg_temperature_dC;
+
+	uint16_t balance_target_voltage_mV;
 	bool balance_active;					// Used to toggle balance while in balance state
 } accumulator_t;
 static accumulator_t accumulator;
@@ -95,6 +104,7 @@ static cell_asic IC_config[NUM_IC];
 
 /* ******** Static Function Declaration ******** */
 
+static void init_accumulator_data(void);
 static void init_all_IC(void);
 static uint8_t get_IC(uint8_t bank, uint8_t accumulator_cell);
 static uint8_t get_IC_cell(uint8_t accumulator_cell);
@@ -114,20 +124,25 @@ static bool check_balance_complete(void);
 static void set_GPIO_bits(uint8_t channel);
 static void start_GPIO_ADC_measurement(void);
 static void read_ADC_voltage_registers(void);
-static void store_temperature_values(uint8_t channel);
+static void store_temperature_values(uint8_t channel, int16_t *min_temperature_dC,
+	int16_t *max_temperature_dC, int32_t *total_temperature_dC, uint8_t *count);
 
 /* ******** Startup and Helper Functions ******** */
 
 void FEB_LTC6811_Init(void) {
+	init_accumulator_data();
 	init_all_IC();
+}
 
-	// Initialize accumulator struct
+static void init_accumulator_data(void) {
 	accumulator.total_voltage_mV = FEB_CONFIG_NUM_BANKS * FEB_CONFIG_NUM_CELLS_PER_BANK
 		* FEB_CONFIG_CELL_MAX_VOLTAGE_100uV * 1e-1;
 	for (uint8_t bank = 0; bank < FEB_CONFIG_NUM_BANKS; bank++) {
 		for (uint8_t cell = 0; cell < FEB_CONFIG_NUM_CELLS_PER_BANK; cell++) {
-			accumulator.cells[bank][cell].voltage_error_count = 0;
-			accumulator.cells[bank][cell].temperature_error_count = 0;
+			cell_t *cell_data = &accumulator.cells[bank][cell];
+			cell_data->voltage_error_count = 0;
+			cell_data->temperature_error_count = 0;
+			cell_data->temperature_disabled = false;
 		}
 	}
 }
@@ -324,6 +339,36 @@ void FEB_LTC6811_Accumulator_Voltage_CAN_Transmit(void) {
 	}
 }
 
+void FEB_LTC6811_Accumulator_Temperature_CAN_Transmit(void) {
+	static CAN_TxHeaderTypeDef tx_header;
+	static uint8_t tx_data[8];
+
+	// Initialize transmission header
+	tx_header.DLC = 6;
+	tx_header.StdId = FEB_CAN_ID_BMS_ACCUMULATOR_VOLTAGE;
+	tx_header.IDE = CAN_ID_STD;
+	tx_header.RTR = CAN_RTR_DATA;
+	tx_header.TransmitGlobalTime = DISABLE;
+
+	// Get data
+	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
+	tx_data[0] = (accumulator.cell_avg_temperature_dC >> 8) && 0xFF;
+	tx_data[1] = accumulator.cell_avg_temperature_dC && 0xFF;
+	tx_data[2] = (accumulator.cell_min_temperature_dC >> 8) && 0xFF;
+	tx_data[3] = accumulator.cell_min_temperature_dC && 0xFF;
+	tx_data[4] = (accumulator.cell_max_temperature_dC >> 8) && 0xFF;
+	tx_data[5] = accumulator.cell_max_temperature_dC && 0xFF;
+	osMutexRelease(FEB_LTC6811_LockHandle);
+
+	// Delay until mailbox available
+	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0);
+
+	// Add Tx data to mailbox
+	if (HAL_CAN_AddTxMessage(&hcan1, &tx_header, tx_data, &FEB_CAN_Tx_Mailbox) != HAL_OK) {
+		// Shutdown ...
+	}
+}
+
 /* ******** Voltage Functions ******** */
 
 void FEB_LTC6811_Poll_Voltage(void) {
@@ -498,12 +543,25 @@ void FEB_LTC6811_Stop_Balance(void) {
 /* ******** Temperature Functions ******** */
 
 void FEB_LTC6811_Poll_Temperature(void) {
+	int16_t min_temperature_dC = 0x7FFF;
+	int16_t max_temperature_dC = 0x8000;
+	int32_t total_temperature_dC = 0;
+	uint8_t count = 0;
+
+	// Poll temperature values
 	for (uint8_t channel = 0; channel < FEB_CONFIG_NUM_TEMP_MUX_CH; channel++) {
 		set_GPIO_bits(channel);
 		start_GPIO_ADC_measurement();
 		read_ADC_voltage_registers();
-		store_temperature_values(channel);
+		store_temperature_values(channel, &min_temperature_dC, &max_temperature_dC, &total_temperature_dC, &count);
 	}
+
+	// Update accumulator temperature stats
+	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
+	accumulator.cell_min_temperature_dC = min_temperature_dC;
+	accumulator.cell_max_temperature_dC = max_temperature_dC;
+	accumulator.cell_avg_temperature_dC = (int16_t) (total_temperature_dC / count);
+	osMutexRelease(FEB_LTC6811_LockHandle);
 }
 
 static void set_GPIO_bits(uint8_t channel) {
@@ -532,7 +590,8 @@ static void read_ADC_voltage_registers(void) {
 	LTC6811_rdaux(SEL_ALL_REG, NUM_IC, IC_config);
 }
 
-static void store_temperature_values(uint8_t channel) {
+static void store_temperature_values(uint8_t channel, int16_t *min_temperature_dC,
+	int16_t *max_temperature_dC, int32_t *total_temperature_dC, uint8_t *count) {
 	bool pack_temperature_fault = false;
 	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 	for (uint8_t bank = 0; bank < FEB_CONFIG_NUM_BANKS; bank++) {
@@ -544,7 +603,11 @@ static void store_temperature_values(uint8_t channel) {
 				int16_t temperature_dC = FEB_Temp_LUT_Get_Temp_100mC(voltage_100uV * 1e-1);
 				cell_t *cell_data = &accumulator.cells[bank][cell];
 
-				// Ignore if voltage error read
+				// Ignore disabled temperature sensors
+				if (cell_data->temperature_disabled)
+					continue;
+
+				// Ignore if temperature error read
 				if (temperature_dC == 0x8000 || temperature_dC == 0x7FFF) {
 					cell_data->temperature_error_count += 1;
 
@@ -558,10 +621,18 @@ static void store_temperature_values(uint8_t channel) {
 					// Store temperature
 					cell_data->temperature_dC = temperature_dC;
 
+					// Update temperature stats
+					if (temperature_dC < *min_temperature_dC)
+						*min_temperature_dC = temperature_dC;
+					if (temperature_dC > *max_temperature_dC)
+						*max_temperature_dC = temperature_dC;
+					*total_temperature_dC += temperature_dC;
+					*count += 1;
+
 					// Check under/over temperature fault
 					int16_t min_temperature_dC = FEB_Config_Get_Cell_Min_Temperature_dC();
 					int16_t max_temperature_dC = FEB_Config_Get_Cell_Max_Temperature_dC();
-					bool temperature_fault = temperature_dC < min_temperature_dC || temperature_dC > max_temperature_dC;
+					bool temperature_fault = (temperature_dC < min_temperature_dC || temperature_dC > max_temperature_dC);
 					accumulator.cells[bank][cell].temperature_fault = temperature_fault;
 					if (temperature_fault)
 						pack_temperature_fault = true;
