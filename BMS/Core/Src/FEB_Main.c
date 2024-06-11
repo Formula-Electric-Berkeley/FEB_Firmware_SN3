@@ -18,6 +18,8 @@ void FEB_Main_Task1_VT(void) {
 		FEB_LTC6811_Poll_Temperature();
 		FEB_LTC6811_UART_Transmit();
 		FEB_LTC6811_Cell_Data_CAN_Transmit();
+		FEB_LTC6811_Accumulator_Voltage_CAN_Transmit();
+		FEB_LTC6811_Accumulator_Temperature_CAN_Transmit();
 		osDelay(100);
 	}
 }
@@ -34,6 +36,7 @@ void FEB_Main_Task2_State(void) {
 void FEB_Main_Task3_Charge(void) {
 	while (1) {
 		FEB_CAN_Charger_Process();
+		FEB_CAN_Charger_UART_Transmit();
 		osDelay(1000);
 	}
 }

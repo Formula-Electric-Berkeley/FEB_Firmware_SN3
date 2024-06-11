@@ -3,12 +3,12 @@
 #include "FEB_Temp_LUT.h"
 #include "FEB_SM.h"
 #include "FEB_CAN_Library/FEB_CAN_ID.h"
+#include "stm32f4xx_hal.h"
+#include "cmsis_os2.h"
 #include "LTC6811.h"
 #include "LTC681x.h"
-#include "stm32f4xx_hal.h"
 #include "stdio.h"
 #include "string.h"
-#include "cmsis_os2.h"
 
 extern osMutexId_t FEB_LTC6811_LockHandle;
 extern osMutexId_t FEB_UART_LockHandle;

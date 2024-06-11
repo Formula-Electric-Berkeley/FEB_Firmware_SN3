@@ -34,8 +34,8 @@ class GeneralView(ctk.CTkFrame):
 
         # Charge data
         self.__charge_data_cells["control"] = create_cell(self.__inner_frame, row=row, col=1, text="", wsf=2)
-        self.__charge_data_cells["max_current"] = create_cell(self.__inner_frame, row=row, col=2, text="", wsf=2)
-        self.__charge_data_cells["max_voltage"] = create_cell(self.__inner_frame, row=row, col=3, text="", wsf=2)
+        self.__charge_data_cells["max-current"] = create_cell(self.__inner_frame, row=row, col=2, text="", wsf=2)
+        self.__charge_data_cells["max-voltage"] = create_cell(self.__inner_frame, row=row, col=3, text="", wsf=2)
         self.__charge_data_cells["output-current"] = create_cell(self.__inner_frame, row=row, col=4, text="", wsf=2)
         self.__charge_data_cells["output-voltage"] = create_cell(self.__inner_frame, row=row, col=5, text="", wsf=2)
         row += 1
@@ -107,11 +107,22 @@ class GeneralView(ctk.CTkFrame):
         row += 1
 
     def update_data(self, data: bms_data.BmsData):
+        self.__charge_data_cells["control"].configure(text=str(data.charge.data.get("control", "")))
+        self.__charge_data_cells["max-current"].configure(text=str(data.charge.data.get("max-current", "")))
+        self.__charge_data_cells["max-voltage"].configure(text=str(data.charge.data.get("max-voltage", "")))
+        self.__charge_data_cells["output-current"].configure(text=str(data.charge.data.get("operating-current", "")))
+        self.__charge_data_cells["output-voltage"].configure(text=str(data.charge.data.get("operating-voltage", "")))
+
+        self.__charge_status_cells["hardware-failure"].configure(text=str(data.charge.status.get("hardware-failure", "")))
+        self.__charge_status_cells["temperature-protection"].configure(text=str(data.charge.status.get("temperature", "")))
+        self.__charge_status_cells["input-voltage"].configure(text=str(data.charge.status.get("input-voltage", "")))
+        self.__charge_status_cells["starting-state"].configure(text=str(data.charge.status.get("starting-state", "")))
+        self.__charge_status_cells["communication-state"].configure(text=str(data.charge.status.get("communication-state", "")))
+
         self.__gpio_sense_cells["air-minus-sense"].configure(text=data.state.sense.get("air-minus", ""))
         self.__gpio_sense_cells["air-plus-sense"].configure(text=data.state.sense.get("air-plus", ""))
         self.__gpio_sense_cells["bms-shutdown"].configure(text=data.state.sense.get("bms-shutdown", ""))
         self.__gpio_sense_cells["imd-shutdown"].configure(text=data.state.sense.get("imd-shutdown", ""))
-
 
         self.__relay_data_cells["bms-shutdown"].configure(text=data.state.relay.get("bms-shutdown", ""))
         self.__relay_data_cells["air-plus"].configure(text=data.state.relay.get("air-plus", ""))

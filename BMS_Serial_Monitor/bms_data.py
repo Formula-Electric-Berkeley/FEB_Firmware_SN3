@@ -7,12 +7,14 @@ class BmsData:
         self.cell_data = CellData()
         self.state = BmsState()
         self.ivt = IVTData()
+        self.charge = ChargeData()
     
     def store_message(self, message: list[str]) -> bool:
         success = False
         success = self.cell_data.store_message(message) or success
         success = self.state.store_message(message) or success
         success = self.ivt.store_message(message) or success
+        success = self.charge.store_message(message) or success
         return success
 
 class SerialData:
@@ -87,14 +89,34 @@ class BmsState(SerialData):
 
 class ChargeData(SerialData):
     def __init__(self):
-        self.charge = dict()
+        self.data = dict()
+        self.status = dict()
 
     def store_message(self, message: str) -> bool:
         success = False
         if message[0] == "charge":
-            pass
-            # lock.acquire()
-            # lock.release()
+            success = True
+
+            max_voltage = round(int(message[1]) * 1e-1, 1)
+            max_current = round(int(message[2]) * 1e-1, 1)
+            control = int(message[3])
+            operating_voltage = round(int(message[4]) * 1e-1, 1)
+            operating_current = round(int(message[5]) * 1e-1, 1)
+            status = int(message[6])
+
+            lock.acquire()
+            self.data["max-voltage"] = max_voltage
+            self.data["max-current"] = max_current
+            self.data["control"] = control
+            self.data["operating-voltage"] = operating_voltage
+            self.data["operating-current"] = operating_current
+
+            self.status["hardware-failure"] = status & 1
+            self.status["temperature"] = (status >> 1) & 1
+            self.status["input-voltage"] = (status >> 2) & 1
+            self.status["starting-state"] = (status >> 3) & 1
+            self.status["communication-state"] = (status >> 4) & 1
+            lock.release()
 
         return success
 

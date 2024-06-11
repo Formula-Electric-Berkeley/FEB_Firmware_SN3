@@ -14,5 +14,6 @@ uint16_t FEB_LTC6811_Get_Min_Voltage(void);
 void FEB_LTC6811_UART_Transmit(void);
 void FEB_LTC6811_Cell_Data_CAN_Transmit(void);
 void FEB_LTC6811_Accumulator_Voltage_CAN_Transmit(void);
+void FEB_LTC6811_Accumulator_Temperature_CAN_Transmit(void);
 
 #endif /* INC_FEB_LTC6811_H_ */
