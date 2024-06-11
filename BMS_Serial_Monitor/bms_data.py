@@ -22,6 +22,7 @@ class SerialData:
 class CellData(SerialData):
     def __init__(self):
         self.cell = dict()  # (bank, cell) : {voltage, temperature, voltage-fault, temperature-fault}
+        self.stats = dict() # str : float
     
     def store_message(self, message: list[str]) -> bool:
         success = False
@@ -39,6 +40,16 @@ class CellData(SerialData):
 
             lock.acquire()
             self.cell[key] = value
+            lock.release()
+        elif message[1] == "accumulator-voltage":
+            total_voltage_mV = int(message[1])
+            min_voltage_mV = int(message[2])
+            max_voltage_mV = int(message[3])
+
+            lock.acquire()
+            self.stats["total-voltage"] = round(total_voltage_mV * 1e-3, 3)
+            self.stats["min-cell-voltage"] = round(min_voltage_mV * 1e-3, 3)
+            self.stats["max-cell-voltage"] = round(max_voltage_mV * 1e-3, 3)
             lock.release()
 
         return success

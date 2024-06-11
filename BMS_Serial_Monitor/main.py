@@ -8,8 +8,8 @@ import time
 def main() -> None:
     data = BmsData()
 
-    sc = SerialConnection(data)
-    threading.Thread(target=sc.read_data).start()
+    # sc = SerialConnection(data)
+    # threading.Thread(target=sc.read_data).start()
 
     app = App()
     app.protocol("WM_DELETE_WINDOW", lambda: sys.exit(0))

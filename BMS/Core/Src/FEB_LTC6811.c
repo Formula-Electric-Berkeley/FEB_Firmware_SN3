@@ -84,6 +84,8 @@ typedef struct {
 typedef struct {
 	cell_t cells[FEB_CONFIG_NUM_BANKS][FEB_CONFIG_NUM_CELLS_PER_BANK];
 	uint32_t total_voltage_mV;				// Mili-volts
+	uint16_t cell_min_voltage_mV;			// Mili-volts
+	uint16_t cell_max_voltage_mV;			// Mili-volts
 	uint16_t balance_target_voltage_mV;		// Mili-volts
 	bool balance_active;					// Used to toggle balance while in balance state
 } accumulator_t;
@@ -220,6 +222,7 @@ void FEB_LTC6811_UART_Transmit(void) {
 			osMutexRelease(FEB_LTC6811_LockHandle);
 
 			// Format cell data string
+			// Data: bank, cell, voltage, temperature, voltage fault, temperature fault, balance state
 			sprintf(str, "cell %d %d %d %d %d %d %d\n",
 					bank + 1, cell + 1,
 					cell_voltage_mV, cell_temperature_dC,
@@ -233,10 +236,17 @@ void FEB_LTC6811_UART_Transmit(void) {
 		}
 	}
 
-	// Format total pack voltage string
-	sprintf(str, "total-voltage %ld\n", FEB_LTC6811_Get_Total_Voltage());
+	// Get accumulator voltage data
+	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
+	uint32_t total_voltage_mV = accumulator.total_voltage_mV;
+	uint16_t cell_min_voltage_mV = accumulator.cell_min_voltage_mV;
+	uint16_t cell_max_voltage_mV = accumulator.cell_max_voltage_mV;
+	osMutexRelease(FEB_LTC6811_LockHandle);
 
-	// Transmit total pack voltage
+	// Transmit accumulator voltage data
+	// Data: total voltage, min cell voltage, max cell voltage
+	sprintf(str, "accumulator-voltage %ld %d %d\n",
+			total_voltage_mV, cell_min_voltage_mV, cell_max_voltage_mV);
 	while (osMutexAcquire(FEB_UART_LockHandle, UINT32_MAX) != osOK);
 	HAL_UART_Transmit(&huart2, (uint8_t*) str, strlen(str), 100);
 	osMutexRelease(FEB_UART_LockHandle);
@@ -275,12 +285,41 @@ void FEB_LTC6811_Cell_Data_CAN_Transmit(void) {
 			while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
 
 			// Add Tx data to mailbox
-			if (HAL_CAN_AddTxMessage(&hcan1, &tx_header, tx_data, &FEB_CAN_Tx_Mailbox) != HAL_OK) {
+			if (HAL_CAN_AddTxMessage(&hcan1, &tx_header, tx_data, &FEB_CAN_Tx_Mailbox) != HAL_OK) {`
 				// FEB_SM_Set_Current_State(FEB_SM_ST_SHUTDOWN);
 			}
 		}
 	}
+}
 
+void FEB_LTC6811_Accumulator_Voltage_CAN_Transmit(void) {
+	static CAN_TxHeaderTypeDef tx_header;
+	static uint8_t tx_data[8];
+
+	// Initialize transmission header
+	tx_header.DLC = 6;
+	tx_header.StdId = FEB_CAN_ID_BMS_ACCUMULATOR_VOLTAGE;
+	tx_header.IDE = CAN_ID_STD;
+	tx_header.RTR = CAN_RTR_DATA;
+	tx_header.TransmitGlobalTime = DISABLE;
+
+	// Get data
+	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
+	tx_data[0] = (accumulator.total_voltage_mV >> 8) && 0xFF;
+	tx_data[1] = accumulator.total_voltage_mV && 0xFF;
+	tx_data[2] = (accumulator.cell_min_voltage_mV >> 8) && 0xFF;
+	tx_data[3] = accumulator.cell_max_voltage_mV && 0xFF;
+	tx_data[4] = (accumulator.cell_max_voltage_mV >> 8) && 0xFF;
+	tx_data[5] = accumulator.cell_max_voltage_mV && 0xFF;
+	osMutexRelease(FEB_LTC6811_LockHandle);
+
+	// Delay until mailbox available
+	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0);
+
+	// Add Tx data to mailbox
+	if (HAL_CAN_AddTxMessage(&hcan1, &tx_header, tx_data, &FEB_CAN_Tx_Mailbox) != HAL_OK) {
+		// Shutdown ...
+	}
 }
 
 /* ******** Voltage Functions ******** */
@@ -303,9 +342,14 @@ static void read_voltage_registers(void) {
 }
 
 static void store_voltage_values(void) {
-	uint16_t min_voltage_mV = FEB_Config_Get_Cell_Min_Voltage_mV();
-	uint16_t max_voltage_mV = FEB_Config_Get_Cell_Max_Voltage_mV();
+	// Thresholds
+	uint16_t threshold_min_voltage_mV = FEB_Config_Get_Cell_Min_Voltage_mV();
+	uint16_t threshold_max_voltage_mV = FEB_Config_Get_Cell_Max_Voltage_mV();
+
+	// Measured values
 	uint32_t total_voltage_mV = 0;
+	uint16_t min_voltage_mV = 0xFFFF;
+	uint16_t max_voltage_mV = 0;
 
 	bool pack_voltage_error = false;		// Invalid voltage read, do not update total voltage
 	bool pack_voltage_fault = false;		// Fault detected, enter fault state
@@ -316,6 +360,7 @@ static void store_voltage_values(void) {
 			uint16_t voltage_100uV = IC_config[get_IC(bank, cell)].cells.c_codes[get_IC_cell(cell)];
 			cell_t *cell_data = &accumulator.cells[bank][cell];
 
+			// Ignore if voltage error read
 			if (voltage_100uV == FEB_LTC6811_VOLTAGE_ERROR_VALUE) {
 				pack_voltage_error= true;
 				cell_data->error_count += 1;
@@ -330,10 +375,16 @@ static void store_voltage_values(void) {
 				// Store voltage
 				uint16_t voltage_mV = voltage_100uV * 1e-1;
 				cell_data->voltage_mV = voltage_mV;
+
+				// Update stat values
 				total_voltage_mV += voltage_mV;
+				if (voltage_mV < min_voltage_mV)
+					min_voltage_mV = voltage_mV;
+				if (voltage_mV > max_voltage_mV)
+					max_voltage_mV = voltage_mV;
 
 				// Check under/over voltage fault
-				bool cell_voltage_fault = voltage_mV < min_voltage_mV || voltage_mV > max_voltage_mV;
+				bool cell_voltage_fault = voltage_mV < threshold_min_voltage_mV || voltage_mV > threshold_max_voltage_mV;
 				cell_data->voltage_fault = cell_voltage_fault;
 				if (cell_voltage_fault)
 					pack_voltage_fault = true;
@@ -342,6 +393,8 @@ static void store_voltage_values(void) {
 	}
 	if (!pack_voltage_error)
 		accumulator.total_voltage_mV = total_voltage_mV;
+	accumulator.cell_min_voltage_mV = min_voltage_mV;
+	accumulator.cell_max_voltage_mV = max_voltage_mV;
 	osMutexRelease(FEB_LTC6811_LockHandle);
 
 	if (pack_voltage_fault)

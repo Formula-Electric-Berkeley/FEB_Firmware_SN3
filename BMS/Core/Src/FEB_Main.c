@@ -17,6 +17,7 @@ void FEB_Main_Task1_VT(void) {
 		FEB_LTC6811_Poll_Voltage();
 		FEB_LTC6811_Poll_Temperature();
 		FEB_LTC6811_UART_Transmit();
+		FEB_LTC6811_Cell_Data_CAN_Transmit();
 		osDelay(100);
 	}
 }
