@@ -2,6 +2,7 @@
 // use VS code compare tool to fix any changes made
 // Copy / Paste into https://www.onlinegdb.com/online_c_compiler
 #define COMPILE_UNIT_TEST 0 
+#define COMPILE_THROTTLE_TEST 0
 #if COMPILE_UNIT_TEST
 
 
@@ -321,5 +322,79 @@ int main()
     
     return 0;
 }
+#endif // COMPILE_REGEN_TEST
+#if COMPILE_THROTTLE_TEST
+#include <stdio.h>
 
-#endif // COMPILE_UNIT_TEST
+#define INIT_VOLTAGE            480     // initial voltage of accumulator (used for capping torque commands) (consider sampling when BMS samples)
+#define PEAK_CURRENT            52.0      // max DC current (in amps) we want to pull from accumulator
+#define PEAK_CURRENT_REGEN      18.0      // max DC current (in amps) we want to charge the accumulator
+#define MAX_TORQUE              230    // New emrax datasheet says this should be 220???
+#define MAX_TORQUE_REGEN        1300    // User defined constant (equivalent to continuous torque) -- tune to MechE, nominally this doesn't seem to go above 50
+#define RPM_TO_RAD_S            0.10472 // 2 pi / 60
+#define FADE_SPEED_RPM          200.0   // About 3.5mph, don't do regen below here (rely on EEPROM/inverter control loop to properly fade)
+#define BRAKE_POSITION_THRESH   0.15    // Minimum brake position (as %) before we stop accelerating / start regen
+#define START_REGEN_SOC         0.95    // State of charge at which regen starts
+#define MAX_REGEN_SOC           0.8     // State of charge at which full regen is enabled
+#define MAX_CELL_TEMP           45.0    // Cell temp at which we are to stop regen (consider reading this from BMS for single source of truth)
+#define TEMP_FILTER_SHARPNESS   1.0     // Make notion page
+#define USER_REGEN_FILTER       0.0     // Manually tune how much of our calculated regen we want
+#define min(x1, x2) x1 < x2 ? x1 : x2;
+
+float FEB_get_peak_current_delimiter(float voltage)
+{
+	float accumulator_voltage = voltage;
+	float estimated_voltage_drop_at_peak = PEAK_CURRENT;
+	float start_derating_voltage = 400.0 + PEAK_CURRENT; // Assume R_acc = 1ohm
+	// Note: Comments are based on start_derating_voltage = 460V and PEAK_CURRENT = 60
+
+	// Saturate outside of 460 and 410
+	if (accumulator_voltage > start_derating_voltage)
+	{
+		return 1;
+	}
+	if (accumulator_voltage <= 410)
+	{
+		return (10.0 / PEAK_CURRENT); // limit to only 10A 
+	}
+
+	// TODO: add a low-pass filter on this value if speed oscillates at high power
+
+	//   x0    y0            x1    y1
+	// (460V, 60/60A) and (410V, 10/60A)
+
+	//      m   = (        y_1           -              y_0)              / (x_1 -          x_0)
+	float slope = ((10.0 / PEAK_CURRENT) - (PEAK_CURRENT / PEAK_CURRENT)) / (410.0 - (start_derating_voltage));
+	//      y     =   m     (       x            -          x_0          ) + y_0
+	float derater = slope * (accumulator_voltage - start_derating_voltage) + 1.0;
+
+	return derater;   
+}
+
+float FEB_CAN_RMS_getMaxTorque(float voltage, float speed){
+	// float accumulator_voltage = min(INIT_VOLTAGE, (RMS_MESSAGE.HV_Bus_Voltage-50) / 10); // TODO: consider reading from IVT
+	float motor_speed = speed * RPM_TO_RAD_S;
+	float peak_current_limited = PEAK_CURRENT * FEB_get_peak_current_delimiter(voltage);
+	float power_capped = peak_current_limited * 400.0; // Cap power to 24kW (i.e. our min voltage)
+ 	// If speed is less than 15, we should command max torque
+  	// This catches divide by 0 errors and also negative speeds (which may create very high negative torque values)
+	if (motor_speed < 15) {
+		return MAX_TORQUE;
+	}
+	float maxTorque = min(MAX_TORQUE, (power_capped) / motor_speed);
+	return maxTorque;
+}
+
+int main()
+{
+    for (float v = 605; v > 375; v -= 10)
+    {
+        for (float s = -100; s < 4000; s+=100)
+        {
+            printf("%f Volts, %f RPM -> %fA from accumulator\n", v, s, FEB_CAN_RMS_getMaxTorque(v,s) * (s * RPM_TO_RAD_S) / v);    
+        }
+    }
+    
+    return 0;
+}
+#endif // COMPILE_THROTTLE_TEST

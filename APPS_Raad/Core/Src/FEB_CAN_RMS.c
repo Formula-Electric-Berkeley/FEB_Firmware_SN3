@@ -176,15 +176,16 @@ float FEB_get_peak_current_delimiter()
 }
 
 float FEB_CAN_RMS_getMaxTorque(void){
-	float accumulator_voltage = min(INIT_VOLTAGE, (RMS_MESSAGE.HV_Bus_Voltage-50) / 10); // TODO: consider reading from IVT
+	// float accumulator_voltage = min(INIT_VOLTAGE, (RMS_MESSAGE.HV_Bus_Voltage-50) / 10); // TODO: consider reading from IVT
 	float motor_speed = RMS_MESSAGE.Motor_Speed * RPM_TO_RAD_S;
 	float peak_current_limited = PEAK_CURRENT * FEB_get_peak_current_delimiter();
+	float power_capped = peak_current_limited * 400.0; // Cap power to 24kW (i.e. our min voltage)
  	// If speed is less than 15, we should command max torque
   	// This catches divide by 0 errors and also negative speeds (which may create very high negative torque values)
 	if (motor_speed < 15) {
 		return MAX_TORQUE;
 	}
-	float maxTorque = min(MAX_TORQUE, (accumulator_voltage * peak_current_limited) / motor_speed);
+	float maxTorque = min(MAX_TORQUE, (power_capped) / motor_speed);
 	return maxTorque;
 }
 
