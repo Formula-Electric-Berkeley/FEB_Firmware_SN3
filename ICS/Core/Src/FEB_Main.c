@@ -17,5 +17,7 @@ void FEB_Main_Loop(void) {
 
 	FEB_IO_ICS_Loop();
 
+	FEB_Radio_Transmit();
+
 	HAL_Delay(10);
 }

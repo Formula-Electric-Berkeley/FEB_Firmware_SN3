@@ -156,12 +156,12 @@ void FEB_IO_ICS_Loop(void) {
 }
 
 // set nth bit
-static uint8_t set_n_bit(uint8_t x, uint8_t n, uint8_t bit_value) {
+uint8_t set_n_bit(uint8_t x, uint8_t n, uint8_t bit_value) {
 	return (x & (~(1 << n))) | (bit_value << n);
 }
 
 // convert uint8_t to binary string
-static void uint8_to_binary_string(uint8_t value, char *binary_string) {
+void uint8_to_binary_string(uint8_t value, char *binary_string) {
     for (int i = 7; i >= 0; i--) {
     	binary_string[7 - i] = ((value >> i) & 1) ? '1' : '0';
     }

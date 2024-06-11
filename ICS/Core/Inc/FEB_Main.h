@@ -8,6 +8,7 @@
 #include "FEB_CAN_ICS.h"
 #include "FEB_CAN.h"
 #include "FEB_IO_ICS.h"
+#include "FEB_Radio.h"
 
 #include "stm32f4xx_hal.h"
 
