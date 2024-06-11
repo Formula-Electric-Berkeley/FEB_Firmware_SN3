@@ -36,9 +36,9 @@ uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
 //		// Code Error - Shutdown
 //	}
 
-	uint16_t ids[] = {FEB_CAN_ID_BMS_STATE, FEB_CAN_ID_IVT_VOLTAGE_1};
+	uint16_t ids[] = {FEB_CAN_ID_BMS_STATE, FEB_CAN_ID_BMS_ACCUMULATOR_VOLTAGE, FEB_CAN_ID_BMS_ACCUMULATOR_TEMPERATURE, FEB_CAN_ID_RMS_MOTOR};
 
-	for (uint8_t i = 0; i < 2; i++) {
+	for (uint8_t i = 0; i < 4; i++) {
 		CAN_FilterTypeDef filter_config;
 
 		// Standard CAN - 2.0A - 11 bit
@@ -67,9 +67,29 @@ void FEB_CAN_ICS_Rx_Handler(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_
 		case FEB_CAN_ID_BMS_STATE:
 			ICS_UI_Values.bms_state = FEB_CAN_Rx_Data[0];
 			break;
-		case FEB_CAN_ID_IVT_VOLTAGE_1:
-			ICS_UI_Values.ivt_voltage = ((FEB_CAN_Rx_Data[2] << 24) + (FEB_CAN_Rx_Data[3] << 16) + (FEB_CAN_Rx_Data[4] << 8) + FEB_CAN_Rx_Data[5]) * 0.001;
+		case FEB_CAN_ID_BMS_ACCUMULATOR_VOLTAGE:
+			ICS_UI_Values.pack_voltage = (FEB_CAN_Rx_Data[0] << 8) + FEB_CAN_Rx_Data[1];
+			ICS_UI_Values.min_voltage = (FEB_CAN_Rx_Data[2] << 8) + FEB_CAN_Rx_Data[3]; //2.4-4.3
+			uint8_t x1 = FEB_CAN_Rx_Data[1];
+			uint8_t x2 = FEB_CAN_Rx_Data[2];
 			break;
+		case FEB_CAN_ID_BMS_ACCUMULATOR_TEMPERATURE:
+			ICS_UI_Values.acc_temp = (FEB_CAN_Rx_Data[0] << 8) + FEB_CAN_Rx_Data[1];
+			break;
+		case FEB_CAN_ID_RMS_MOTOR:
+			if (FEB_CAN_Rx_Data[3] == 255) {
+				ICS_UI_Values.motor_speed = 0;
+			} else {
+				ICS_UI_Values.motor_speed = (FEB_CAN_Rx_Data[2] << 8) + FEB_CAN_Rx_Data[3];
+				memcpy(&(ICS_UI_Values.motor_speed), FEB_CAN_Rx_Data+2, 2);
+			}
+			uint8_t x3 = FEB_CAN_Rx_Data[2];
+			uint8_t x4 = FEB_CAN_Rx_Data[3];
+			uint16_t x5 = ICS_UI_Values.motor_speed;
+			break;
+//		case FEB_CAN_ID_IVT_VOLTAGE_1:
+//			ICS_UI_Values.ivt_voltage = ((FEB_CAN_Rx_Data[2] << 24) + (FEB_CAN_Rx_Data[3] << 16) + (FEB_CAN_Rx_Data[4] << 8) + FEB_CAN_Rx_Data[5]) * 0.001;
+//			break;
 	}
 }
 

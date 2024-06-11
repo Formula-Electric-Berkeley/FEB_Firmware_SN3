@@ -18,6 +18,7 @@ extern "C" {
 void ui_Screen1_screen_init(void);
 extern lv_obj_t *ui_Screen1;
 extern lv_obj_t *ui_Bar1;
+extern lv_obj_t *ui_Bar2;
 extern lv_obj_t *ui_Bar3;
 extern lv_obj_t *ui_Container2;
 extern lv_obj_t *ui_Label1;
@@ -40,7 +41,7 @@ extern lv_obj_t *ui____initial_actions0;
 extern lv_obj_t * img_regen_status;
 extern lv_obj_t * img_ones_place;
 extern lv_obj_t * img_tens_place;
-extern lv_obj_t * img_percent;
+extern lv_obj_t * img_v;
 extern lv_obj_t * img_ones_place1;
 extern lv_obj_t * img_tens_place1;
 extern lv_obj_t * img_degrees;
@@ -48,6 +49,7 @@ extern lv_obj_t * img_ones_place2;
 extern lv_obj_t * img_tens_place2;
 extern lv_obj_t * img_tsal_status;
 extern lv_obj_t * img_bms_status;
+extern lv_obj_t * img_decimal;
 
 LV_FONT_DECLARE( ui_font_intervar52);
 LV_FONT_DECLARE( ui_font_robotf);
@@ -57,9 +59,9 @@ LV_FONT_DECLARE( ui_font_roboto52);
 LV_FONT_DECLARE( ui_font_roboto60);
 
 void ui_init(void);
-void set_soc_value(uint8_t value);
+void set_soc_value(uint16_t value);
 void set_temp_value(uint8_t value);
-void set_speed_value(uint8_t value);
+void set_speed_value(uint16_t value);
 void set_tsal_status(uint8_t value);
 void set_bms_status(uint8_t value);
 void set_regen_status(uint8_t value);

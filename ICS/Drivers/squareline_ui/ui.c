@@ -13,6 +13,7 @@
 void ui_Screen1_screen_init(void);
 lv_obj_t *ui_Screen1;
 lv_obj_t *ui_Bar1;
+lv_obj_t *ui_Bar2;
 lv_obj_t *ui_Bar3;
 lv_obj_t *ui_Container2;
 lv_obj_t *ui_Label1;
@@ -35,7 +36,7 @@ lv_obj_t *ui____initial_actions0;
 lv_obj_t * img_regen_status;
 lv_obj_t * img_ones_place;
 lv_obj_t * img_tens_place;
-lv_obj_t * img_percent;
+lv_obj_t * img_v;
 lv_obj_t * img_ones_place1;
 lv_obj_t * img_tens_place1;
 lv_obj_t * img_degrees;
@@ -43,6 +44,7 @@ lv_obj_t * img_ones_place2;
 lv_obj_t * img_tens_place2;
 lv_obj_t * img_tsal_status;
 lv_obj_t * img_bms_status;
+lv_obj_t * img_decimal;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
 #if LV_COLOR_DEPTH != 16
