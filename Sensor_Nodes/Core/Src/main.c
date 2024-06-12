@@ -25,6 +25,7 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "FEB_CAN_Library/FEB_CAN_ID.h"
 //#include "FEB_CAN_Library/"
 
 /* Private includes ----------------------------------------------------------*/
@@ -54,6 +55,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+
+uint8_t IS_FRONT = 1;
 
 // WSS phase counters
 uint32_t ticks0 = 0;
@@ -89,6 +92,181 @@ void SystemClock_Config(void);
 
 void transmit_uart(const char *string) {
     HAL_UART_Transmit(&huart2, (uint8_t*)string, strlen(string), 1000);
+}
+
+void FEB_CAN_Transmit_Front_Wheel_Speed()
+{
+  CAN_TxHeaderTypeDef TxHeader;
+  uint8_t TxData[8];
+  uint32_t TxMailbox;
+
+  TxHeader.DLC = 8; // Data length
+  TxHeader.IDE = CAN_ID_STD; // Standard ID
+  TxHeader.RTR = CAN_RTR_DATA; // Data frame
+  TxHeader.StdId = FEB_CAN_ID_FRONT_SENSOR_WHEEL_SPEED_1; // CAN ID
+  TxHeader.ExtId = 0; // Not used with standard ID
+
+  char send[50];
+  sprintf(send, "%d rpm, %f mph \r\n", wss0, (wss0 * 0.06098555871));
+
+  transmit_uart(send);
+
+  // Fill the data
+  TxData[0] = wss0;
+
+  while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
+
+  if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+  {
+    // Transmission request error
+	 char msg[50];
+	 sprintf(msg, "CAN transmit error");
+	 transmit_uart(msg);
+	 Error_Handler();
+  }
+
+  // Wait until the message is transmitted
+   // while (HAL_CAN_IsTxMessagePending(&hcan1, TxMailbox)) {}
+}
+
+void FEB_CAN_Transmit_Rear_Wheel_Speed()
+{
+  CAN_TxHeaderTypeDef TxHeader;
+  uint8_t TxData[8];
+  uint32_t TxMailbox;
+
+  TxHeader.DLC = 8; // Data length
+  TxHeader.IDE = CAN_ID_STD; // Standard ID
+  TxHeader.RTR = CAN_RTR_DATA; // Data frame
+  TxHeader.StdId = FEB_CAN_ID_REAR_SENSOR_WHEEL_SPEED_1; // CAN ID
+  TxHeader.ExtId = 0; // Not used with standard ID
+
+  char send[50];
+  sprintf(send, "%d rpm, %f mph \r\n", wss1, (wss1 * 0.06098555871));
+
+  transmit_uart(send);
+
+  // Fill the data
+  TxData[0] = wss1;
+
+  while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
+
+  if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+  {
+    // Transmission request error
+	 char msg[50];
+	 sprintf(msg, "CAN transmit error");
+	 transmit_uart(msg);
+	 Error_Handler();
+  }
+
+  // Wait until the message is transmitted
+   // while (HAL_CAN_IsTxMessagePending(&hcan1, TxMailbox)) {}
+}
+
+void FEB_CAN_Transmit_Front_LPOT()
+{
+  CAN_TxHeaderTypeDef TxHeader;
+  uint8_t TxData[8];
+  uint32_t TxMailbox;
+
+  TxHeader.DLC = 8; // Data length
+  TxHeader.IDE = CAN_ID_STD; // Standard ID
+  TxHeader.RTR = CAN_RTR_DATA; // Data frame
+  TxHeader.StdId = FEB_CAN_ID_FRONT_SENSOR_LIN_POT_1; // CAN ID
+  TxHeader.ExtId = 0; // Not used with standard ID
+
+  char send[50];
+  sprintf(send, "%d rpm, %f mph \r\n", wss0, (wss0 * 0.06098555871));
+
+  transmit_uart(send);
+
+  // Fill the data
+  TxData[0] = ds0;
+
+  while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
+
+  if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+  {
+    // Transmission request error
+	 char msg[50];
+	 sprintf(msg, "CAN transmit error");
+	 transmit_uart(msg);
+	 Error_Handler();
+  }
+
+  // Wait until the message is transmitted
+   // while (HAL_CAN_IsTxMessagePending(&hcan1, TxMailbox)) {}
+}
+
+void FEB_CAN_Transmit_Rear_Left_LPOT()
+{
+  CAN_TxHeaderTypeDef TxHeader;
+  uint8_t TxData[8];
+  uint32_t TxMailbox;
+
+  TxHeader.DLC = 8; // Data length
+  TxHeader.IDE = CAN_ID_STD; // Standard ID
+  TxHeader.RTR = CAN_RTR_DATA; // Data frame
+  TxHeader.StdId = FEB_CAN_ID_REAR_SENSOR_LIN_POT_1_; // CAN ID
+  TxHeader.ExtId = 0; // Not used with standard ID
+
+  char msg[50];
+  sprintf(msg, "%d adc, %d adc \r\n", ds0, ds1);
+
+  transmit_uart(msg);
+
+  // Fill the data
+  TxData[0] = ds0;
+
+  while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
+
+  if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+  {
+    // Transmission request error
+	 char msg[50];
+	 sprintf(msg, "CAN transmit error");
+	 transmit_uart(msg);
+	 Error_Handler();
+  }
+
+  // Wait until the message is transmitted
+   // while (HAL_CAN_IsTxMessagePending(&hcan1, TxMailbox)) {}
+}
+
+void FEB_CAN_Transmit_Rear_Right_LPOT()
+{
+  CAN_TxHeaderTypeDef TxHeader;
+  uint8_t TxData[8];
+  uint32_t TxMailbox;
+
+  TxHeader.DLC = 8; // Data length
+  TxHeader.IDE = CAN_ID_STD; // Standard ID
+  TxHeader.RTR = CAN_RTR_DATA; // Data frame
+  TxHeader.StdId = FEB_CAN_ID_REAR_SENSOR_LIN_POT_2; // CAN ID
+  TxHeader.ExtId = 0; // Not used with standard ID
+
+  char msg[50];
+  sprintf(msg, "%d adc, %d adc \r\n", ds0, ds1);
+
+  transmit_uart(msg);
+
+  // Fill the data
+  TxData[0] = ds1;
+
+  while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}
+
+  if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+  {
+    // Transmission request error
+	 char msg[50];
+	 sprintf(msg, "CAN transmit error");
+	 transmit_uart(msg);
+	 Error_Handler();
+  }
+
+  // Wait until the message is transmitted
+   // while (HAL_CAN_IsTxMessagePending(&hcan1, TxMailbox)) {}
 }
 
 void CAN_Transmit()
@@ -190,20 +368,33 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		ds0 = FEB_Read_ADC(ADC_CHANNEL_0);
 		ds1 = FEB_Read_ADC(ADC_CHANNEL_4);
 
-		char msg[50];
-		sprintf(msg, "%d adc, %d adc \r\n", ds0, ds1);
+//		char msg[50];
+//		sprintf(msg, "%d adc, %d adc \r\n", ds0, ds1);
+//
+//		transmit_uart(msg);
 
-		transmit_uart(msg);
+		if (IS_FRONT) {
+			FEB_CAN_Transmit_Front_LPOT();
+		} else {
+			FEB_CAN_Transmit_Rear_Left_LPOT();
+			FEB_CAN_Transmit_Rear_Right_LPOT();
+		}
 
     }
 
 	// CAN sensor report generation
 	if (htim->Instance == TIM2) {
 //		CAN_Transmit();
-		  char send[50];
-		  sprintf(send, "%d rpm, %f mph \r\n", wss1, (wss1 * 0.06098555871));
+//		  char send[50];
+//		  sprintf(send, "%d rpm, %f mph \r\n", wss1, (wss1 * 0.06098555871));
+//
+//		  transmit_uart(send);
 
-		  transmit_uart(send);
+		  if (IS_FRONT) {
+			  FEB_CAN_Transmit_Front_Wheel_Speed();
+		  } else {
+			  FEB_CAN_Transmit_Rear_Wheel_Speed();
+		  }
 	}
 }
 
