@@ -25,6 +25,7 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+//#include "FEB_CAN_Library/"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -72,8 +73,8 @@ uint8_t tm_state = 0;
 uint8_t tm0 = 0;
 uint8_t tm1 = 0;
 
-uint8_t ds0 = 0;
-uint8_t ds1 = 1;
+uint16_t ds0 = 0;
+uint16_t ds1 = 1;
 
 /* USER CODE END PV */
 
@@ -101,6 +102,11 @@ void CAN_Transmit()
   TxHeader.RTR = CAN_RTR_DATA; // Data frame
   TxHeader.StdId = 0x545; // CAN ID
   TxHeader.ExtId = 0; // Not used with standard ID
+
+  char send[50];
+  sprintf(send, "%d rpm, %f mph \r\n", wss0, (wss0 * 0.06098555871));
+
+  transmit_uart(send);
 
   // Fill the data
   TxData[0] = wss0;
@@ -193,7 +199,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 	// CAN sensor report generation
 	if (htim->Instance == TIM2) {
-		CAN_Transmit();
+//		CAN_Transmit();
+		  char send[50];
+		  sprintf(send, "%d rpm, %f mph \r\n", wss1, (wss1 * 0.06098555871));
+
+		  transmit_uart(send);
 	}
 }
 
