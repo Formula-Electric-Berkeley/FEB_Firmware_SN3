@@ -145,6 +145,22 @@ static void init_accumulator_data(void) {
 			cell_data->temperature_disabled = false;
 		}
 	}
+	/*Disable the following faulty/ removed cells (one-indexed referencing GUI)
+	 * 	- (B2, C1)
+	 * 	- (B2, C6)
+	 * 	- (B2, C14)
+	 * 	- (B3, C1)
+	 */
+	uint8_t remove_list[4][2] = {
+			{1,0},
+			{1,5},
+			{1,13},
+			{2,0}
+	};
+	for(int i = 0; i < 4;i++){
+		cell_t *remove_cell = &accumulator.cells[remove_list[i][0]][remove_list[i][1]];
+		remove_cell->temperature_disabled = true;
+	}
 }
 
 static void init_all_IC(void) {
@@ -444,8 +460,10 @@ static void store_voltage_values(void) {
 	accumulator.cell_max_voltage_mV = max_voltage_mV;
 	osMutexRelease(FEB_LTC6811_LockHandle);
 
-	if (pack_voltage_fault)
+	if (pack_voltage_fault){
 		FEB_SM_Transition(FEB_SM_ST_FAULT);
+
+	}
 }
 
 /* ******** Balance Functions ******** */
@@ -641,6 +659,7 @@ static void store_temperature_values(uint8_t channel, int16_t *min_temperature_d
 		}
 	}
 	osMutexRelease(FEB_LTC6811_LockHandle);
-	if (pack_temperature_fault)
+	if (pack_temperature_fault){
 		FEB_SM_Transition(FEB_SM_ST_FAULT);
+	}
 }

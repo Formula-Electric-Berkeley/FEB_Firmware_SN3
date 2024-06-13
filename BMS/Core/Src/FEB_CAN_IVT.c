@@ -59,8 +59,10 @@ void FEB_CAN_IVT_Process(void) {
 		IVT_message_flag.current = false;
 		 int32_t current_mA = IVT_message.current_mA;
 		 if (current_mA < FEB_Config_Get_Pack_Min_Current_mA() ||
-			 current_mA > FEB_Config_Get_Pack_Max_Current_mA())
-			 FEB_SM_Transition(FEB_SM_ST_FAULT);
+			 current_mA > FEB_Config_Get_Pack_Max_Current_mA()){
+
+		 }
+//			 FEB_SM_Transition(FEB_SM_ST_FAULT);
 	}
 	if (IVT_message_flag.voltage_1) {
 		IVT_message_flag.voltage_1 = false;
