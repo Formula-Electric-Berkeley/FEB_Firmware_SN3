@@ -50,7 +50,11 @@ void FEB_IO_ICS_Loop(void) {
 			//Flio ready to drive if pressed again to turn it off
 			r2d = (r2d == 1) ? 0 : 1;
 			IO_state = (uint8_t) set_n_bit(IO_state, 1, 1);
-			set_rtd_buzzer = 0;
+			if(r2d == 1){
+				set_rtd_buzzer = 0;
+			}else{
+				set_rtd_buzzer = 1;
+			}
 
 			//Restart the start time so we don't constantly toggle r2d
 			rtd_press_start_time = HAL_GetTick();
