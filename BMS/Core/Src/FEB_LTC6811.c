@@ -4,14 +4,11 @@
 #include "FEB_SM.h"
 #include "FEB_CAN_Library/FEB_CAN_ID.h"
 #include "stm32f4xx_hal.h"
-#include "cmsis_os2.h"
 #include "LTC6811.h"
 #include "LTC681x.h"
 #include "stdio.h"
 #include "string.h"
 
-extern osMutexId_t FEB_LTC6811_LockHandle;
-extern osMutexId_t FEB_UART_LockHandle;
 extern UART_HandleTypeDef huart2;
 extern CAN_HandleTypeDef hcan1;
 extern uint32_t FEB_CAN_Tx_Mailbox;
@@ -202,14 +199,11 @@ static uint8_t get_channel(uint8_t accumulator_cell) {
 }
 
 uint32_t FEB_LTC6811_Get_Total_Voltage(void) {
-	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 	uint32_t total_voltage_mV = accumulator.total_voltage_mV;
-	osMutexRelease(FEB_LTC6811_LockHandle);
 	return total_voltage_mV;
 }
 
 uint16_t FEB_LTC6811_Get_Min_Voltage(void) {
-	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 	uint16_t min_voltage_mV = FEB_CONFIG_CELL_MAX_VOLTAGE_mV;
 	for (uint8_t bank = 0; bank < FEB_CONFIG_NUM_BANKS; bank++) {
 		for (uint8_t cell = 0; cell < FEB_CONFIG_NUM_CELLS_PER_BANK; cell++) {
@@ -218,7 +212,6 @@ uint16_t FEB_LTC6811_Get_Min_Voltage(void) {
 				min_voltage_mV = cell_voltage_mV;
 		}
 	}
-	osMutexRelease(FEB_LTC6811_LockHandle);
 	return min_voltage_mV;
 }
 
@@ -230,13 +223,11 @@ void FEB_LTC6811_UART_Transmit(void) {
 	for (uint8_t bank = 0; bank < FEB_CONFIG_NUM_BANKS; bank++) {
 		for (uint8_t cell = 0; cell < FEB_CONFIG_NUM_CELLS_PER_BANK; cell++) {
 			// Get cell data
-			while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 			uint16_t cell_voltage_mV = accumulator.cells[bank][cell].voltage_mV;
 			int16_t cell_temperature_dC = accumulator.cells[bank][cell].temperature_dC;
 			bool cell_voltage_fault = accumulator.cells[bank][cell].voltage_fault;
 			bool cell_temperature_fault = accumulator.cells[bank][cell].temperature_fault;
 			bool balance = accumulator.cells[bank][cell].balance && accumulator.balance_active;
-			osMutexRelease(FEB_LTC6811_LockHandle);
 
 			// Format cell data string
 			// Data: bank, cell, voltage, temperature, voltage fault, temperature fault, balance state
@@ -247,26 +238,20 @@ void FEB_LTC6811_UART_Transmit(void) {
 					balance);
 
 			// Transmit cell data
-			while (osMutexAcquire(FEB_UART_LockHandle, UINT32_MAX) != osOK);
 			HAL_UART_Transmit(&huart2, (uint8_t*) str, strlen(str), 100);
-			osMutexRelease(FEB_UART_LockHandle);
 		}
 	}
 
 	// Get accumulator voltage data
-	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 	uint32_t total_voltage_mV = accumulator.total_voltage_mV;
 	uint16_t cell_min_voltage_mV = accumulator.cell_min_voltage_mV;
 	uint16_t cell_max_voltage_mV = accumulator.cell_max_voltage_mV;
-	osMutexRelease(FEB_LTC6811_LockHandle);
 
 	// Transmit accumulator voltage data
 	// Data: total voltage, min cell voltage, max cell voltage
 	sprintf(str, "accumulator-voltage %ld %d %d\n",
 			total_voltage_mV, cell_min_voltage_mV, cell_max_voltage_mV);
-	while (osMutexAcquire(FEB_UART_LockHandle, UINT32_MAX) != osOK);
 	HAL_UART_Transmit(&huart2, (uint8_t*) str, strlen(str), 100);
-	osMutexRelease(FEB_UART_LockHandle);
 }
 
 void FEB_LTC6811_Cell_Data_CAN_Transmit(void) {
@@ -283,13 +268,11 @@ void FEB_LTC6811_Cell_Data_CAN_Transmit(void) {
 	for (uint8_t bank = 0; bank < FEB_CONFIG_NUM_BANKS; bank++) {
 		for (uint8_t cell = 0; cell < FEB_CONFIG_NUM_CELLS_PER_BANK; cell++) {
 			// Get data
-			while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 			uint16_t voltage_mV = accumulator.cells[bank][cell].voltage_mV;
 			int16_t temperature_dC = accumulator.cells[bank][cell].temperature_dC;
 			bool voltage_fault = accumulator.cells[bank][cell].voltage_fault;
 			bool temperature_fault = accumulator.cells[bank][cell].temperature_fault;
 			bool balance = accumulator.cells[bank][cell].balance && accumulator.balance_active;
-			osMutexRelease(FEB_LTC6811_LockHandle);
 
 			tx_data[0] = (((bank + 1) & 0x7) << 5) + (cell & 0x1F);
 			tx_data[1] = voltage_mV & 0xFF;
@@ -321,14 +304,12 @@ void FEB_LTC6811_Accumulator_Voltage_CAN_Transmit(void) {
 	tx_header.TransmitGlobalTime = DISABLE;
 
 	// Get data
-	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 	tx_data[0] = (accumulator.total_voltage_mV >> 8) && 0xFF;
 	tx_data[1] = accumulator.total_voltage_mV && 0xFF;
 	tx_data[2] = (accumulator.cell_min_voltage_mV >> 8) && 0xFF;
 	tx_data[3] = accumulator.cell_max_voltage_mV && 0xFF;
 	tx_data[4] = (accumulator.cell_max_voltage_mV >> 8) && 0xFF;
 	tx_data[5] = accumulator.cell_max_voltage_mV && 0xFF;
-	osMutexRelease(FEB_LTC6811_LockHandle);
 
 	// Delay until mailbox available
 	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0);
@@ -351,14 +332,12 @@ void FEB_LTC6811_Accumulator_Temperature_CAN_Transmit(void) {
 	tx_header.TransmitGlobalTime = DISABLE;
 
 	// Get data
-	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 	tx_data[0] = (accumulator.cell_avg_temperature_dC >> 8) && 0xFF;
 	tx_data[1] = accumulator.cell_avg_temperature_dC && 0xFF;
 	tx_data[2] = (accumulator.cell_min_temperature_dC >> 8) && 0xFF;
 	tx_data[3] = accumulator.cell_min_temperature_dC && 0xFF;
 	tx_data[4] = (accumulator.cell_max_temperature_dC >> 8) && 0xFF;
 	tx_data[5] = accumulator.cell_max_temperature_dC && 0xFF;
-	osMutexRelease(FEB_LTC6811_LockHandle);
 
 	// Delay until mailbox available
 	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0);
@@ -401,7 +380,6 @@ static void store_voltage_values(void) {
 	bool pack_voltage_error = false;		// Invalid voltage read, do not update total voltage
 	bool pack_voltage_fault = false;		// Fault detected, enter fault state
 
-	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 	for (uint8_t bank = 0; bank < FEB_CONFIG_NUM_BANKS; bank++) {
 		for (uint8_t cell = 0; cell < FEB_CONFIG_NUM_CELLS_PER_BANK; cell++) {
 			uint16_t voltage_100uV = IC_config[get_IC(bank, cell)].cells.c_codes[get_IC_cell(cell)];
@@ -442,7 +420,6 @@ static void store_voltage_values(void) {
 		accumulator.total_voltage_mV = total_voltage_mV;
 	accumulator.cell_min_voltage_mV = min_voltage_mV;
 	accumulator.cell_max_voltage_mV = max_voltage_mV;
-	osMutexRelease(FEB_LTC6811_LockHandle);
 
 	if (pack_voltage_fault)
 		FEB_SM_Transition(FEB_SM_ST_FAULT);
@@ -451,10 +428,8 @@ static void store_voltage_values(void) {
 /* ******** Balance Functions ******** */
 
 void FEB_LTC6811_Init_Balance(void) {
-	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 	set_target_voltage();
 	balance_all_cells();
-	osMutexRelease(FEB_LTC6811_LockHandle);
 }
 
 static void set_target_voltage(void) {
@@ -480,17 +455,13 @@ static void balance_all_cells(void) {
 
 void FEB_LTC6811_Balance_Process(void) {
 	if (FEB_SM_Get_Current_State() == FEB_SM_ST_BALANCE) {
-		while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 		accumulator.balance_active = true;
-		osMutexRelease(FEB_LTC6811_LockHandle);
 
-		osDelay(30000);
+		HAL_Delay(30000);
 
-		while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 		accumulator.balance_active = false;
-		osMutexRelease(FEB_LTC6811_LockHandle);
 
-		osDelay(4000);
+		HAL_Delay(4000);
 
 		if (check_balance_complete())
 			FEB_SM_Transition(FEB_SM_ST_STANDBY);
@@ -499,7 +470,6 @@ void FEB_LTC6811_Balance_Process(void) {
 
 static bool check_balance_complete(void) {
 	bool complete = true;
-	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 	for (uint8_t bank = 0; bank < FEB_CONFIG_NUM_BANKS; bank++) {
 		for (uint8_t cell = 0; cell < FEB_CONFIG_NUM_CELLS_PER_BANK; cell++) {
 			if (accumulator.cells[bank][cell].balance)
@@ -510,7 +480,6 @@ static bool check_balance_complete(void) {
 			}
 		}
 	}
-	osMutexRelease(FEB_LTC6811_LockHandle);
 	return complete;
 }
 
@@ -530,14 +499,12 @@ static void configure_DCCBITS_A(uint8_t IC) {
 }
 
 void FEB_LTC6811_Stop_Balance(void) {
-	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 	accumulator.balance_active = false;
 	for (uint8_t bank = 0; bank < FEB_CONFIG_NUM_BANKS; bank++) {
 		for (uint8_t cell = 0; cell < FEB_CONFIG_NUM_CELLS_PER_BANK; cell++) {
 			accumulator.cells[bank][cell].balance = false;
 		}
 	}
-	osMutexRelease(FEB_LTC6811_LockHandle);
 }
 
 /* ******** Temperature Functions ******** */
@@ -557,11 +524,9 @@ void FEB_LTC6811_Poll_Temperature(void) {
 	}
 
 	// Update accumulator temperature stats
-	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 	accumulator.cell_min_temperature_dC = min_temperature_dC;
 	accumulator.cell_max_temperature_dC = max_temperature_dC;
 	accumulator.cell_avg_temperature_dC = (int16_t) (total_temperature_dC / count);
-	osMutexRelease(FEB_LTC6811_LockHandle);
 }
 
 static void set_GPIO_bits(uint8_t channel) {
@@ -593,7 +558,6 @@ static void read_ADC_voltage_registers(void) {
 static void store_temperature_values(uint8_t channel, int16_t *min_temperature_dC,
 	int16_t *max_temperature_dC, int32_t *total_temperature_dC, uint8_t *count) {
 	bool pack_temperature_fault = false;
-	while (osMutexAcquire(FEB_LTC6811_LockHandle, UINT32_MAX) != osOK);
 	for (uint8_t bank = 0; bank < FEB_CONFIG_NUM_BANKS; bank++) {
 		for (uint8_t cell = 0; cell < FEB_CONFIG_NUM_CELLS_PER_BANK; cell++) {
 			if (get_channel(cell) == channel) {
@@ -640,7 +604,6 @@ static void store_temperature_values(uint8_t channel, int16_t *min_temperature_d
 			}
 		}
 	}
-	osMutexRelease(FEB_LTC6811_LockHandle);
 	if (pack_temperature_fault)
 		FEB_SM_Transition(FEB_SM_ST_FAULT);
 }

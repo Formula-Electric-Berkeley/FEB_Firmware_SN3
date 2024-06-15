@@ -3,14 +3,12 @@
 #include "FEB_CAN_Library/FEB_CAN_ID.h"
 #include "FEB_Config.h"
 #include "stm32f4xx_hal.h"
-#include "cmsis_os2.h"
 #include "string.h"
 #include "stdio.h"
 
 
 extern CAN_HandleTypeDef hcan1;
 extern UART_HandleTypeDef huart2;
-extern osMutexId_t FEB_UART_LockHandle;
 extern uint8_t FEB_CAN_Tx_Data[8];
 extern CAN_TxHeaderTypeDef FEB_CAN_Tx_Header;
 extern uint32_t FEB_CAN_Tx_Mailbox;
@@ -128,7 +126,5 @@ void FEB_CAN_Charger_UART_Transmit(void) {
 		BMS_message.max_voltage_dV, BMS_message.max_current_dA, BMS_message.control,
 		CCS_message.op_voltage_dV, CCS_message.op_current_dA, CCS_message.status);
 
-	while (osMutexAcquire(FEB_UART_LockHandle, UINT32_MAX) != osOK);
 	HAL_UART_Transmit(&huart2, (uint8_t*) str, strlen(str), 100);
-	osMutexRelease(FEB_UART_LockHandle);
 }

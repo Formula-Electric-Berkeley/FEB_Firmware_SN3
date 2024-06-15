@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -49,63 +48,6 @@ TIM_HandleTypeDef htim4;
 
 UART_HandleTypeDef huart2;
 
-/* Definitions for Task1_VT */
-osThreadId_t Task1_VTHandle;
-const osThreadAttr_t Task1_VT_attributes = {
-  .name = "Task1_VT",
-  .stack_size = 512 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
-/* Definitions for Task2_State */
-osThreadId_t Task2_StateHandle;
-const osThreadAttr_t Task2_State_attributes = {
-  .name = "Task2_State",
-  .stack_size = 256 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal,
-};
-/* Definitions for Task3_Charge */
-osThreadId_t Task3_ChargeHandle;
-const osThreadAttr_t Task3_Charge_attributes = {
-  .name = "Task3_Charge",
-  .stack_size = 256 * 4,
-  .priority = (osPriority_t) osPriorityHigh,
-};
-/* Definitions for Task4_Balance */
-osThreadId_t Task4_BalanceHandle;
-const osThreadAttr_t Task4_Balance_attributes = {
-  .name = "Task4_Balance",
-  .stack_size = 512 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal1,
-};
-/* Definitions for Task5_IVT */
-osThreadId_t Task5_IVTHandle;
-const osThreadAttr_t Task5_IVT_attributes = {
-  .name = "Task5_IVT",
-  .stack_size = 512 * 4,
-  .priority = (osPriority_t) osPriorityNormal1,
-};
-/* Definitions for Task6_CAN */
-osThreadId_t Task6_CANHandle;
-const osThreadAttr_t Task6_CAN_attributes = {
-  .name = "Task6_CAN",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityBelowNormal,
-};
-/* Definitions for FEB_SM_Lock */
-osMutexId_t FEB_SM_LockHandle;
-const osMutexAttr_t FEB_SM_Lock_attributes = {
-  .name = "FEB_SM_Lock"
-};
-/* Definitions for FEB_LTC6811_Lock */
-osMutexId_t FEB_LTC6811_LockHandle;
-const osMutexAttr_t FEB_LTC6811_Lock_attributes = {
-  .name = "FEB_LTC6811_Lock"
-};
-/* Definitions for FEB_UART_Lock */
-osMutexId_t FEB_UART_LockHandle;
-const osMutexAttr_t FEB_UART_Lock_attributes = {
-  .name = "FEB_UART_Lock"
-};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -117,13 +59,6 @@ static void MX_USART2_UART_Init(void);
 static void MX_CAN1_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_SPI1_Init(void);
-void Start_Task1_VT(void *argument);
-void Start_Task2_State(void *argument);
-void Start_Task3_Charge(void *argument);
-void Start_Task4_Balance(void *argument);
-void Start_Task5_IVT(void *argument);
-void Start_Task6_CAN(void *argument);
-
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -171,65 +106,6 @@ int main(void)
 
   /* USER CODE END 2 */
 
-  /* Init scheduler */
-  osKernelInitialize();
-  /* Create the mutex(es) */
-  /* creation of FEB_SM_Lock */
-  FEB_SM_LockHandle = osMutexNew(&FEB_SM_Lock_attributes);
-
-  /* creation of FEB_LTC6811_Lock */
-  FEB_LTC6811_LockHandle = osMutexNew(&FEB_LTC6811_Lock_attributes);
-
-  /* creation of FEB_UART_Lock */
-  FEB_UART_LockHandle = osMutexNew(&FEB_UART_Lock_attributes);
-
-  /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
-
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
-  /* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
-
-  /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
-
-  /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
-
-  /* Create the thread(s) */
-  /* creation of Task1_VT */
-  Task1_VTHandle = osThreadNew(Start_Task1_VT, NULL, &Task1_VT_attributes);
-
-  /* creation of Task2_State */
-  Task2_StateHandle = osThreadNew(Start_Task2_State, NULL, &Task2_State_attributes);
-
-  /* creation of Task3_Charge */
-  Task3_ChargeHandle = osThreadNew(Start_Task3_Charge, NULL, &Task3_Charge_attributes);
-
-  /* creation of Task4_Balance */
-  Task4_BalanceHandle = osThreadNew(Start_Task4_Balance, NULL, &Task4_Balance_attributes);
-
-  /* creation of Task5_IVT */
-  Task5_IVTHandle = osThreadNew(Start_Task5_IVT, NULL, &Task5_IVT_attributes);
-
-  /* creation of Task6_CAN */
-  Task6_CANHandle = osThreadNew(Start_Task6_CAN, NULL, &Task6_CAN_attributes);
-
-  /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
-  /* USER CODE END RTOS_THREADS */
-
-  /* USER CODE BEGIN RTOS_EVENTS */
-  /* add events, ... */
-  /* USER CODE END RTOS_EVENTS */
-
-  /* Start scheduler */
-  osKernelStart();
-
-  /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -237,6 +113,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	FEB_Main_Loop();
   }
   /* USER CODE END 3 */
 }
@@ -507,96 +384,6 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
-
-/* USER CODE BEGIN Header_Start_Task1_VT */
-/**
-  * @brief  Function implementing the Task1_VT thread.
-  * @param  argument: Not used
-  * @retval None
-  */
-/* USER CODE END Header_Start_Task1_VT */
-void Start_Task1_VT(void *argument)
-{
-  /* USER CODE BEGIN 5 */
-  /* Infinite loop */
-  FEB_Main_Task1_VT();
-  /* USER CODE END 5 */
-}
-
-/* USER CODE BEGIN Header_Start_Task2_State */
-/**
-* @brief Function implementing the Task2_State thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_Start_Task2_State */
-void Start_Task2_State(void *argument)
-{
-  /* USER CODE BEGIN Start_Task2_State */
-  /* Infinite loop */
-  FEB_Main_Task2_State();
-  /* USER CODE END Start_Task2_State */
-}
-
-/* USER CODE BEGIN Header_Start_Task3_Charge */
-/**
-* @brief Function implementing the Task3_Charge thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_Start_Task3_Charge */
-void Start_Task3_Charge(void *argument)
-{
-  /* USER CODE BEGIN Start_Task3_Charge */
-  /* Infinite loop */
-  FEB_Main_Task3_Charge();
-  /* USER CODE END Start_Task3_Charge */
-}
-
-/* USER CODE BEGIN Header_Start_Task4_Balance */
-/**
-* @brief Function implementing the Task4_Balance thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_Start_Task4_Balance */
-void Start_Task4_Balance(void *argument)
-{
-  /* USER CODE BEGIN Start_Task4_Balance */
-  /* Infinite loop */
-  FEB_Main_Task4_Balance();
-  /* USER CODE END Start_Task4_Balance */
-}
-
-/* USER CODE BEGIN Header_Start_Task5_IVT */
-/**
-* @brief Function implementing the Task5_IVT thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_Start_Task5_IVT */
-void Start_Task5_IVT(void *argument)
-{
-  /* USER CODE BEGIN Start_Task5_IVT */
-  /* Infinite loop */
-  FEB_Main_Task5_IVT();
-  /* USER CODE END Start_Task5_IVT */
-}
-
-/* USER CODE BEGIN Header_Start_Task6_CAN */
-/**
-* @brief Function implementing the Task6_CAN thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_Start_Task6_CAN */
-void Start_Task6_CAN(void *argument)
-{
-  /* USER CODE BEGIN Start_Task6_CAN */
-  /* Infinite loop */
-  FEB_Main_Task6_CAN();
-  /* USER CODE END Start_Task6_CAN */
-}
 
 /**
   * @brief  This function is executed in case of error occurrence.
