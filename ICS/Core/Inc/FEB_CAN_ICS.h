@@ -7,6 +7,7 @@
 #include "FEB_UART_TRANSMIT.h"
 #include "FEB_IO_ICS.h"
 #include "FEB_CAN_APPS.h"
+#include "FEB_CAN_BMS.h"
 
 #include "stm32f4xx_hal.h"
 
