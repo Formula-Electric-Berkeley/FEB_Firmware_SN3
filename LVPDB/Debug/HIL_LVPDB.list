@@ -35,17 +35,17 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  15 .debug_rnglists 00000a1d  00000000  00000000  0001d5e8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00023d49  00000000  00000000  0001e005  2**0
+ 16 .debug_macro  00023d97  00000000  00000000  0001e005  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   000126cc  00000000  00000000  00041d4e  2**0
+ 17 .debug_line   000127ac  00000000  00000000  00041d9c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    000cfcd7  00000000  00000000  0005441a  2**0
+ 18 .debug_str    000cfeb3  00000000  00000000  00054548  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  001240f1  2**0
+ 19 .comment      00000043  00000000  00000000  001243fb  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00004634  00000000  00000000  00124134  2**2
+ 20 .debug_frame  00004634  00000000  00000000  00124440  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000070  00000000  00000000  00128768  2**0
+ 21 .debug_line_str 00000070  00000000  00000000  00128a74  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1519,7 +1519,7 @@ void FEB_CAN_APPS_Str_Msg(CAN_RxHeaderTypeDef *FEB_CAN_Rx_Header, uint8_t FEB_CA
 	switch(FEB_CAN_Rx_Header->StdId) {
  80010ea:	687b      	ldr	r3, [r7, #4]
  80010ec:	681b      	ldr	r3, [r3, #0]
- 80010ee:	2b09      	cmp	r3, #9
+ 80010ee:	2b04      	cmp	r3, #4
  80010f0:	d002      	beq.n	80010f8 <FEB_CAN_APPS_Str_Msg+0x18>
  80010f2:	2b80      	cmp	r3, #128	@ 0x80
  80010f4:	d005      	beq.n	8001102 <FEB_CAN_APPS_Str_Msg+0x22>
@@ -1598,7 +1598,7 @@ uint8_t FEB_CAN_ICS_Filter(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uin
     // For multiple filters, create array of filter IDs and loop over IDs.
 
 	uint16_t ids[] = {FEB_CAN_ID_ICS_BUTTON_STATE};
- 800115c:	2307      	movs	r3, #7
+ 800115c:	2306      	movs	r3, #6
  800115e:	86bb      	strh	r3, [r7, #52]	@ 0x34
 
 	for (uint8_t i = 0; i < 1; i++) {
@@ -1684,7 +1684,7 @@ void FEB_CAN_ICS_Store_Msg(CAN_RxHeaderTypeDef *rx_header, uint8_t rx_data[]) {
 	switch(rx_header->StdId) {
  80011da:	687b      	ldr	r3, [r7, #4]
  80011dc:	681b      	ldr	r3, [r3, #0]
- 80011de:	2b07      	cmp	r3, #7
+ 80011de:	2b06      	cmp	r3, #6
  80011e0:	d130      	bne.n	8001244 <FEB_CAN_ICS_Store_Msg+0x74>
 		case FEB_CAN_ID_ICS_BUTTON_STATE:
 				ICS_States[0] = ((rx_data[0] | 0b11111101) == 0b11111111);

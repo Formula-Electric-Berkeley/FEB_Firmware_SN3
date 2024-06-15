@@ -1,6 +1,6 @@
 Core/Src/FEB_Hardware.o: ../Core/Src/FEB_Hardware.c \
  ../Core/Inc/FEB_Hardware.h ../Core/Inc/FEB_CAN_APPS.h \
- ../Core/Inc/FEB_CAN_ID.h \
+ ../Core/Inc/FEB_CAN_Library/FEB_CAN_ID.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -33,7 +33,7 @@ Core/Src/FEB_Hardware.o: ../Core/Src/FEB_Hardware.c \
  ../Core/Inc/FEB_CAN_ICS.h
 ../Core/Inc/FEB_Hardware.h:
 ../Core/Inc/FEB_CAN_APPS.h:
-../Core/Inc/FEB_CAN_ID.h:
+../Core/Inc/FEB_CAN_Library/FEB_CAN_ID.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:
