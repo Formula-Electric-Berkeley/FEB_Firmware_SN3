@@ -421,8 +421,8 @@ static void store_voltage_values(void) {
 	accumulator.cell_min_voltage_mV = min_voltage_mV;
 	accumulator.cell_max_voltage_mV = max_voltage_mV;
 
-	if (pack_voltage_fault)
-		FEB_SM_Transition(FEB_SM_ST_FAULT);
+	if (pack_voltage_fault){}
+//		FEB_SM_Transition(FEB_SM_ST_FAULT);
 }
 
 /* ******** Balance Functions ******** */
@@ -604,6 +604,6 @@ static void store_temperature_values(uint8_t channel, int16_t *min_temperature_d
 			}
 		}
 	}
-	if (pack_temperature_fault)
-		FEB_SM_Transition(FEB_SM_ST_FAULT);
+	if (pack_temperature_fault){}
+//		FEB_SM_Transition(FEB_SM_ST_FAULT);
 }

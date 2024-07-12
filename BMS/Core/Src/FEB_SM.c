@@ -340,7 +340,7 @@ void FEB_SM_UART_Transmit(void) {
 
 void FEB_SM_CAN_Transmit(void) {
 	// Initialize transmission header
-	FEB_CAN_Tx_Header.DLC = 3;
+	FEB_CAN_Tx_Header.DLC = 1;
 	FEB_CAN_Tx_Header.StdId = FEB_CAN_ID_BMS_STATE;
 	FEB_CAN_Tx_Header.IDE = CAN_ID_STD;
 	FEB_CAN_Tx_Header.RTR = CAN_RTR_DATA;
@@ -350,9 +350,9 @@ void FEB_SM_CAN_Transmit(void) {
 	uint16_t cell_min_voltage = FEB_LTC6811_Get_Min_Voltage();
 
 	// Copy data to Tx buffer
-	FEB_CAN_Tx_Data[0] = FEB_SM_Get_Current_State();
-	FEB_CAN_Tx_Data[1] = cell_min_voltage && 0xFF;
-	FEB_CAN_Tx_Data[2] = cell_min_voltage >> 8;
+	FEB_CAN_Tx_Data[0] = (uint8_t) FEB_SM_Get_Current_State();
+//	FEB_CAN_Tx_Data[1] = cell_min_voltage && 0xFF;
+//	FEB_CAN_Tx_Data[2] = cell_min_voltage >> 8;
 
 	// Delay until mailbox available
 	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {}

@@ -14,7 +14,7 @@ void FEB_Main_Setup(void) {
 void FEB_Main_Loop(void) {
 	FEB_LTC6811_Poll_Voltage();
 	FEB_LTC6811_Poll_Temperature();
-//	FEB_LTC6811_UART_Transmit();
+	FEB_LTC6811_UART_Transmit();
 //	FEB_LTC6811_Cell_Data_CAN_Transmit();
 //	FEB_LTC6811_Accumulator_Voltage_CAN_Transmit();
 //	FEB_LTC6811_Accumulator_Temperature_CAN_Transmit();
@@ -25,11 +25,11 @@ void FEB_Main_Loop(void) {
 //	FEB_LTC6811_Balance_Process();
 
 	FEB_SM_Process();
-//	FEB_SM_UART_Transmit();
-//	FEB_SM_CAN_Transmit();
+	FEB_SM_UART_Transmit();
+	FEB_SM_CAN_Transmit();
 
 	FEB_CAN_IVT_Process();
-//	FEB_CAN_IVT_UART_Transmit();
+	FEB_CAN_IVT_UART_Transmit();
 
 	HAL_Delay(10);
 }
