@@ -26,14 +26,16 @@ Core/Src/FEB_Main.o: ../Core/Src/FEB_Main.c ../Core/Inc/FEB_Main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/main.h ../Core/Inc/FEB_Main.h ../Core/Inc/FEB_Store.h \
- ../Core/Inc/FEB_CAN_ID.h ../Core/Inc/FEB_CAN.h ../Core/Inc/FEB_RMS.h \
- ../Core/Inc/FEB_NORMALIZED.h
+ ../Core/Inc/FEB_Timer.h ../Core/Inc/FEB_CAN.h ../Core/Inc/FEB_CAN_ICS.h \
+ ../Core/Inc/FEB_CAN_ID.h ../Core/Inc/FEB_CAN_RMS.h \
+ ../Core/Inc/FEB_CAN_BMS.h ../Core/Inc/FEB_Normalized.h \
+ ../Core/Inc/FEB_Const.h ../Core/Inc/FEB_CAN_BSPD.h \
+ ../Core/Inc/FEB_TPS2482.h ../Core/Inc/FEB_HECS.h
 ../Core/Inc/FEB_Main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -62,15 +64,19 @@ Core/Src/FEB_Main.o: ../Core/Src/FEB_Main.c ../Core/Inc/FEB_Main.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
-../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
-../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
-../Core/Inc/main.h:
-../Core/Inc/FEB_Main.h:
-../Core/Inc/FEB_Store.h:
-../Core/Inc/FEB_CAN_ID.h:
+../Core/Inc/FEB_Timer.h:
 ../Core/Inc/FEB_CAN.h:
-../Core/Inc/FEB_RMS.h:
-../Core/Inc/FEB_NORMALIZED.h:
+../Core/Inc/FEB_CAN_ICS.h:
+../Core/Inc/FEB_CAN_ID.h:
+../Core/Inc/FEB_CAN_RMS.h:
+../Core/Inc/FEB_CAN_BMS.h:
+../Core/Inc/FEB_Normalized.h:
+../Core/Inc/FEB_Const.h:
+../Core/Inc/FEB_CAN_BSPD.h:
+../Core/Inc/FEB_TPS2482.h:
+../Core/Inc/FEB_HECS.h:

@@ -1,3 +1,0 @@
-../Core/Src/FEB_CAN_ICS.c:13:6:FEB_CAN_ICS_Ready	4	static
-../Core/Src/FEB_CAN_ICS.c:19:9:FEB_CAN_ICS_Filter_Config	64	static
-../Core/Src/FEB_CAN_ICS.c:46:6:FEB_CAN_ICS_Store_Msg	16	static

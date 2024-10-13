@@ -1,67 +1,41 @@
+// ********************************** Includes & External **********************************
 
-//******************* INCLUDES & EXTERNS ****************
 #include "FEB_Main.h"
 
-// *********************** VARIABLES *********************
-# define SLEEP_TIME 10
+extern ADC_HandleTypeDef hadc1;
 
-float normalized_acc;
-float normalized_brake;
+// ********************************** Variables **********************************
+char buf[128];
+uint8_t buf_len; //stolen from Main_Setup (SN2)
 
-static char buf[128];
-static uint8_t buf_len;
+// ********************************** Functions **********************************
 
-//******************  FUNCTIONS ****************************
-
-//this is a homeless function that i think needs to live here
-void FEB_APPS_sendBrake(){
-	FEB_CAN_Transmit(&hcan1);
+void FEB_Main_Setup(void){
+	HAL_ADCEx_InjectedStart(&hadc1); //@lovehate - where does this go
+//	FEB_Timer_Init();
+//	FEB_TPS2482_Setup();
+	FEB_CAN_Init(); //FEB_CAN_Init() // The transceiver must be connected otherwise you get sent into an infinite loop
+	FEB_CAN_RMS_Setup();
 }
 
+void FEB_Main_While(void){
+//	FEB_CAN_ICS_Transmit();
+//
+	FEB_SM_ST_t bms_state = FEB_CAN_BMS_getState();
 
-void FEB_Main_User2(void){
-	HAL_ADCEx_InjectedStart(&hadc1);
-	HAL_TIM_Base_Start(&htim5);
 
+	if (FEB_Ready_To_Drive() && (bms_state == FEB_SM_ST_DRIVE || bms_state == FEB_SM_ST_DRIVE_REGEN)) {
+		FEB_Normalized_updateAcc();
+		FEB_CAN_RMS_Process();
+	} else {
+		FEB_Normalized_setAcc0();
+		FEB_CAN_RMS_Disable();
+	}
+	FEB_HECS_update();
+	FEB_Normalized_update_Brake();
 
-	//char buf[128]; use static variable instead
-	//uint8_t buf_len; use static variable insetad
+	FEB_CAN_RMS_Torque();
+	FEB_Normalized_CAN_sendBrake();
 
-	FEB_CAN_Init(); // The transceiver must be connected otherwise you get sent into an infinite loop
-	RMSControl.enabled = 0;
-	RMSControl.torque= 0.0;
+	HAL_Delay(10);
 }
-
-void FEB_Main_User3(void){
-	  //ready to drive
-	  if (SW_MESSAGE.ready_to_drive == 1) {
-		  normalized_acc = FEB_Normalized_Acc_Pedals();
-		  if (!RMSControl.enabled) {  // when the car just powered on, driver commands ready to drive but rms is not enabled
-			  FEB_RMS_Init();
-			  RMSControl.enabled = 1;
-		  }
-	  } else {
-		  // normalized_acc = FEB_Normalized_Acc_Pedals(); redundant
-		  normalized_acc = 0.0;
-		  RMSControl.enabled = 0;
-	  }
-	  // Top line is Evan's new function, Bottom line is old APPS function
-	  uint16_t torque = normalized_acc * FEB_getMaxTorque(RMS_MESSAGE.HV_Bus_Voltage, RMS_MESSAGE.Motor_Speed);
-//	  uint16_t torque = normalized_acc * 130;
-	  normalized_brake = FEB_Normalized_Brake_Pedals();
-	  FEB_RMS_setTorque(torque);
-	  FEB_APPS_sendBrake();
-
-//	  buf_len = sprintf(buf, "rtd:%d, enable:%d lockout:%d impl:%d acc: %.3f brake: %.3f Bus Voltage: %d Motor Speed: %d\n", SW_MESSAGE.ready_to_drive, Inverter_enable, Inverter_enable_lockout, isImpl, normalized_acc, normalized_brake, RMS_MESSAGE.HV_Bus_Voltage, RMS_MESSAGE.Motor_Speed);
-
-	  buf_len = sprintf(buf, "Evan's Max Torque: %d\n", FEB_getMaxTorque(RMS_MESSAGE.HV_Bus_Voltage, RMS_MESSAGE.Motor_Speed));
-
-	  HAL_UART_Transmit(&huart2,(uint8_t *)buf, buf_len, 1000);
-
-	  HAL_Delay(SLEEP_TIME);
-}
-
-
-
-
-
