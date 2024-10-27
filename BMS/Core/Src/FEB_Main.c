@@ -10,6 +10,7 @@
 
 void FEB_Main_Setup(void) {
 	FEB_SM_Init();
+	FEB_SM_Transition(FEB_SM_ST_LV);
 }
 
 void FEB_Main_Task1_VT(void) {

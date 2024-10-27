@@ -74,7 +74,7 @@ FEB_Hw_Relay_t FEB_Hw_AIR_Plus_Sense(void) {
 	return FEB_HW_RELAY_OPEN;
 }
 
-/* Read BMS shutdown sense, assum SM lock held. */
+/* Read BMS shutdown sense, assume SM lock held. */
 FEB_Hw_Relay_t FEB_Hw_BMS_Shutdown_Sense(void) {
 	if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12) == GPIO_PIN_SET)
 		return FEB_HW_RELAY_CLOSE;

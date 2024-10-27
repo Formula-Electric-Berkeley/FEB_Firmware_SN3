@@ -12,18 +12,19 @@
 #include "stdio.h"
 #include "string.h"
 
-static void startup(void);
-static void standby(void);
-static void standby_to_balance(void);
-static void standby_to_charge(void);
-static void standby_to_precharge(void);
-static void precharge_to_drive_standby(void);
-static void drive_standby_to_drive(void);
-static void drive_to_drive_standby(void);
-static void drive_to_drive_regen(void);
-static void drive_regen_to_drive(void);
-static void drive_regen_to_drive_standby(void);
-static void fault(void);
+static void bootTransition(FEB_SM_ST_t);
+static void LVPowerTransition(FEB_SM_ST_t);
+static void ESCCompleteTransition(FEB_SM_ST_t);
+static void PrechargeTransition(FEB_SM_ST_t);
+static void EnergizedTransition(FEB_SM_ST_t);
+static void DriveTransition(FEB_SM_ST_t);
+static void FreeTransition(FEB_SM_ST_t);
+static void ChargingTransition(FEB_SM_ST_t);
+static void BalanceTransition(FEB_SM_ST_t);
+static void BMSFaultTransition(FEB_SM_ST_t);
+static void BSPDFaultTransition(FEB_SM_ST_t);
+static void IMDFaultTransition(FEB_SM_ST_t);
+static void ChargingFaultTransition(FEB_SM_ST_t);
 
 extern osMutexId_t FEB_SM_LockHandle;
 extern osMutexId_t FEB_UART_LockHandle;
@@ -38,47 +39,21 @@ static FEB_SM_ST_t current_state;
 
 /* ******** State Transitions ******** */
 
-// State transition model
-typedef struct {
-	FEB_SM_ST_t current_state;
-	void (*action)(void);
-	FEB_SM_ST_t next_state;
-} FEB_SM_Transition_t;
-
-/* List of transitions pairs (s, a, s') */
-#define NUM_TRANSITIONS 24
-static FEB_SM_Transition_t transitions[] = {
-	{FEB_SM_ST_STARTUP, fault, FEB_SM_ST_FAULT},
-	{FEB_SM_ST_STARTUP, standby, FEB_SM_ST_STANDBY},
-
-	{FEB_SM_ST_STANDBY, fault, FEB_SM_ST_FAULT},
-	{FEB_SM_ST_STANDBY, standby_to_balance, FEB_SM_ST_BALANCE},
-	{FEB_SM_ST_STANDBY, standby_to_charge, FEB_SM_ST_CHARGE},
-	{FEB_SM_ST_STANDBY, standby_to_precharge, FEB_SM_ST_PRECHARGE},
-
-	{FEB_SM_ST_BALANCE, fault, FEB_SM_ST_FAULT},
-	{FEB_SM_ST_BALANCE, standby, FEB_SM_ST_STANDBY},
-
-	{FEB_SM_ST_CHARGE, fault, FEB_SM_ST_FAULT},
-	{FEB_SM_ST_CHARGE, standby, FEB_SM_ST_STANDBY},
-
-	{FEB_SM_ST_PRECHARGE, fault, FEB_SM_ST_FAULT},
-	{FEB_SM_ST_PRECHARGE, standby, FEB_SM_ST_STANDBY},
-	{FEB_SM_ST_PRECHARGE, precharge_to_drive_standby, FEB_SM_ST_DRIVE_STANDBY},
-
-	{FEB_SM_ST_DRIVE_STANDBY, fault, FEB_SM_ST_FAULT},
-	{FEB_SM_ST_DRIVE_STANDBY, standby, FEB_SM_ST_STANDBY},
-	{FEB_SM_ST_DRIVE_STANDBY, drive_standby_to_drive, FEB_SM_ST_DRIVE},
-
-	{FEB_SM_ST_DRIVE, fault, FEB_SM_ST_FAULT},
-	{FEB_SM_ST_DRIVE, standby, FEB_SM_ST_STANDBY},
-	{FEB_SM_ST_DRIVE, drive_to_drive_standby, FEB_SM_ST_DRIVE_STANDBY},
-	{FEB_SM_ST_DRIVE, drive_to_drive_regen, FEB_SM_ST_DRIVE_REGEN},
-
-	{FEB_SM_ST_DRIVE_REGEN, fault, FEB_SM_ST_FAULT},
-	{FEB_SM_ST_DRIVE_REGEN, standby, FEB_SM_ST_STANDBY},
-	{FEB_SM_ST_DRIVE_REGEN, drive_regen_to_drive, FEB_SM_ST_DRIVE},
-	{FEB_SM_ST_DRIVE_REGEN, drive_regen_to_drive_standby, FEB_SM_ST_DRIVE_STANDBY}
+/* List of transition functions*/
+static FEB_SM_ST_t transitionVector[12]={
+		bootTransition,
+		LVPowerTransition,
+		ESCCompleteTransition,
+		PrechargeTransition,
+		EnergizedTransition,
+		DriveTransition,
+		FreeTransition,
+		ChargingTransition,
+		BalanceTransition,
+		BMSFaultTransition,
+		BSPDFaultTransition,
+		IMDFaultTransition,
+		ChargingFaultTransition
 };
 
 /* ******** State Transition Functions ******** */
@@ -86,21 +61,13 @@ static FEB_SM_Transition_t transitions[] = {
 
 /* Initiate state transition. Assume SM lock held. */
 static void transition(FEB_SM_ST_t next_state) {
-	if (current_state == next_state)
-		return;
-	for (uint8_t i = 0; i < NUM_TRANSITIONS; i++) {
-		if (transitions[i].current_state == current_state &&
-			transitions[i].next_state == next_state) {
-			transitions[i].action();
-			break;
-		}
-	}
+	transitionVector[current_state](next_state);
 }
 
 /* Function called from initial thread (no other threads created).
  * No synchronization needed. */
 static void startup(void) {
-	current_state = FEB_SM_ST_STARTUP;
+	current_state = FEB_SM_ST_BOOT;
 	FEB_Config_Update(current_state);
 
 	FEB_Hw_Set_AIR_Plus_Relay(FEB_HW_RELAY_OPEN);
@@ -110,119 +77,13 @@ static void startup(void) {
 
 
 	if (!FEB_CAN_Init()) {
-		current_state = FEB_SM_ST_FAULT;
+		current_state = FEB_SM_ST_FAULT_BMS;
 		FEB_Hw_Set_BMS_Shutdown_Relay(FEB_HW_RELAY_OPEN);
 		return;
 	}
+
 	FEB_LTC6811_Init();
-}
 
-/* Assume SM lock held. */
-static void standby_to_balance(void) {
-	current_state = FEB_SM_ST_BALANCE;
-	FEB_Config_Update(current_state);
-
-	// Initialize balance
-	osMutexRelease(FEB_SM_LockHandle);
-	FEB_LTC6811_Init_Balance();
-
-	// Initialize state variables
-	while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
-	current_state = FEB_SM_ST_BALANCE;
-	FEB_Config_Update(current_state);
-}
-
-/* Assume SM lock held. */
-static void standby(void) {
-	FEB_SM_ST_t previous_state = current_state;
-	current_state = FEB_SM_ST_STANDBY;
-	FEB_Config_Update(current_state);
-
-	FEB_Hw_Set_AIR_Plus_Relay(FEB_HW_RELAY_OPEN);
-	FEB_Hw_Set_Precharge_Relay(FEB_HW_RELAY_OPEN);
-
-	// Stop Balance
-	if (previous_state == FEB_SM_ST_BALANCE) {
-		osMutexRelease(FEB_SM_LockHandle);
-		FEB_LTC6811_Stop_Balance();
-		while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
-	}
-
-	// TODO: Stop Charge
-}
-
-/* Assume SM lock held. */
-static void standby_to_charge(void) {
-	current_state = FEB_SM_ST_CHARGE;
-	FEB_Config_Update(current_state);
-	osDelay(100);
-	FEB_Hw_Set_AIR_Plus_Relay(FEB_HW_RELAY_CLOSE);
-}
-
-/* Assume SM lock held. */
-static void standby_to_precharge(void) {
-	current_state = FEB_SM_ST_PRECHARGE;
-	FEB_Config_Update(current_state);
-
-	FEB_Hw_Set_AIR_Plus_Relay(FEB_HW_RELAY_OPEN);
-	FEB_Hw_Set_Precharge_Relay(FEB_HW_RELAY_CLOSE);
-}
-
-/* Assume SM lock held. */
-static void precharge_to_drive_standby(void) {
-	current_state = FEB_SM_ST_DRIVE_STANDBY;
-	FEB_Config_Update(current_state);
-
-	FEB_Hw_Set_AIR_Plus_Relay(FEB_HW_RELAY_CLOSE);
-	osDelay(100);
-	FEB_Hw_Set_Precharge_Relay(FEB_HW_RELAY_OPEN);
-}
-
-/* Assume SM lock held. */
-static void drive_standby_to_drive(void) {
-	current_state = FEB_SM_ST_DRIVE;
-	FEB_Config_Update(current_state);
-}
-
-/* Assume SM lock held. */
-static void drive_to_drive_standby(void) {
-	current_state = FEB_SM_ST_DRIVE_STANDBY;
-	FEB_Config_Update(current_state);
-}
-
-/* Assume SM lock held. */
-static void drive_to_drive_regen(void) {
-	current_state = FEB_SM_ST_DRIVE_REGEN;
-	FEB_Config_Update(current_state);
-}
-
-/* Assume SM lock held. */
-static void drive_regen_to_drive(void) {
-	current_state = FEB_SM_ST_DRIVE;
-	FEB_Config_Update(current_state);
-}
-
-/* Assume SM lock held. */
-static void drive_regen_to_drive_standby(void) {
-	current_state = FEB_SM_ST_DRIVE_STANDBY;
-	FEB_Config_Update(current_state);
-}
-
-/* Handle transition from any state to fault state. Assume SM lock held. */
-static void fault(void) {
-	FEB_SM_ST_t previous_state = current_state;
-	current_state = FEB_SM_ST_FAULT;
-	FEB_Config_Update(current_state);
-
-	FEB_Hw_Set_BMS_Shutdown_Relay(FEB_HW_RELAY_OPEN);
-	FEB_Hw_Set_AIR_Plus_Relay(FEB_HW_RELAY_OPEN);
-	FEB_Hw_Set_Precharge_Relay(FEB_HW_RELAY_OPEN);
-
-	if (previous_state == FEB_SM_ST_BALANCE) {
-		osMutexRelease(FEB_SM_LockHandle);
-		FEB_LTC6811_Stop_Balance();
-		while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
-	}
 }
 
 /* ******** Interface ******** */
@@ -251,50 +112,188 @@ void FEB_SM_Transition(FEB_SM_ST_t next_state) {
 /* Check for conditions necessary for state transitions. */
 void FEB_SM_Process(void) {
 	while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
-	switch (current_state) {
-		case FEB_SM_ST_STARTUP:
-			transition(FEB_SM_ST_STANDBY);
-			break;
-		case FEB_SM_ST_STANDBY:
-			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE && FEB_Hw_Charge_Sense() == FEB_HW_RELAY_CLOSE &&  FEB_CAN_Charger_Received())
-				transition(FEB_SM_ST_CHARGE);
-			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE && FEB_Hw_AIR_Plus_Sense() == FEB_HW_RELAY_OPEN && FEB_Hw_Charge_Sense() == FEB_HW_RELAY_OPEN)
-				transition(FEB_SM_ST_PRECHARGE);
-//			transition(FEB_SM_ST_BALANCE);
-			break;
-		case FEB_SM_ST_BALANCE:
-			break;
-		case FEB_SM_ST_CHARGE:
-			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_OPEN)
-				transition(FEB_SM_ST_STANDBY);
-			break;
-		case FEB_SM_ST_PRECHARGE:
-			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_OPEN)
-				transition(FEB_SM_ST_STANDBY);
-//			else if ()
-			break;
-		case FEB_SM_ST_DRIVE_STANDBY:
-			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_OPEN)
-				transition(FEB_SM_ST_STANDBY);
-			else if (FEB_CAN_ICS_Ready_To_Drive())
-				transition(FEB_SM_ST_DRIVE);
-			break;
-		case FEB_SM_ST_DRIVE:
-			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_OPEN)
-				transition(FEB_SM_ST_STANDBY);
-			else if (!FEB_CAN_ICS_Ready_To_Drive())
-				transition(FEB_SM_ST_DRIVE_STANDBY);
-			break;
-		case FEB_SM_ST_DRIVE_REGEN:
-			if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_OPEN)
-				transition(FEB_SM_ST_STANDBY);
-			else if (!FEB_CAN_ICS_Ready_To_Drive())
-				transition(FEB_SM_ST_DRIVE_STANDBY);
-			break;
-		case FEB_SM_ST_FAULT:
-			break;
-	}
+	transitionVector[current_state](FEB_SM_ST_DEFAULT);
 	osMutexRelease(FEB_SM_LockHandle);
+}
+
+/** Transition Functions **/
+static void fault(FEB_SM_ST_t FAULT_TYPE) {
+	current_state = FAULT_TYPE;
+
+	FEB_Hw_Set_BMS_Shutdown_Relay(FEB_HW_RELAY_OPEN);
+	FEB_Hw_Set_AIR_Plus_Relay(FEB_HW_RELAY_OPEN);
+	FEB_Hw_Set_Precharge_Relay(FEB_HW_RELAY_OPEN);
+}
+
+static void bootTransition(FEB_SM_ST_t next_state){
+	switch(next_state){
+	case FEB_SM_ST_FAULT_BMS:
+	case FEB_SM_ST_FAULT_IMD:
+	case FEB_SM_ST_FAULT_BSPD:
+		fault(next_state);
+		break;
+
+	case FEB_SM_ST_LV:
+		current_state=FEB_SM_ST_LV;
+		break;
+
+	default:
+		break;
+	}
+	FEB_Config_Update(current_state);
+}
+static void LVPowerTransition(FEB_SM_ST_t next_state){
+	switch(next_state){
+	case FEB_SM_ST_FAULT_BMS:
+	case FEB_SM_ST_FAULT_IMD:
+	case FEB_SM_ST_FAULT_BSPD:
+		fault(next_state);
+		break;
+
+	case FEB_SM_ST_ESC:
+	case FEB_SM_ST_FREE:
+		current_state=next_state;
+		break;
+
+	case FEB_SM_ST_DEFAULT:
+		if(FEB_Hw_BMS_Shutdown_Sense()==FEB_HW_RELAY_CLOSE)
+			current_state=FEB_SM_ST_ESC;
+		break;
+
+	default:
+		return;
+	}
+	FEB_Config_Update(current_state);
+}
+static void ESCCompleteTransition(FEB_SM_ST_t next_state){
+	switch(next_state){
+	case FEB_SM_ST_FAULT_BMS:
+	case FEB_SM_ST_FAULT_IMD:
+	case FEB_SM_ST_FAULT_BSPD:
+		fault(next_state);
+		break;
+
+	case FEB_SM_ST_DEFAULT:
+		if (FEB_Hw_AIR_Minus_Sense() == FEB_HW_RELAY_CLOSE
+			&& FEB_Hw_AIR_Plus_Sense() == FEB_HW_RELAY_OPEN
+			&& FEB_Hw_Charge_Sense() == FEB_HW_RELAY_OPEN)
+				LVPowerTransition(FEB_SM_ST_PRECHARGE);
+		else if(FEB_Hw_BMS_Shutdown_Sense()==FEB_HW_RELAY_CLOSE)
+			current_state=FEB_SM_ST_LV;
+		break;
+
+	default:
+		break;
+	}
+	FEB_Config_Update(current_state);
+
+}
+static void PrechargeTransition(FEB_SM_ST_t next_state){
+	switch(next_state){
+	case FEB_SM_ST_FAULT_BMS:
+	case FEB_SM_ST_FAULT_IMD:
+	case FEB_SM_ST_FAULT_BSPD:
+		fault(next_state);
+		break;
+
+	case FEB_SM_ST_DEFAULT:
+		break;
+
+	default:
+		break;
+	}
+	FEB_Config_Update(current_state);
+}
+static void EnergizedTransition(FEB_SM_ST_t next_state){
+	switch(next_state){
+	case FEB_SM_ST_FAULT_BMS:
+	case FEB_SM_ST_FAULT_IMD:
+	case FEB_SM_ST_FAULT_BSPD:
+		fault(next_state);
+		break;
+
+	case FEB_SM_ST_DRIVE:
+		current_state=next_state;
+		break;
+
+	case FEB_SM_ST_DEFAULT:
+		if(FEB_CAN_ICS_Ready_To_Drive())
+			current_state=FEB_SM_ST_DRIVE;
+		else if(FEB_Hw_BMS_Shutdown_Sense()==FEB_HW_RELAY_CLOSE)
+			current_state=FEB_SM_ST_LV;
+		break;
+
+	default:
+		break;
+	}
+	FEB_Config_Update(current_state);
+}
+static void DriveTransition(FEB_SM_ST_t next_state){
+	switch(next_state){
+	case FEB_SM_ST_FAULT_BMS:
+	case FEB_SM_ST_FAULT_IMD:
+	case FEB_SM_ST_FAULT_BSPD:
+		fault(next_state);
+		break;
+
+	case FEB_SM_ST_DEFAULT:
+		if(FEB_Hw_BMS_Shutdown_Sense()==FEB_HW_RELAY_CLOSE)
+					current_state=FEB_SM_ST_ESC;
+		break;
+	default:
+		break;
+	}
+	FEB_Config_Update(current_state);
+}
+static void FreeTransition(FEB_SM_ST_t next_state){
+	switch(next_state){
+	case FEB_SM_ST_FAULT_BMS:
+	case FEB_SM_ST_FAULT_IMD:
+		fault(FEB_SM_ST_FAULT_CHARGING);
+		break;
+	default:
+		break;
+	}
+	FEB_Config_Update(current_state);
+}
+static void ChargingTransition(FEB_SM_ST_t next_state){
+	switch(next_state){
+	case FEB_SM_ST_FAULT_BMS:
+	case FEB_SM_ST_FAULT_IMD:
+		fault(FEB_SM_ST_FAULT_CHARGING);
+		break;
+	default:
+		break;
+	}
+	FEB_Config_Update(current_state);
+}
+static void BalanceTransition(FEB_SM_ST_t next_state){
+	switch(next_state){
+	case FEB_SM_ST_FAULT_BMS:
+	case FEB_SM_ST_FAULT_IMD:
+		fault(FEB_SM_ST_FAULT_CHARGING);
+		osMutexRelease(FEB_SM_LockHandle);
+		FEB_LTC6811_Stop_Balance();
+		while (osMutexAcquire(FEB_SM_LockHandle, UINT32_MAX) != osOK);
+		break;
+	}
+	default:
+		break;
+
+}
+
+/** Hard Fault Functions **/
+static void BMSFaultTransition(FEB_SM_ST_t next_state){
+	fault(current_state);
+}
+static void BSPDFaultTransition(FEB_SM_ST_t next_state){
+	fault(current_state);
+}
+static void IMDFaultTransition(FEB_SM_ST_t next_state){
+	fault(current_state);
+}
+static void ChargingFaultTransition(FEB_SM_ST_t next_state){
+	fault(current_state);
 }
 
 /* Output current state, relay state, and GPIO sense. */
@@ -305,32 +304,41 @@ void FEB_SM_UART_Transmit(void) {
 	FEB_SM_ST_t state = FEB_SM_Get_Current_State();
 	char* state_str;
 	switch(state) {
-		case FEB_SM_ST_STARTUP:
-			state_str = "startup";
+		case FEB_SM_ST_BOOT:
+			state_str = "Boot";
 			break;
-		case FEB_SM_ST_STANDBY:
-			state_str = "standby";
+		case FEB_SM_ST_LV:
+			state_str = "LV Power";
 			break;
-		case FEB_SM_ST_BALANCE:
-			state_str = "balance";
-			break;
-		case FEB_SM_ST_CHARGE:
-			state_str = "charge";
+		case FEB_SM_ST_ESC:
+			state_str = "ESC Complete";
 			break;
 		case FEB_SM_ST_PRECHARGE:
-			state_str = "precharge";
+			state_str = "PRECHARGE";
 			break;
-		case FEB_SM_ST_DRIVE_STANDBY:
-			state_str = "drive-standby";
+		case FEB_SM_ST_ENERGIZED:
+			state_str = "Energized";
 			break;
 		case FEB_SM_ST_DRIVE:
-			state_str = "drive";
+			state_str = "Drive";
 			break;
-		case FEB_SM_ST_DRIVE_REGEN:
-			state_str = "drive-regen";
+		case FEB_SM_ST_FREE:
+			state_str = "Accumulator Free";
 			break;
-		case FEB_SM_ST_FAULT:
-			state_str = "fault";
+		case FEB_SM_ST_CHARGING:
+			state_str = "Charging";
+			break;
+		case FEB_SM_ST_BALANCE:
+			state_str = "Balancing";
+			break;
+		case FEB_SM_ST_FAULT_BMS:
+			state_str = "BMS Fault";
+			break;
+		case FEB_SM_ST_FAULT_IMD:
+			state_str = "IMD Fault";
+			break;
+		case FEB_SM_ST_FAULT_BSPD:
+			state_str = "BSPD Fault";
 			break;
 	}
 

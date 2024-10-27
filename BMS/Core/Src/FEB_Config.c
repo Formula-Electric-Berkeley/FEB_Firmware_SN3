@@ -15,15 +15,12 @@ static int32_t pack_max_current_mA = 0;
 void FEB_Config_Update(FEB_SM_ST_t current_state) {
 	int32_t current_resolution_mA = 50;
 	switch (current_state) {
-		case FEB_SM_ST_STARTUP:
-			cell_min_voltage_mV = 2500;
-			cell_max_voltage_mV = 4200;
-			cell_min_temperature_dC = -200;
-			cell_max_temperature_dC = 600;
-			pack_min_current_mA = 0 - current_resolution_mA;
-			pack_max_current_mA = 0 + current_resolution_mA;
-			break;
-		case FEB_SM_ST_STANDBY:
+		case FEB_SM_ST_BOOT:
+		case FEB_SM_ST_LV:
+		case FEB_SM_ST_FAULT_BMS:
+		case FEB_SM_ST_FAULT_IMD:
+		case FEB_SM_ST_FAULT_BSPD:
+		case FEB_SM_ST_ENERGIZED:
 			cell_min_voltage_mV = 2500;
 			cell_max_voltage_mV = 4200;
 			cell_min_temperature_dC = -200;
@@ -39,7 +36,7 @@ void FEB_Config_Update(FEB_SM_ST_t current_state) {
 			pack_min_current_mA = 0 - current_resolution_mA;
 			pack_max_current_mA = 0 + current_resolution_mA;
 			break;
-		case FEB_SM_ST_CHARGE:
+		case FEB_SM_ST_CHARGING:
 			cell_min_voltage_mV = 2500;
 			cell_max_voltage_mV = 4200;
 			cell_min_temperature_dC = 0;
@@ -62,30 +59,6 @@ void FEB_Config_Update(FEB_SM_ST_t current_state) {
 			cell_max_temperature_dC = 600;
 			pack_min_current_mA = 0 - current_resolution_mA;
 			pack_max_current_mA = 60000;
-			break;
-		case FEB_SM_ST_DRIVE_STANDBY:
-			cell_min_voltage_mV = 2500;
-			cell_max_voltage_mV = 4200;
-			cell_min_temperature_dC = -200;
-			cell_max_temperature_dC = 600;
-			pack_min_current_mA = 0 - current_resolution_mA;
-			pack_max_current_mA = 0 + current_resolution_mA;
-			break;
-		case FEB_SM_ST_DRIVE_REGEN:
-			cell_min_voltage_mV = 2500;
-			cell_max_voltage_mV = 4200;
-			cell_min_temperature_dC = 0;
-			cell_max_temperature_dC = 450;
-			pack_min_current_mA = -20000;
-			pack_max_current_mA = 60000;
-			break;
-		case FEB_SM_ST_FAULT:
-			cell_min_voltage_mV = 2500;
-			cell_max_voltage_mV = 4200;
-			cell_min_temperature_dC = -200;
-			cell_max_temperature_dC = 600;
-			pack_min_current_mA = 0 - current_resolution_mA;
-			pack_max_current_mA = 0 + current_resolution_mA;
 			break;
 	}
 }
