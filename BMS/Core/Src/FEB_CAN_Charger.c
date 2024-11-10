@@ -22,7 +22,7 @@ typedef struct {
 } BMS_message_t;
 typedef struct {
 	uint16_t op_voltage_dV;			// Operating voltage
-	uint16_t op_current_dA;			// Ooperating current
+	uint16_t op_current_dA;			// Operating current
 	uint8_t status;
 	bool received;
 } CCS_message_t;

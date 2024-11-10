@@ -84,13 +84,6 @@ const osThreadAttr_t Task5_IVT_attributes = {
   .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal1,
 };
-/* Definitions for Task6_CAN */
-osThreadId_t Task6_CANHandle;
-const osThreadAttr_t Task6_CAN_attributes = {
-  .name = "Task6_CAN",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityBelowNormal,
-};
 /* Definitions for FEB_SM_Lock */
 osMutexId_t FEB_SM_LockHandle;
 const osMutexAttr_t FEB_SM_Lock_attributes = {
@@ -122,7 +115,6 @@ void Start_Task2_State(void *argument);
 void Start_Task3_Charge(void *argument);
 void Start_Task4_Balance(void *argument);
 void Start_Task5_IVT(void *argument);
-void Start_Task6_CAN(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -213,9 +205,6 @@ int main(void)
 
   /* creation of Task5_IVT */
   Task5_IVTHandle = osThreadNew(Start_Task5_IVT, NULL, &Task5_IVT_attributes);
-
-  /* creation of Task6_CAN */
-  Task6_CANHandle = osThreadNew(Start_Task6_CAN, NULL, &Task6_CAN_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -580,21 +569,6 @@ void Start_Task5_IVT(void *argument)
   /* Infinite loop */
   FEB_Main_Task5_IVT();
   /* USER CODE END Start_Task5_IVT */
-}
-
-/* USER CODE BEGIN Header_Start_Task6_CAN */
-/**
-* @brief Function implementing the Task6_CAN thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_Start_Task6_CAN */
-void Start_Task6_CAN(void *argument)
-{
-  /* USER CODE BEGIN Start_Task6_CAN */
-  /* Infinite loop */
-  FEB_Main_Task6_CAN();
-  /* USER CODE END Start_Task6_CAN */
 }
 
 /**

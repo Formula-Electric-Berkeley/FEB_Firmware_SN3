@@ -60,6 +60,8 @@ void FEB_Config_Update(FEB_SM_ST_t current_state) {
 			pack_min_current_mA = 0 - current_resolution_mA;
 			pack_max_current_mA = 60000;
 			break;
+		default:
+			break;
 	}
 }
 
