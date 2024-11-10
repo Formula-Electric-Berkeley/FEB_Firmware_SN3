@@ -461,7 +461,7 @@ static void store_voltage_values(void) {
 	osMutexRelease(FEB_LTC6811_LockHandle);
 
 	if (pack_voltage_fault){
-		FEB_SM_Transition(FEB_SM_ST_FAULT);
+		FEB_SM_Transition(FEB_SM_ST_FAULT_BMS);
 
 	}
 }
@@ -511,7 +511,7 @@ void FEB_LTC6811_Balance_Process(void) {
 		osDelay(4000);
 
 		if (check_balance_complete())
-			FEB_SM_Transition(FEB_SM_ST_STANDBY);
+			FEB_SM_Transition(FEB_SM_ST_FREE);
 	}
 }
 
@@ -660,6 +660,6 @@ static void store_temperature_values(uint8_t channel, int16_t *min_temperature_d
 	}
 	osMutexRelease(FEB_LTC6811_LockHandle);
 	if (pack_temperature_fault){
-		FEB_SM_Transition(FEB_SM_ST_FAULT);
+		FEB_SM_Transition(FEB_SM_ST_FAULT_BMS);
 	}
 }

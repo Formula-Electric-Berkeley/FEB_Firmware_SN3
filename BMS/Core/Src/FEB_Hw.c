@@ -94,3 +94,11 @@ FEB_Hw_Relay_t FEB_Hw_Charge_Sense(void) {
 		return FEB_HW_RELAY_CLOSE;
 	return FEB_HW_RELAY_OPEN;
 }
+
+/* Read pre-charge sense, assume SM lock held. */
+FEB_Hw_Relay_t FEB_Hw_Precharge_Sense(void) {
+	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_SET)
+		return FEB_HW_RELAY_CLOSE;
+	return FEB_HW_RELAY_OPEN;
+}
+

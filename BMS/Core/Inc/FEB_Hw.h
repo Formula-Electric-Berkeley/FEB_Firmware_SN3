@@ -18,5 +18,5 @@ FEB_Hw_Relay_t FEB_Hw_AIR_Plus_Sense(void);
 FEB_Hw_Relay_t FEB_Hw_BMS_Shutdown_Sense(void);
 FEB_Hw_Relay_t FEB_Hw_IMD_Shutdown_Sense(void);
 FEB_Hw_Relay_t FEB_Hw_Charge_Sense(void);
-
+FEB_Hw_Relay_t FEB_Hw_Precharge_Sense(void);
 #endif /* INC_FEB_HW_H_ */
