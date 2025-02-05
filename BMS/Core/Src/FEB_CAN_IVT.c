@@ -1,23 +1,31 @@
-// ******************************** Includes & External ********************************
-
 #include "FEB_CAN_IVT.h"
+#include "FEB_CAN_Library/FEB_CAN_ID.h"
+#include "FEB_Config.h"
+#include "FEB_Const.h"
+#include "FEB_LTC6811.h"
+#include "stdint.h"
+#include "stdbool.h"
+#include "stdio.h"
+#include "string.h"
 
-
-// ******************************** Struct ********************************
+extern UART_HandleTypeDef huart2;
 
 typedef struct {
-	volatile bool current;
-	volatile bool voltage_1;
-	volatile bool voltage_2;
-	volatile bool voltage_3;
-} IVT_CAN_flag_t;
+	int32_t current_mA;
+	int32_t voltage_1_mV;
+	int32_t voltage_2_mV;
+	int32_t voltage_3_mV;
+} IVT_message_t;
+typedef struct {
+	bool current;
+	bool voltage_1;
+	bool voltage_2;
+	bool voltage_3;
+} IVT_message_flag_t;
+static IVT_message_t IVT_message;				// IVT values
+static IVT_message_flag_t IVT_message_flag;		// Flags indicating new IVT messages
 
-// ******************************** Variables ********************************
-
-static IVT_CAN_flag_t IVT_CAN_flag;
-FEB_CAN_IVT_Message_t FEB_CAN_IVT_Message;
-
-// ******************************** Functions ********************************
+/* ******** CAN Functions ******** */
 
 uint8_t FEB_CAN_IVT_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignment, uint8_t filter_bank) {
 	uint16_t ids[] = {FEB_CAN_ID_IVT_CURRENT, FEB_CAN_ID_IVT_VOLTAGE_1, FEB_CAN_ID_IVT_VOLTAGE_2, FEB_CAN_ID_IVT_VOLTAGE_3};
@@ -39,57 +47,67 @@ uint8_t FEB_CAN_IVT_Filter_Config(CAN_HandleTypeDef* hcan, uint8_t FIFO_assignme
 	    filter_bank++;
 
 		if (HAL_CAN_ConfigFilter(hcan, &filter_config) != HAL_OK) {
-			FEB_SM_Set_Current_State(FEB_SM_ST_SHUTDOWN);
+//			FEB_SM_Set_Current_State(FEB_SM_ST_SHUTDOWN);
 		}
 	}
 
 	return filter_bank;
 }
 
+void FEB_CAN_IVT_Process(void) {
+	if (IVT_message_flag.current) {
+		IVT_message_flag.current = false;
+		 int32_t current_mA = IVT_message.current_mA;
+		 if (current_mA < FEB_Config_Get_Pack_Min_Current_mA() ||
+			 current_mA > FEB_Config_Get_Pack_Max_Current_mA()){
+
+		 }
+//			 FEB_SM_Transition(FEB_SM_ST_FAULT);
+	}
+	if (IVT_message_flag.voltage_1) {
+		IVT_message_flag.voltage_1 = false;
+		if (FEB_SM_Get_Current_State() == FEB_SM_ST_PRECHARGE) {
+			float voltage_V = (float) IVT_message.voltage_1_mV * 1e-3;
+			float target_voltage_V = FEB_LTC6811_Get_Total_Voltage() * FEB_CONST_PRECHARGE_PCT * 1e-3;
+			if (voltage_V >= target_voltage_V)
+				FEB_SM_Transition(FEB_SM_ST_DRIVE_STANDBY);
+		}
+	}
+	if (IVT_message_flag.voltage_2) {
+		IVT_message_flag.voltage_2 = false;
+		// ...
+	}
+	if (IVT_message_flag.voltage_3) {
+		IVT_message_flag.voltage_3 = false;
+		// ...
+	}
+}
+
 void FEB_CAN_IVT_Store_Msg(CAN_RxHeaderTypeDef* rx_header, uint8_t rx_data[]) {
 	switch(rx_header->StdId) {
 	    case FEB_CAN_ID_IVT_CURRENT:
-	    	IVT_CAN_flag.current = true;
-	    	FEB_CAN_IVT_Message.current_mA = (rx_data[2] << 24) + (rx_data[3] << 16) + (rx_data[4] << 8) + rx_data[5];
+	    	IVT_message_flag.current = true;
+	    	IVT_message.current_mA = ((rx_data[2] << 24) + (rx_data[3] << 16) + (rx_data[4] << 8) + rx_data[5]) * -1;
 			break;
 	    case FEB_CAN_ID_IVT_VOLTAGE_1:
-	    	IVT_CAN_flag.voltage_1 = true;
-	    	FEB_CAN_IVT_Message.voltage_1_mV = (rx_data[2] << 24) + (rx_data[3] << 16) + (rx_data[4] << 8) + rx_data[5];
+	    	IVT_message_flag.voltage_1 = true;
+	    	IVT_message.voltage_1_mV = (rx_data[2] << 24) + (rx_data[3] << 16) + (rx_data[4] << 8) + rx_data[5];
 	    	break;
 	    case FEB_CAN_ID_IVT_VOLTAGE_2:
-	    	IVT_CAN_flag.voltage_2 = true;
-	    	FEB_CAN_IVT_Message.voltage_2_mV = (rx_data[2] << 24) + (rx_data[3] << 16) + (rx_data[4] << 8) + rx_data[5];
+	    	IVT_message_flag.voltage_2 = true;
+	    	IVT_message.voltage_2_mV = (rx_data[2] << 24) + (rx_data[3] << 16) + (rx_data[4] << 8) + rx_data[5];
 	    	break;
 	    case FEB_CAN_ID_IVT_VOLTAGE_3:
-	    	IVT_CAN_flag.voltage_3 = true;
-	    	FEB_CAN_IVT_Message.voltage_3_mV = (rx_data[2] << 24) + (rx_data[3] << 16) + (rx_data[4] << 8) + rx_data[5];
+	    	IVT_message_flag.voltage_3 = true;
+	    	IVT_message.voltage_3_mV = (rx_data[2] << 24) + (rx_data[3] << 16) + (rx_data[4] << 8) + rx_data[5];
 	    	break;
 	}
 }
 
-void FEB_CAN_IVT_Process(void) {
-	if (IVT_CAN_flag.current) {
-		IVT_CAN_flag.current = false;
-		// TODO: Check current flowing through battery
-		// float current_A = FEB_CAN_IVT_Message.current_mA * 0.001;
-	}
-	if (IVT_CAN_flag.voltage_1) {
-		IVT_CAN_flag.voltage_1 = false;
-		if (FEB_SM_Get_Current_State() == FEB_SM_ST_PRECHARGE) {
-			// TODO: Check precharge complete
-			float voltage_V = (float) FEB_CAN_IVT_Message.voltage_1_mV * 0.001;
-			float target_voltage_V = FEB_LTC6811_Get_Total_Voltage() * FEB_CONST_PRECHARGE_PCT;
-			if (voltage_V >= target_voltage_V) {
-				FEB_SM_Set_Current_State(FEB_SM_ST_DRIVE);
-			}
-		}
-	}
-	if (IVT_CAN_flag.voltage_2) {
-		IVT_CAN_flag.voltage_2 = false;
-		// ...
-	}
-	if (IVT_CAN_flag.voltage_3) {
-		IVT_CAN_flag.voltage_3 = false;
-		// ...
-	}
+void FEB_CAN_IVT_UART_Transmit(void) {
+	static char str[64];
+	sprintf(str, "IVT %ld %ld %ld %ld\n",
+			IVT_message.voltage_1_mV, IVT_message.voltage_2_mV, IVT_message.voltage_3_mV,
+			IVT_message.current_mA);
+	HAL_UART_Transmit(&huart2, (uint8_t*) str, strlen(str), 100);
 }

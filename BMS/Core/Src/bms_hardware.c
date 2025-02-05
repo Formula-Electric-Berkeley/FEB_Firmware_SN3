@@ -44,6 +44,7 @@ Copyright 2017 Linear Technology Corp. (LTC)
 // ********************************** Includes & External **********************************
 
 #include "bms_hardware.h"
+#include "stm32f4xx_hal.h"
 
 extern SPI_HandleTypeDef hspi1;
 

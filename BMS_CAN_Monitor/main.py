@@ -7,9 +7,9 @@ from can_data import MonitorCanData
 def main() -> None:
     # CAN
     mcd = MonitorCanData()
-    cc = CanConnection(mcd)
-    cc.connect()
-    cc.read_data()
+    # cc = CanConnection(mcd)
+    # cc.connect()
+    # cc.read_data()
     
     # TODO: Remove
     # test(mcd)

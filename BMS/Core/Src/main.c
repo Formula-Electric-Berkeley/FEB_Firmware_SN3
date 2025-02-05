@@ -60,21 +60,21 @@ const osThreadAttr_t Task1_VT_attributes = {
 osThreadId_t Task2_StateHandle;
 const osThreadAttr_t Task2_State_attributes = {
   .name = "Task2_State",
-  .stack_size = 128 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityAboveNormal,
 };
 /* Definitions for Task3_Charge */
 osThreadId_t Task3_ChargeHandle;
 const osThreadAttr_t Task3_Charge_attributes = {
   .name = "Task3_Charge",
-  .stack_size = 128 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityHigh,
 };
 /* Definitions for Task4_Balance */
 osThreadId_t Task4_BalanceHandle;
 const osThreadAttr_t Task4_Balance_attributes = {
   .name = "Task4_Balance",
-  .stack_size = 128 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityAboveNormal1,
 };
 /* Definitions for Task5_IVT */
@@ -90,6 +90,21 @@ const osThreadAttr_t Task6_CAN_attributes = {
   .name = "Task6_CAN",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityBelowNormal,
+};
+/* Definitions for FEB_SM_Lock */
+osMutexId_t FEB_SM_LockHandle;
+const osMutexAttr_t FEB_SM_Lock_attributes = {
+  .name = "FEB_SM_Lock"
+};
+/* Definitions for FEB_LTC6811_Lock */
+osMutexId_t FEB_LTC6811_LockHandle;
+const osMutexAttr_t FEB_LTC6811_Lock_attributes = {
+  .name = "FEB_LTC6811_Lock"
+};
+/* Definitions for FEB_UART_Lock */
+osMutexId_t FEB_UART_LockHandle;
+const osMutexAttr_t FEB_UART_Lock_attributes = {
+  .name = "FEB_UART_Lock"
 };
 /* USER CODE BEGIN PV */
 
@@ -159,6 +174,15 @@ int main(void)
 
   /* Init scheduler */
   osKernelInitialize();
+  /* Create the mutex(es) */
+  /* creation of FEB_SM_Lock */
+  FEB_SM_LockHandle = osMutexNew(&FEB_SM_Lock_attributes);
+
+  /* creation of FEB_LTC6811_Lock */
+  FEB_LTC6811_LockHandle = osMutexNew(&FEB_LTC6811_Lock_attributes);
+
+  /* creation of FEB_UART_Lock */
+  FEB_UART_LockHandle = osMutexNew(&FEB_UART_Lock_attributes);
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -289,10 +313,10 @@ static void MX_CAN1_Init(void)
 
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 5;
+  hcan1.Init.Prescaler = 18;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_16TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_3TQ;
   hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = DISABLE;
@@ -443,7 +467,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
@@ -451,8 +475,8 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PC1 PC2 PC3 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3;
+  /*Configure GPIO pins : PC0 PC1 PC2 PC3 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -464,6 +488,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PC4 PC5 PC10 PC12 */
+  GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_10|GPIO_PIN_12;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PB4 */
   GPIO_InitStruct.Pin = GPIO_PIN_4;
