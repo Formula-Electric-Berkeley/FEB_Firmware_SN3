@@ -521,7 +521,7 @@ void Start_Task1_VT(void *argument)
 {
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
-  FEB_Main_Task1_VT();
+  FEB_Task_ADBMS();
   /* USER CODE END 5 */
 }
 
@@ -551,7 +551,7 @@ void Start_Task3_Charge(void *argument)
 {
   /* USER CODE BEGIN Start_Task3_Charge */
   /* Infinite loop */
-  FEB_Main_Task3_Charge();
+  FEB_Task_Charge();
   /* USER CODE END Start_Task3_Charge */
 }
 
@@ -566,7 +566,7 @@ void Start_Task4_Balance(void *argument)
 {
   /* USER CODE BEGIN Start_Task4_Balance */
   /* Infinite loop */
-  FEB_Main_Task4_Balance();
+  FEB_Task_Balance();
   /* USER CODE END Start_Task4_Balance */
 }
 
@@ -581,7 +581,7 @@ void Start_Task5_IVT(void *argument)
 {
   /* USER CODE BEGIN Start_Task5_IVT */
   /* Infinite loop */
-  FEB_Main_Task5_IVT();
+  FEB_Task_IVT();
   /* USER CODE END Start_Task5_IVT */
 }
 
@@ -596,7 +596,7 @@ void Start_Task6_CAN(void *argument)
 {
   /* USER CODE BEGIN Start_Task6_CAN */
   /* Infinite loop */
-  FEB_Main_Task6_CAN();
+  FEB_Task_CAN();
   /* USER CODE END Start_Task6_CAN */
 }
 

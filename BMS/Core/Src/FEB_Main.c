@@ -12,7 +12,7 @@ void FEB_Main_Setup(void) {
 	FEB_SM_Init();
 }
 
-void FEB_Main_Task1_VT(void) {
+void FEB_Task_ADBMS(void) {
 	while (1) {
 		FEB_LTC6811_Poll_Voltage();
 		FEB_LTC6811_Poll_Temperature();
@@ -33,7 +33,7 @@ void FEB_Main_Task2_State(void) {
 	}
 }
 
-void FEB_Main_Task3_Charge(void) {
+void FEB_Task_Charge(void) {
 	while (1) {
 		FEB_CAN_Charger_Process();
 		FEB_CAN_Charger_UART_Transmit();
@@ -41,14 +41,14 @@ void FEB_Main_Task3_Charge(void) {
 	}
 }
 
-void FEB_Main_Task4_Balance(void) {
+void FEB_Task_Balance(void) {
 	while (1) {
 		FEB_LTC6811_Balance_Process();
 		osDelay(1000);
 	}
 }
 
-void FEB_Main_Task5_IVT(void) {
+void FEB_Task_IVT(void) {
 	while (1) {
 		FEB_CAN_IVT_Process();
 		FEB_CAN_IVT_UART_Transmit();
@@ -56,7 +56,7 @@ void FEB_Main_Task5_IVT(void) {
 	}
 }
 
-void FEB_Main_Task6_CAN(void) { // TODO: Remove Function
+void FEB_Task_CAN(void) { // TODO: Remove Function
 	while (1) {
 		osDelay(1000);
 	}

@@ -2,6 +2,7 @@
 #define INC_FEB_SM_H_
 
 #include "stdbool.h"
+#include "FEB_Config.h"
 
 #define FEB_SM_ST_DEBUG true
 
